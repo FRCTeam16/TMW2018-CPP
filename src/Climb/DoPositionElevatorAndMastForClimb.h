@@ -23,7 +23,7 @@ private:
 	bool floorReached = false;
 	bool elevateComplete = false;
 	bool complete = false;
-	long start;
+	long start = 0;
 
 	bool TimeElapsed(double elapsed);
 };

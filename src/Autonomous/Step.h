@@ -9,7 +9,7 @@
 #define SRC_AUTONOMOUS_STEP_H_
 
 #include "WPILib.h"
-#include "World.h"	// TODO: Why is this incomplete, we can't forward ref it
+#include "World.h"
 
 struct CrabInfo {
 	float twist		= 0.0;

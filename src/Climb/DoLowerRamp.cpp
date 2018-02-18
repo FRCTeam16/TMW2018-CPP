@@ -9,12 +9,9 @@
 #include <Climb/DoLowerRamp.h>
 
 DoLowerRamp::DoLowerRamp() {
-	// TODO Auto-generated constructor stub
-
 }
 
 DoLowerRamp::~DoLowerRamp() {
-	// TODO Auto-generated destructor stub
 }
 
 void DoLowerRamp::Forward() {

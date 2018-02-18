@@ -11,15 +11,12 @@ DoPositionElevatorAndMastForClimb::~DoPositionElevatorAndMastForClimb() {
 
 void DoPositionElevatorAndMastForClimb::Forward() {
 	if (StateTransition::IsFirstRun()) {
-		std::cout << "DoPositionElevatorAndMastForClimb First Part\n";
 		start = frc::Timer::GetFPGATimestamp();
 		Robot::elevator->SetElevatorPosition(Elevator::ElevatorPosition::kFloor);
 		Robot::mast->SetMastPosition(Mast::MastPosition::kVertical);
 	}
 
 	if (!floorReached && !elevateComplete && TimeElapsed(0.1) && Robot::mast->InPosition() && Robot::elevator->InPosition()) {
-//                TODO: Set rotation at appropriate time in elevator position
-		std::cout << "DoPositionElevatorAndMastForClimb Second Part\n";
 		Robot::elevator->ShiftLow();
 		Robot::elevator->SetElevatorPosition(Elevator::ElevatorPosition::kClimb);
 		Robot::intake->SetExtendSolenoidState(true);

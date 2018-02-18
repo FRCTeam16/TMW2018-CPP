@@ -112,7 +112,6 @@ void Mast::Run() {
 void Mast::SetMastPosition(Mast::MastPosition _mastPosition) {
 	mastPosition = _mastPosition;
 	int target;
-	// FIXME: Switch default to main case, others to default
 	switch (mastPosition) {
 		case kClimb:
 		case kVertical:
