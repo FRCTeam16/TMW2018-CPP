@@ -20,7 +20,7 @@ public:
 	bool IsFinished() override;
 
 private:
-	bool finished;
+	bool finished = false;
 };
 
 #endif /* SRC_CLIMB_DOCLIMB_H_ */

@@ -59,8 +59,8 @@ private:
 	 double intakeSpeed = 1.0;
 	 double defaultEjectSpeed = -1.0;
 	 bool pickupTriggered = false;
-	 std::unique_ptr<ThresholdCounter> leftIntakeAmpThresholdCounter;
-	 std::unique_ptr<ThresholdCounter> rightIntakeAmpThresholdCounter;
+	 std::shared_ptr<ThresholdCounter> leftIntakeAmpThresholdCounter;
+	 std::shared_ptr<ThresholdCounter> rightIntakeAmpThresholdCounter;
 	 double targetEjectSpeed = 0.0;
 
 };

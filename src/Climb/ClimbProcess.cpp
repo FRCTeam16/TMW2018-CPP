@@ -4,10 +4,10 @@
  *  Created on: Feb 17, 2018
  *      Author: smithj11
  */
+#include <Climb/ClimbNoOp.h>
 #include <iostream>
 
 #include "ClimbProcess.h"
-#include "NoOp.h"
 #include "DoPositionElevatorAndMastForClimb.h"
 #include "DoClimb.h"
 #include "DoLowerRamp.h"
@@ -83,7 +83,7 @@ void ClimbProcess::LoadTransition(ClimbProcess::ClimbState state) {
 		break;
 	case kCurledUp:
 	default:
-		transition = new NoOp();
+		transition = new ClimbNoOp();
 		break;
 	}
 	activeTransition.reset(transition);

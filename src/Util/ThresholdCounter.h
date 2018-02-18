@@ -9,8 +9,8 @@ public:
 	void Reset();
 
 private:
-	const int numberOfChecks;
 	const double threshold;
+	const int numberOfChecks;
 	int checkCount = 0;
 };
 

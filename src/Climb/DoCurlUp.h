@@ -12,7 +12,7 @@
 
 class DoCurlUp: public StateTransition {
 private:
-	bool finished;
+	bool finished = false;
 public:
 	DoCurlUp();
 	virtual ~DoCurlUp();

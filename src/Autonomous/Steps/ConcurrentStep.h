@@ -16,9 +16,8 @@ public:
 	ConcurrentStep(std::initializer_list<Step*> stepList);
 	virtual ~ConcurrentStep();
 	bool Run(std::shared_ptr<World> world) override;
-	const CrabInfo GetCrabInfo();
+	const CrabInfo* GetCrabInfo();
 private:
-	Step* driveStep;
 	std::vector<Step*> steps;
 };
 

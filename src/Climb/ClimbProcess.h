@@ -30,7 +30,7 @@ private:
 	ClimbState currentState = ClimbState::kDisabled;
 	ClimbState nextState;
 	std::shared_ptr<StateTransition> activeTransition;
-	bool inProgress;
+	bool inProgress = false;
 	void LoadTransition(ClimbProcess::ClimbState climbState);
 };
 

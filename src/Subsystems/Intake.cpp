@@ -13,12 +13,14 @@
 #include <Subsystems/Elevator.h>
 
 Intake::Intake() : frc::Subsystem("Intake") {
+	std::cout << "Starting Intake\n";
 	const std::vector<std::shared_ptr<WPI_VictorSPX>> motors { leftIntakeMotor, rightIntakeMotor };
 	for (auto &motor : motors) {
 		motor->ConfigPeakOutputForward(1,  0);
 		motor->ConfigPeakOutputReverse(-1,  0);
 		motor->SetNeutralMode(NeutralMode::Brake);
 	}
+	std::cout << "Finished Intake\n";
 }
 
 Intake::~Intake() {}
@@ -30,6 +32,12 @@ void Intake::Init() {
 	int intakeAmpThresholdScans = PrefUtil::getSetInt("IntakeAmpThresholdScans", 5);
 	leftIntakeAmpThresholdCounter.reset(new ThresholdCounter(intakeAmpThreshold, intakeAmpThresholdScans));
 	rightIntakeAmpThresholdCounter.reset(new ThresholdCounter(intakeAmpThreshold, intakeAmpThresholdScans));
+
+	std::cout << "Initialized Threshold Counters: "
+					  << leftIntakeAmpThresholdCounter.get()
+					  << " | "
+					  << rightIntakeAmpThresholdCounter.get()
+					  << "\n";
 }
 
 void Intake::Run() {
@@ -38,6 +46,7 @@ void Intake::Run() {
 	if (IntakeState::kIntake == state && !pickupTriggered) {
 		const double leftAmps = GetLeftIntakeCurrent();
 		const double rightAmps = GetRightIntakeCurrent();
+
 		if (leftIntakeAmpThresholdCounter->Check(leftAmps) || leftIntakeAmpThresholdCounter->Check(rightAmps)) {
 			performPickup = true;
 		}
@@ -92,6 +101,7 @@ void Intake::Eject() {
 }
 
 void Intake::Eject(double speed) {
+	std::cout << "Intake::Eject " << speed << "\n";
 	state = IntakeState::kEject;
 	targetEjectSpeed = speed;
 	ResetPickupTriggerState();

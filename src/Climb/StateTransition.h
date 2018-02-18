@@ -41,7 +41,7 @@ protected:
 	virtual void Reverse() {}
 
 	bool IsTimeElapsed() {
-		return (frc::Timer::GetFPGATimestamp() - startTime) > 100.0;
+		return (frc::Timer::GetFPGATimestamp() - startTime) > 0.1;
 	}
 
 	bool IsFirstRun() {

@@ -2,7 +2,6 @@
 
 
 std::unique_ptr<OI> Robot::oi;
-std::shared_ptr<Ramp> Robot::ramp;
 std::shared_ptr<DriveBase> Robot::driveBase;
 std::shared_ptr<Intake> Robot::intake;
 std::shared_ptr<Elevator> Robot::elevator;
@@ -11,7 +10,6 @@ std::shared_ptr<Mast> Robot::mast;
 void Robot::RobotInit() {
 	RobotMap::init();
 
-    ramp.reset(new Ramp());
 	driveBase.reset(new DriveBase());
 	intake.reset(new Intake());
 	elevator.reset(new Elevator());
@@ -24,8 +22,6 @@ void Robot::RobotInit() {
 	// yet. Thus, their requires() statements may grab null pointers. Bad
 	// news. Don't move it.
 	oi.reset(new OI());
-
-	frc::SmartDashboard::PutData("Auto Modes", &chooser);
 }
 
 /**
@@ -38,16 +34,19 @@ void Robot::DisabledInit(){
 
 void Robot::DisabledPeriodic() {
 	frc::Scheduler::GetInstance()->Run();
+	InstrumentSubsystems();
 }
 
 void Robot::AutonomousInit() {
 	autonomousCommand = chooser.GetSelected();
 	if (autonomousCommand != nullptr)
 		autonomousCommand->Start();
+	InitSubsystems();
 }
 
 void Robot::AutonomousPeriodic() {
 	frc::Scheduler::GetInstance()->Run();
+	InstrumentSubsystems();
 }
 
 void Robot::TeleopInit() {
@@ -61,10 +60,12 @@ void Robot::TeleopInit() {
 	driveBase->InitTeleop();
 	climbProcess.release();
 	climbProcess.reset(new ClimbProcess());
-
+	InitSubsystems();
+	std::cout << "Completed TeleopInit\n";
 }
 
 void Robot::TeleopPeriodic() {
+	double startTime = frc::Timer::GetFPGATimestamp();
 	frc::Scheduler::GetInstance()->Run();
 	double threshold = 0.1;
 
@@ -172,6 +173,7 @@ void Robot::TeleopPeriodic() {
 	 */
 	const double twistInput = oi->GetJoystickTwist(threshold);
 
+	double start = frc::Timer::GetFPGATimestamp();
 	if (speedModeTest) {
 		driveBase->SetConstantVelocity(twistInput, 0.38);
 	} else if (!lockWheels) {
@@ -184,25 +186,45 @@ void Robot::TeleopPeriodic() {
 		driveBase->Crab(0, 0, 0, true);
 	}
 
-	// ************************************ //
+	double now = frc::Timer::GetFPGATimestamp();
+	SmartDashboard::PutNumber("DriveBaseRun", (now-start) * 1000);
 
+
+	// ************************************ //
 
 	climbProcess->Run();
 	climbProcess->Instrument();
 	RunSubsystems();
 	InstrumentSubsystems();
+
+	long elapsed = (frc::Timer::GetFPGATimestamp() - startTime) * 1000.0;
+	SmartDashboard::PutNumber("Teleop Period (ms)", elapsed);
 }
 
 void Robot::InitSubsystems() {
 	Robot::elevator->Init();
 	Robot::intake->Init();
+	std::cout << "Mast init start\n";
 	Robot::mast->Init();
+	std::cout << "Mast init done\n";
 }
 
 void Robot::RunSubsystems() {
+	double start = frc::Timer::GetFPGATimestamp();
 	Robot::elevator->Run();
+	double now = frc::Timer::GetFPGATimestamp();
+	SmartDashboard::PutNumber("ElevatorRun", (now-start) * 1000);
+
+	start = frc::Timer::GetFPGATimestamp();
 	Robot::intake->Run();
+	now = frc::Timer::GetFPGATimestamp();
+	SmartDashboard::PutNumber("IntakeRun", (now-start) * 1000);
+
+	start = frc::Timer::GetFPGATimestamp();
 	Robot::mast->Run();
+	now = frc::Timer::GetFPGATimestamp();
+	SmartDashboard::PutNumber("MastRun", (now-start) * 1000);
+
 }
 
 void Robot::InstrumentSubsystems() {
@@ -210,6 +232,12 @@ void Robot::InstrumentSubsystems() {
 	Robot::intake->Instrument();
 	Robot::mast->Instrument();
 
+
+
+	double now = frc::Timer::GetFPGATimestamp();
+	double elapsedMs = (now - lastTime) * 1000;
+	SmartDashboard::PutNumber("Period (ms)", elapsedMs);
+	lastTime = now;
 }
 
 START_ROBOT_CLASS(Robot);

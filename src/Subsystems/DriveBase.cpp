@@ -39,7 +39,7 @@ DriveBase::DriveBase() : Subsystem("DriveBase") {
 
 	frontLeftSteer = RobotMap::driveBaseFrontLeftSteer;
 	frontRightSteer = RobotMap::driveBaseFrontRightSteer;
-	rearLeftSteer = RobotMap::driveBaseFrontLeftSteer;
+	rearLeftSteer = RobotMap::driveBaseRearLeftSteer;
 	rearRightSteer = RobotMap::driveBaseRearRightSteer;
 
 	frontLeftDrive = RobotMap::driveBaseFrontLeftDrive;
@@ -357,10 +357,10 @@ void DriveBase::SetTalonSteerSetpoint(double setpoint, double offset, std::share
 	}
 
 	double finalSetpoint = currentPosition + diff;
-	std::cout << "current: " << currentPosition <<
-			" | setpoint: " << setpoint <<
-			" | diff: " << diff <<
-			" | final: " << finalSetpoint << std::endl;
+//	std::cout << "current: " << currentPosition <<
+//			" | setpoint: " << setpoint <<
+//			" | diff: " << diff <<
+//			" | final: " << finalSetpoint << std::endl;
 	steer->Set(ControlMode::Position, finalSetpoint * 4096);
 }
 

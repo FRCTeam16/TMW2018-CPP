@@ -10,7 +10,7 @@
 
 #include "WPILib.h"
 #include "ctre/Phoenix.h"
-#include "Util/DriveInfo.h"
+#include "../../Util/DriveInfo.h"
 
 class FrontTwoAveragingDriveEncoderPIDSource : public PIDSource {
 public:

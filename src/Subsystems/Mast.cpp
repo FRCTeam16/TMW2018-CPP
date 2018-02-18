@@ -5,6 +5,7 @@
 std::shared_ptr<DartMagicMotionManager> DartMagicMotionManager::INSTANCE;
 
 Mast::Mast() : frc::Subsystem("Mast") {
+	std::cout << "Mast starting\n";
 	for (auto &dart : darts) {
 		dart->SetSensorPhase(true);
 		dart->SetInverted(true);
@@ -14,6 +15,7 @@ Mast::Mast() : frc::Subsystem("Mast") {
 		dart->ConfigPeakOutputForward(1, 0);
 		dart->ConfigPeakOutputReverse(-1, 0);
 	}
+	std::cout << "Mast complete\n";
 
 	// Pre-init constraints since they are used for some mapping calculations
 	Preferences *prefs = Preferences::GetInstance();
@@ -28,6 +30,7 @@ Mast::Mast() : frc::Subsystem("Mast") {
 Mast::~Mast() {}
 
 void Mast::Init() {
+	std::cout << "Mast::Init() Start\n";
 	Preferences *prefs = Preferences::GetInstance();
 	leftConstraint.reset(new DartConstraint(
 			prefs->GetInt("DartLeftMinimum", 159),
@@ -50,11 +53,11 @@ void Mast::Init() {
 	for (auto &dart : darts) {
 		dart->ConfigPeakOutputForward(1, 0);
 		dart->ConfigPeakOutputReverse(-1, 0);
+		std::cout << "Configuring Dart: " + dart->GetDeviceID() << "\n";
 	}
 
 	dartPositionThreshold = PrefUtil::getSetInt("DartPositionThreshold", 10);
 	DART_DIVERGENCE_THRESHOLD = PrefUtil::getSetInt("DartDivergenceThreshold", 50);
-
 
 
 	positionLookup[MastPosition::kClimb] = PrefUtil::getSetInt("MastPositionClimb", 175);
@@ -73,6 +76,7 @@ void Mast::Init() {
 
 	magicMotionManager->InitDefaultPID();
 	leftDart->SelectProfileSlot(0, 0);
+	std::cout << "Mast::Init() Finished\n";
 }
 
 
@@ -95,7 +99,7 @@ void Mast::Run() {
 				std::cerr << "MAST DARTS DISABLED DUE TO POSITION DIVERGENCE\n";
 				runMode = RunMode::kManual;
 				leftDart->Set(ControlMode::PercentOutput, 0);
-				rightDart->Set(ControlMode::PercentOutput, 0);
+//				rightDart->Set(ControlMode::PercentOutput, 0);	// pause left only to allow right to catch up
 				return;
 			}
 			magicMotionManager->Run(magicTarget);

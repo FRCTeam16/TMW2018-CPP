@@ -21,7 +21,6 @@
 
 
 #include "Subsystems/DriveBase.h"
-#include "Subsystems/Ramp.h"
 #include "Subsystems/Intake.h"
 #include "Subsystems/Elevator.h"
 #include "Subsystems/Mast.h"
@@ -40,7 +39,6 @@ public:
 	frc::LiveWindow *lw = frc::LiveWindow::GetInstance();
 	frc::SendableChooser<frc::Command*> chooser;
 
-	static std::shared_ptr<Ramp> ramp;
 	static std::shared_ptr<DriveBase> driveBase;
 	static std::shared_ptr<Intake> intake;
 	static std::shared_ptr<Elevator> elevator;
@@ -60,6 +58,7 @@ public:
 	void InstrumentSubsystems();
 private:
 	std::unique_ptr<ClimbProcess> climbProcess;
+	double lastTime = 0.0;
 
 };
 #endif

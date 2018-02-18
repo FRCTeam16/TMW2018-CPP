@@ -9,12 +9,9 @@
 #include <Climb/DoCurlUp.h>
 
 DoCurlUp::DoCurlUp() {
-	// TODO Auto-generated constructor stub
-
 }
 
 DoCurlUp::~DoCurlUp() {
-	// TODO Auto-generated destructor stub
 }
 
 void DoCurlUp::Forward() {

@@ -48,6 +48,7 @@ private:
    	}
 
     void SetProcessFollowerRunning(bool _running) {
+//    	std::cout << "SetProcessFollowerRunning: " << _running << "\n";
 		running = _running;
 	}
 
@@ -63,6 +64,8 @@ public:
     	if (INSTANCE == 0) {
     		INSTANCE = std::shared_ptr<DartMagicMotionManager>(
     				new DartMagicMotionManager(_talon, _talonConstraint, _follower, _followerConstraint));
+
+    		std::cout << "Created DartMMMgr INSTANCE: " << INSTANCE.get() << "\n";
     	}
 
     	return INSTANCE;
@@ -125,6 +128,7 @@ public:
     }
 
     void Run(int target) {
+//    	std::cout << "Motion Magic Targetr: " << target << "\n";
         talon->Set(ControlMode::MotionMagic, target);
         SetProcessFollowerRunning(true);
         // TODO: Might be nice to test getting the calculated target from profile vs. instantaneous value for smoother follower tracking
@@ -138,7 +142,7 @@ public:
 
     void ProcessFollower() {
     	if (running) {
-		   int currentPosition = talon->SetSelectedSensorPosition(0, 0, 0);
+		   int currentPosition = talon->GetSelectedSensorPosition(0);
 		   int followerTarget = DartConstraint::mapDartConstraint(currentPosition, talonConstraint, followerConstraint);
 
 		   int closedLoopError = follower->GetClosedLoopError(0);
@@ -150,7 +154,7 @@ public:
 		   }
 		   lastErrorSign = currentErrorSign;
 
-		   //  logger.info("======> TARGET = " + target + " | CURRENT -> " + currentPosition + " | FOLLOWER TARGET -> " + followerTarget);
+//		   std::cout << "======> CURRENT -> " << currentPosition << " | FOLLOWER TARGET -> " << followerTarget;
 		   follower->Set(ControlMode::Position, followerTarget);
 	   }
     }

@@ -8,6 +8,7 @@
 #include <Subsystems/Elevator.h>
 
 Elevator::Elevator() : frc::Subsystem("Elevator") {
+	std::cout << "Elevator starting\n";
 	for (auto &motor : motors) {
 		motor->SetNeutralMode(NeutralMode::Brake);
 		motor->ConfigPeakOutputForward(1,  0);
@@ -27,6 +28,7 @@ Elevator::Elevator() : frc::Subsystem("Elevator") {
 
 	mainElevatorMotor->SetSensorPhase(true);
 	magicMotionManager.reset(new ElevatorMagicMotionManager(mainElevatorMotor));
+	std::cout << "Elevator() complete\n";
 }
 
 
@@ -62,9 +64,9 @@ void Elevator::Run() {
 }
 
 
-void Elevator::SetOpenLoopPercent(double openLoopPercent) {
+void Elevator::SetOpenLoopPercent(double _openLoopPercent) {
 	runMode = RunMode::kManual;
-	openLoopPercent = openLoopPercent;
+	openLoopPercent = _openLoopPercent;
 }
 
 Elevator::ElevatorPosition Elevator::GetElevatorPosition() {

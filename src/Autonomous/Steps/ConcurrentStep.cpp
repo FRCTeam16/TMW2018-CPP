@@ -11,7 +11,6 @@ ConcurrentStep::~ConcurrentStep() {
 		delete *it;
 	}
 	steps.clear();
-	delete(driveStep);
 }
 
 bool ConcurrentStep::Run(std::shared_ptr<World> world) {
@@ -23,7 +22,7 @@ bool ConcurrentStep::Run(std::shared_ptr<World> world) {
 	return finished;
 }
 
-CrabInfo ConcurrentStep::GetCrabInfo() {
+const CrabInfo* ConcurrentStep::GetCrabInfo() {
 	return steps.front()->GetCrabInfo();
 }
 

@@ -53,15 +53,15 @@ private:
    std::shared_ptr<DartConstraint> leftConstraint;
    std::shared_ptr<DartConstraint> rightConstraint;
 
-   double leftMotorSpeed;
-   double rightMotorSpeed;
+   double leftMotorSpeed = 0.0;
+   double rightMotorSpeed = 0.0;
    int magicTarget;
 
    Mast::RunMode runMode = Mast::RunMode::kManual;
    Mast::MastPosition mastPosition = Mast::MastPosition::kManualPosition;
    int DART_DIVERGENCE_THRESHOLD = 30;
    std::map<Mast::MastPosition, int> positionLookup;
-   int dartPositionThreshold;
+   int dartPositionThreshold = 0;
 
    bool AreDartsDiverged();
    void SetLeftMotorSpeed(double speed);
