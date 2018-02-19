@@ -147,8 +147,11 @@ void Intake::SetPickupTriggered(bool triggered) {
 void Intake::Instrument() {
 	SmartDashboard::PutNumber("Intake Motor", leftIntakeMotor->Get());
 	SmartDashboard::PutBoolean("Intake Solenoid", extendSolenoid->Get());
-	SmartDashboard::PutNumber("Left Intake Current", GetLeftIntakeCurrent());
-	SmartDashboard::PutNumber("Right Intake Current", GetRightIntakeCurrent());
+
+	if ((loopCounter++ % 10) == 0) {
+		SmartDashboard::PutNumber("Left Intake Current", GetLeftIntakeCurrent());
+		SmartDashboard::PutNumber("Right Intake Current", GetRightIntakeCurrent());
+	}
 }
 
 

@@ -63,6 +63,8 @@ private:
 	 std::shared_ptr<ThresholdCounter> rightIntakeAmpThresholdCounter;
 	 double targetEjectSpeed = 0.0;
 
+	 long loopCounter = 0;
+
 };
 
 #endif /* SRC_SUBSYSTEMS_INTAKE_H_ */

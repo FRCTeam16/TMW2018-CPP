@@ -68,8 +68,7 @@ private:
    void SetRightMotorSpeed(double speed);
 
 
-
-
+   int loopCounter = 0;
 };
 
 
