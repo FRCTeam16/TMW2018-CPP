@@ -17,18 +17,23 @@
 
 
 AutoManager::AutoManager() :
-		strategies(new frc::SendableChooser<void*>())
+		strategies(new frc::SendableChooser<void*>()),
+		positions(new frc::SendableChooser<void*>())
 {
+	std::cout << "AutoManager::AutoManager() start\n";
 	positions->AddDefault("2 - Center", (void *) AutoStartPosition::kCenter);
 	positions->AddObject("1 - Left", (void *) AutoStartPosition::kLeft);
 	positions->AddObject("3 - Right", (void *) AutoStartPosition::kRight);
+	std::cout << "AutoManager::Added Positions\n";
 
 	strategies->AddDefault("999 - Debug Auto Strategy", (void *) AutoStrategy::kDebug);
 	strategies->AddObject("1 - Center Switch", (void *) AutoStrategy::kCenterSwitch);
 	strategies->AddObject("2 - Side Start", (void *) AutoStrategy::kSide);
+	std::cout << "AutoManager::Added Strategies\n";
 
 	frc::SmartDashboard::PutData("Autonomous Start Pos", positions.get());
 	frc::SmartDashboard::PutData("Autonomous Strategy", strategies.get());
+	std::cout << "AutoManager::AutoManager() finished\n";
 }
 
 AutoManager::~AutoManager() {

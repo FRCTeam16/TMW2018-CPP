@@ -24,6 +24,7 @@ void Robot::RobotInit() {
 	oi.reset(new OI());
 
 	autoManager.reset(new AutoManager());
+	std::cout << "Robot::RobotInit() complete - stratofortress is aloft\n";
 }
 
 /**
