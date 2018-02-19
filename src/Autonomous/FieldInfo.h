@@ -16,7 +16,6 @@ public:
 
 	enum Location { Left, Right, Unknown};
 
-
 	Location switchLocation;
 	Location scaleLocation;
 	Location farSwitchLocation;

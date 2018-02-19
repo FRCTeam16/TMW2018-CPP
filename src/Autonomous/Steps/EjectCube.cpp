@@ -15,14 +15,19 @@ bool EjectCube::Run(std::shared_ptr<World> world) {
 
 
 	// If we are using a collision detector, we wait until that hits
+	// otherwise wait until min time has passed
 	bool doEject = false;
 	if (collisionDetector) {
 		doEject = (collisionDetector) ?
-					(collisionDetector->Detect() && pastMinTime) || timedOut :
+					(collisionDetector->Detect() && pastMinTime) :
 					false;
 	} else {
 		// we just wait for our delay
 		doEject = pastMinTime;
+	}
+
+	if (timedOut) {
+		doEject = true;
 	}
 
 

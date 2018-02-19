@@ -104,6 +104,7 @@ public:
 	void SetTargetAngle(double angle);
 	double GetTwistControlOutput();
 	double GetTwistControlError();
+	double GetCrabTwistOutput();
 
 	void SetTargetDriveDistance(double distance, double maxSpeed = 0.5);
 	void UseClosedLoopDrive();

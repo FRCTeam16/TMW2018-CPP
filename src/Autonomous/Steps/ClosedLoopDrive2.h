@@ -1,9 +1,3 @@
-/*
- * ClosedLoopDrive2.h
- *
- *  Created on: Feb 17, 2018
- *      Author: jsmith
- */
 
 #ifndef SRC_AUTONOMOUS_STEPS_CLOSEDLOOPDRIVE2_H_
 #define SRC_AUTONOMOUS_STEPS_CLOSEDLOOPDRIVE2_H_
@@ -42,14 +36,14 @@ private:
 	const double YtargetDistance;
 	const double distanceThreshold;     // -1 value simply checks for passing the setpoint
 	const DriveUnit::Units units;
+	const double rampUp;	// ramp up time length, -1 to disable
+	const double rampDown;	// ramp down position threshold, -1 to disable
+	CollisionDetector collisionDetector;
 	const bool reverse = false;
 	const double timeoutCommand = 10;
 	const bool useGyro = true;
-	CollisionDetector collisionDetector;
 	const int thresholdCounterTarget = 5;
 
-	const double rampUp;	// ramp up time length, -1 to disable
-	const double rampDown;	// ramp down position threshold, -1 to disable
 
 	double startTime = -1;
 	bool useCurrentAngle = false;

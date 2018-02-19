@@ -9,6 +9,7 @@ bool DriveToBump::Run(std::shared_ptr<World> world) {
 	}
 	if (collisionDetector->Detect() && ((currentTime - startTime) > delayCheckTime)) {
 		std::cout << "DriveToBump detected collision\n";
+		crab->Stop();
 		return true;
 	}
 	if ((currentTime - startTime) > maxTimeToDrive) {

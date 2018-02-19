@@ -18,6 +18,7 @@ private:
 	const double threshold;
 	double last_accel_x = 0.0;
 	double last_accel_y = 0.0;
+	double largest_seen = 0.0;
 };
 
 #endif /* SRC_UTIL_COLLISIONDETECTOR_H_ */

@@ -34,7 +34,7 @@ private:
      const double ySpeed;
      const double xSpeed;
      const double maxTimeToDrive;
-     const double delayCheckTime;
+     const double delayCheckTime;	// delay before checking for collision
      const std::unique_ptr<CollisionDetector> collisionDetector;
 
      double startTime = -1;

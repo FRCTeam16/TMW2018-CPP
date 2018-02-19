@@ -10,19 +10,26 @@
 
 #include "WPILib.h"
 #include "FieldInfo.h"
+#include "AutoPositions.h"
+
+class AutoManager;
 
 class World {
-public:
-	World();
-	virtual ~World() {}
-	void Init();							// perform world initializatoin
-	double GetClock() const;				// time elapsed since Init() in seconds
-	bool IsRed();
-	FieldInfo GetFieldInfo();
 private:
 	std::unique_ptr<Timer> timer;			// tracks time in autonomous world
 	bool isRed;
 	FieldInfo fieldInfo;
+	AutoStartPosition startPosition;
+public:
+	World();
+	virtual ~World() {}
+
+	void Init();							// perform world initialization
+	double GetClock() const;				// time elapsed since Init() in seconds
+	bool IsRed();
+	FieldInfo GetFieldInfo();
+	AutoStartPosition GetStartPosition() { return startPosition; }
+	void SetStartPosition(AutoStartPosition pos) { startPosition = pos; }
 };
 
 #endif /* SRC_AUTONOMOUS_WORLD_H_ */

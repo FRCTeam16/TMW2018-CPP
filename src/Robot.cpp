@@ -75,6 +75,8 @@ void Robot::TeleopPeriodic() {
 	double startTime = frc::Timer::GetFPGATimestamp();
 	frc::Scheduler::GetInstance()->Run();
 	double threshold = 0.1;
+	bool lockAngle = false;
+	double lockedAngle = 0.0;
 
 
 	if (oi->GPRB->RisingEdge()) {
@@ -84,7 +86,7 @@ void Robot::TeleopPeriodic() {
 	}
 
 	bool lockWheels = false;
-	if (oi->DL4->Pressed()) {
+	if (oi->DL6->Pressed()) {
 		lockWheels = true;
 	}
 
@@ -178,7 +180,14 @@ void Robot::TeleopPeriodic() {
 	/*
 		Drive Control
 	 */
-	const double twistInput = oi->GetJoystickTwist(threshold);
+	 double twistInput = oi->GetJoystickTwist(threshold);
+	if (oi->DL4->Pressed()) {
+		driveBase->SetTargetAngle(-45.0);
+		twistInput = driveBase->GetCrabTwistOutput();
+	} else 	if (oi->DL5->Pressed()) {
+		driveBase->SetTargetAngle(45.0);
+		twistInput = driveBase->GetCrabTwistOutput();
+	}
 
 	double start = frc::Timer::GetFPGATimestamp();
 	if (speedModeTest) {

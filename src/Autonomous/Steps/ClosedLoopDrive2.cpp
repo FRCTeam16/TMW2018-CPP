@@ -5,7 +5,6 @@
 
 
 ClosedLoopDrive2::~ClosedLoopDrive2() {
-	// TODO Auto-generated destructor stub
 }
 
 void ClosedLoopDrive2::setUseCurrentAngle() {
@@ -14,9 +13,9 @@ void ClosedLoopDrive2::setUseCurrentAngle() {
 
 bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 	if (startTime < 0) {
+		startTime = world->GetClock();
 		const double hypotenuse = sqrt(XtargetDistance * XtargetDistance + YtargetDistance * YtargetDistance);
 		targetSetpoint = DriveUnit::ToPulses(hypotenuse, units);
-		startTime = world->GetClock();
 		const double targetAngle = (!useCurrentAngle) ? angle : RobotMap::gyro->GetYaw();
 		Robot::driveBase->SetTargetAngle(targetAngle);
 

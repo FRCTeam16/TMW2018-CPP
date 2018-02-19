@@ -30,7 +30,6 @@ StepStrategy::~StepStrategy() {
 }
 
 void StepStrategy::Init(std::shared_ptr<World> world) {
-
 }
 
 bool StepStrategy::Run(std::shared_ptr<World> world) {

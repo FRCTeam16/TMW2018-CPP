@@ -28,6 +28,7 @@ private:
 class WrappedStep {
 public:
 	WrappedStep(Step* _step) : step(_step) {}
+	virtual ~WrappedStep();
 	bool Run(std::shared_ptr<World> world);
 	bool IsFinished();
 	Step* GetStep() { return step; }

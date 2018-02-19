@@ -32,3 +32,5 @@ FieldInfo World::GetFieldInfo() {
 bool World::IsRed() {
 	return isRed;
 }
+
+

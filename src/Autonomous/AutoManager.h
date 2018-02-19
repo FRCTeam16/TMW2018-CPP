@@ -20,11 +20,14 @@ public:
 	void Init(std::shared_ptr<World> world);
 	void Periodic(std::shared_ptr<World> world);
 	void Instrument();
+
 private:
 	enum AutoStrategy {
-		kDebug = 0, kCenterSwitch, kScale
+		kDebug = 0, kCenterSwitch, kSide
 	};
+
 	std::shared_ptr<frc::SendableChooser<void*>> strategies;
+	std::shared_ptr<frc::SendableChooser<void*>> positions;
 	std::unique_ptr<Strategy> CreateStrategy(const AutoStrategy &key, std::shared_ptr<World> word);
 	std::unique_ptr<Strategy> currentStrategy;
 	double startTime = -1;

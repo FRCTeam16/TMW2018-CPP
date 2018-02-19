@@ -508,6 +508,10 @@ Wheelbase DriveBase::GetWheelbase() {
 	return wheelbase;
 }
 
+double DriveBase::GetCrabTwistOutput() {
+	return crabSpeedTwist->Get();
+}
+
 void DriveBase::Instrument() {
 	SmartDashboard::PutNumber("FL V", frontLeftDrive->GetSelectedSensorVelocity(0));
 	SmartDashboard::PutNumber("FR V", frontRightDrive->GetSelectedSensorVelocity(0));
