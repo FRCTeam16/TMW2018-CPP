@@ -11,7 +11,6 @@
 
 
 #include "RobotMap.h"
-#include "LiveWindow/LiveWindow.h"
 
 std::shared_ptr<WPI_TalonSRX> RobotMap::mastleftDart;
 std::shared_ptr<WPI_TalonSRX> RobotMap::mastrightDart;
@@ -36,7 +35,6 @@ std::shared_ptr<PowerDistributionPanel> RobotMap::powerDistributionPanel;
 
 
 void RobotMap::init() {
-//    frc::LiveWindow *lw = frc::LiveWindow::GetInstance();
 
     driveBaseFrontLeftDrive.reset(new WPI_TalonSRX(1));
     driveBaseFrontRightDrive.reset(new WPI_TalonSRX(3));

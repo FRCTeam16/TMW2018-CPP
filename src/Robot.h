@@ -17,7 +17,6 @@
 #include "WPILib.h"
 #include "Commands/Command.h"
 #include "RobotMap.h"
-#include "LiveWindow/LiveWindow.h"
 
 
 #include "Subsystems/DriveBase.h"
@@ -39,7 +38,6 @@ class Robot : public frc::TimedRobot {
 public:
 	frc::Command* autonomousCommand = nullptr;
 	static std::unique_ptr<OI> oi;
-	frc::LiveWindow *lw = frc::LiveWindow::GetInstance();
 	frc::SendableChooser<frc::Command*> chooser;
 
 	static std::shared_ptr<DriveBase> driveBase;

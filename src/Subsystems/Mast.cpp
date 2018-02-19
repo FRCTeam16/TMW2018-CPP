@@ -218,8 +218,4 @@ void Mast::Instrument() {
 	SmartDashboard::PutNumber("Left Dart Amps", leftDart->GetOutputCurrent());
 	SmartDashboard::PutNumber("Right Dart Amps", rightDart->GetOutputCurrent());
 	AreDartsDiverged();
-
-	SmartDashboard::PutNumber("Left Dart V", leftDart->ConfigGetParameter(ParamEnum::eMotMag_VelCruise, 0, 0));
-	SmartDashboard::PutNumber("Left Dart A", leftDart->ConfigGetParameter(ParamEnum::eMotMag_Accel, 0, 0));
-	SmartDashboard::PutNumber("Left Dart P", leftDart->ConfigGetParameter(ParamEnum::eProfileParamSlot_P, 0, 0));
 }
