@@ -49,7 +49,7 @@ std::unique_ptr<Strategy> AutoManager::CreateStrategy(const AutoStrategy &key, s
 	switch (key) {
 	case kDebug:
 		std::cout << "AUTOMAN: Selected DEBUG \n";
-		strategy = new DebugAutoStrategy();
+		strategy = new DebugAutoStrategy(world);
 		break;
 	case kCenterSwitch:
 		std::cout << "AUTOMAN: Selected Center Switch\n";

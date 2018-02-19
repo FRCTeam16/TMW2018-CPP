@@ -144,6 +144,10 @@ void Intake::SetPickupTriggered(bool triggered) {
 	pickupTriggered = triggered;
 }
 
+bool Intake::IsPickupTriggered() {
+	return pickupTriggered;
+}
+
 void Intake::Instrument() {
 	SmartDashboard::PutNumber("Intake Motor", leftIntakeMotor->Get());
 	SmartDashboard::PutBoolean("Intake Solenoid", extendSolenoid->Get());

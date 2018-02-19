@@ -33,6 +33,8 @@ protected:
 	std::vector<Step*> steps;
 	void RunDrives(const CrabInfo *crab, bool showMessage = true);
 	const std::unique_ptr<CrabInfo> STOP { new CrabInfo() };
+private:
+	bool finished = false;
 };
 
 #endif /* SRC_AUTONOMOUS_STRATEGY_H_ */

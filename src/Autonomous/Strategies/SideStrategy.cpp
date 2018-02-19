@@ -17,6 +17,10 @@
 #include <Subsystems/Elevator.h>
 #include <Autonomous/Steps/DelayParam.h>
 #include <Autonomous/Steps/Delay.h>
+#include <Autonomous/Steps/Rotate.h>
+#include <Autonomous/Steps/RotateUntilPast.h>
+#include <Autonomous/Steps/IntakeCube.h>
+#include <Autonomous/Steps/IntakeSolenoid.h>
 
 SideStrategy::SideStrategy(std::shared_ptr<World> world) {
 	FieldInfo fieldInfo = world->GetFieldInfo();
@@ -40,10 +44,12 @@ SideStrategy::SideStrategy(std::shared_ptr<World> world) {
 
 	if (haveSwitch && haveScale) {
 		DoScaleFirst();
+		DoScaleFirstSecondPickup();
 	} else if (haveSwitch && !haveScale) {
 
 	} else if (!haveSwitch && haveScale) {
 		DoScaleFirst();
+		DoScaleFirstSecondPickup();
 	} else {
 		// no switch and no scale
 	}
@@ -73,11 +79,6 @@ void SideStrategy::DoScaleFirst() {
 				new PositionMast(Mast::MastPosition::kVertical)
 			})
 	);
-//	steps.push_back(
-//			new ConcurrentStep({
-//				new ClosedLoopDrive2(0.0, scaleSpeed1, scaleX1 * inv, scaleY1, -1, DriveUnit::Units::kInches, 10.0, 0.5, -1),
-//			}, false)
-//	);
 	steps.push_back(new ClosedLoopDrive2(0.0, scaleSpeed1, scaleX1 * inv, scaleY1, -1, DriveUnit::Units::kInches, 10.0, 0.5, -1));
 	steps.push_back(
 			new ConcurrentStep({
@@ -88,4 +89,21 @@ void SideStrategy::DoScaleFirst() {
 	steps.push_back(new EjectCube(0.0,  2.0,  0.5));
 }
 
+void SideStrategy::DoScaleFirstSecondPickup() {
+	const bool isRight = !isLeft;
+
+	steps.push_back(new RotateUntilPast(isRight, 180.0, 90.0));
+	steps.push_back(
+			new ConcurrentStep({
+				new Rotate(180.0, 5.0, 5.0, 10),
+				new PositionElevator(Elevator::ElevatorPosition::kFloor, true),
+				new IntakeSolenoid(true)
+	}));
+
+	steps.push_back(
+				new ConcurrentStep({
+					new ClosedLoopDrive2(180.0, 0.3, -10, -48, -1, DriveUnit::Units::kInches, 5.0, -1, -1),
+					new IntakeCube(3.0, 3.5, 4.0)
+	}));
+}
 

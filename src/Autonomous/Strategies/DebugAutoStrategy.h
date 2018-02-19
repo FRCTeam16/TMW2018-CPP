@@ -9,10 +9,12 @@
 #define SRC_AUTONOMOUS_DEBUGAUTOSTRATEGY_H_
 
 #include "../Strategy.h"
+#include "WPILib.h"
+
 
 class DebugAutoStrategy : public StepStrategy {
 public:
-	DebugAutoStrategy();
+	DebugAutoStrategy(std::shared_ptr<World> world);
 	virtual ~DebugAutoStrategy() {}
 
 private:

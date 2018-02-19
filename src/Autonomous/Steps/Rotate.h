@@ -15,10 +15,17 @@ class Rotate : public Step {
 private:
 	double startTime = -1;
 	const double angle = -1;
+	const double THRESHOLD;
 	const double TIMEOUT = 5.0;
-	const double THRESHOLD = 5.0;
+
+	const int scansToHold;
+	int heldScans = 0;
 public:
-	Rotate(double _angle) : angle(_angle) {}
+	Rotate(double _angle, double _threshold = 5.0, double _timeout = 5.0, int _scansToHold = 0) :
+		angle(_angle),
+		THRESHOLD(_threshold),
+		TIMEOUT(_timeout),
+		scansToHold(_scansToHold) {}
 	virtual ~Rotate() {}
 	bool Run(std::shared_ptr<World> world);
 };

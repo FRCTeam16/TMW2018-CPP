@@ -34,7 +34,10 @@ void StepStrategy::Init(std::shared_ptr<World> world) {
 
 bool StepStrategy::Run(std::shared_ptr<World> world) {
 	if (currentStep >= steps.size()) {
-		std::cout << "Finished all auto steps\n";
+		if (!finished) {
+			std::cout << "!!! StepStrategy -> Finished all auto steps !!!\n";
+			finished = true;
+		}
 		RunDrives(STOP.get(), false);
 		return true;
 	}

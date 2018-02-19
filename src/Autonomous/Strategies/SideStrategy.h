@@ -19,6 +19,7 @@ public:
 private:
 	bool isLeft = false;
 	void DoScaleFirst();
+	void DoScaleFirstSecondPickup();
 };
 
 #endif /* SRC_AUTONOMOUS_STRATEGIES_SIDESTRATEGY_H_ */

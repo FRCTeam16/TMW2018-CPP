@@ -182,13 +182,13 @@ void Robot::TeleopPeriodic() {
 		Drive Control
 	 */
 	 double twistInput = oi->GetJoystickTwist(threshold);
-//	if (oi->DL4->Pressed()) {
-//		driveBase->SetTargetAngle(-45.0);
-//		twistInput = driveBase->GetCrabTwistOutput();
-//	} else 	if (oi->DL5->Pressed()) {
-//		driveBase->SetTargetAngle(45.0);
-//		twistInput = driveBase->GetCrabTwistOutput();
-//	}
+	if (oi->DL4->Pressed()) {
+		driveBase->SetTargetAngle(-45.0);
+		twistInput = driveBase->GetCrabTwistOutput();
+	} else 	if (oi->DL5->Pressed()) {
+		driveBase->SetTargetAngle(45.0);
+		twistInput = driveBase->GetCrabTwistOutput();
+	}
 
 	double start = frc::Timer::GetFPGATimestamp();
 	if (speedModeTest) {

@@ -1,10 +1,3 @@
-/*
- * Rotate.cpp
- *
- *  Created on: Feb 24, 2017
- *      Author: User
- */
-
 #include <Autonomous/Steps/Rotate.h>
 #include <Robot.h>
 
@@ -18,21 +11,30 @@ bool Rotate::Run(std::shared_ptr<World> world) {
 
 	const float yaw = RobotMap::gyro->GetYaw();
 	const double yawError = Robot::driveBase->GetTwistControlError();
-	std::cout << "Rotate(setpoint = " << angle << " current yaw = " << yaw << " error = " << yawError << ")\n";
+	std::cout << "Rotate(setpoint = " << angle
+			             << " yaw = " << yaw
+						 << " error = " << yawError
+						 << " scansHeld = " << heldScans << " / " << scansToHold
+						 << ")\n";
 
 	if ((currentTime - startTime) > TIMEOUT) {
-		std::cerr << "Timed out turning\n";
+		std::cerr << "*** Rotate -> Timed out turning *** \n";
 		crab->Stop();
 		return false;
 	}
 
-	if (fabs(yawError) <= THRESHOLD ||
-		(fabs(yawError) >= (360 - THRESHOLD))) {
-		std::cout << "Exiting Turn\n";
-		return true;
+	if (fabs(yawError) <= THRESHOLD || (fabs(yawError) >= (360 - THRESHOLD))) {
+		heldScans++;
+		if (heldScans > scansToHold) {
+			crab->Update(0.0, 0.0, 0.0, true);
+			std::cout << "Exiting Turn\n";
+			return true;
+		}
 	} else {
-		crab->Update(Robot::driveBase->GetTwistControlOutput(), 0.0, 0.0, true);
-		return false;
+		heldScans = 0;
 	}
+
+	crab->Update(Robot::driveBase->GetTwistControlOutput(), 0.0, 0.0, true);
+	return false;
 
 }
