@@ -38,6 +38,7 @@ private:
      const std::unique_ptr<CollisionDetector> collisionDetector;
 
      double startTime = -1;
+     bool collisionDetected = false;
 };
 
 #endif /* SRC_AUTONOMOUS_STEPS_DRIVETOBUMP_H_ */

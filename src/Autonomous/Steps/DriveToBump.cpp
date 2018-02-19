@@ -7,16 +7,23 @@ bool DriveToBump::Run(std::shared_ptr<World> world) {
 		startTime = currentTime;
 		Robot::driveBase->SetTargetAngle(angle);
 	}
-	if (collisionDetector->Detect() && ((currentTime - startTime) > delayCheckTime)) {
+	const double elapsed = (currentTime - startTime);
+
+	if (!collisionDetected) {
+		collisionDetected = collisionDetector->Detect();
+	}
+	if (collisionDetected && (elapsed > delayCheckTime)) {
 		std::cout << "DriveToBump detected collision\n";
 		crab->Stop();
 		return true;
 	}
-	if ((currentTime - startTime) > maxTimeToDrive) {
+
+	if (elapsed > maxTimeToDrive) {
 		std::cerr << "ERROR: DriveToBump timed out\n";
 		crab->Stop();
 		return true;
 	} else {
+		std::cout << "DriveToBump -> updating driveBase\n";
 		crab->Update(
 				(float) Robot::driveBase->GetTwistControlOutput(),
 				(float) ySpeed,

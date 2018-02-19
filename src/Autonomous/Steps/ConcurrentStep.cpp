@@ -32,9 +32,9 @@ const CrabInfo* ConcurrentStep::GetCrabInfo() {
 	WrappedStep *step = steps.front();
 	if (step->IsFinished()) {
 		std::cout << "ConcurrentStep Drive Step has finished, returning stop\n";
-		this->crab->Stop();
-		return this->GetCrabInfo();
+		return STOP.get();
 	} else {
+		std::cout << "ConcurrentStep returning real step info\n";
 		return step->GetStep()->GetCrabInfo();
 	}
 }

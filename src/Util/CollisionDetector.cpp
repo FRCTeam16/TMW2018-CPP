@@ -15,7 +15,7 @@ CollisionDetector::~CollisionDetector() {
 const double UNIT_SCALE = 16384.0; //  = 1G  http://www.ctr-electronics.com/downloads/api/cpp/html/classctre_1_1phoenix_1_1sensors_1_1_pigeon_i_m_u.html#a211525ea83d9728416661238a2a5402a
 
 
-bool CollisionDetector::Detect() {
+bool CollisionDetector::Detect(bool showOutput) {
 	short xyz[3];
 	imu->GetPigeon()->GetBiasedAccelerometer(xyz);
 
@@ -40,11 +40,12 @@ bool CollisionDetector::Detect() {
 
 	frc::SmartDashboard::PutNumber("Current Jerk X", current_jerk_x);
 	frc::SmartDashboard::PutNumber("Current Jerk Y", current_jerk_y);
+	if (showOutput) {
 	std::cout <<  "Jerk: X " << current_jerk_x
 			  << " | Y " << current_jerk_y
 			  << "  | T" << threshold
 			  << " | Largest Seen: " << largest_seen << "\n";
-
+	}
 	return (absX > threshold) || (absY > threshold);
 }
 

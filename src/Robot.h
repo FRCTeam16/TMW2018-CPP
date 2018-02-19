@@ -29,7 +29,7 @@
 
 #include "Autonomous/AutoManager.h"
 #include "Autonomous/World.h"
-
+#include "Util/CollisionDetector.h"
 
 
 #include "OI.h"
@@ -63,6 +63,7 @@ public:
 private:
 	std::unique_ptr<ClimbProcess> climbProcess;
 	double lastTime = 0.0;
+	std::unique_ptr<CollisionDetector> collisionDetector;
 
 };
 #endif

@@ -23,6 +23,7 @@ public:
 	const CrabInfo* GetCrabInfo() override;
 private:
 	std::vector<WrappedStep*> steps;
+	const std::unique_ptr<CrabInfo> STOP { new CrabInfo() };
 };
 
 class WrappedStep {
@@ -35,6 +36,7 @@ public:
 private:
 	Step* step;
 	bool finished = false;
+
 };
 
 #endif /* SRC_AUTONOMOUS_STEPS_CONCURRENTSTEP_H_ */

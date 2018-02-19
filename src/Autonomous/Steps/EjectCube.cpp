@@ -7,39 +7,47 @@ bool EjectCube::Run(std::shared_ptr<World> world) {
 
 	// First run
 	if (startTime < 0) {
-		startTime = currentTime + timeToDelay;
+		startTime = currentTime;
 	}
 	const double elapsed = currentTime - startTime;
 	const bool timedOut = (elapsed > timeout);
-	const bool pastMinTime = currentTime >= startTime;
+	const bool pastMinTime = elapsed > timeToDelay;
 
 
 	// If we are using a collision detector, we wait until that hits
 	// otherwise wait until min time has passed
 	bool doEject = false;
+
 	if (collisionDetector) {
-		doEject = (collisionDetector) ?
-					(collisionDetector->Detect() && pastMinTime) :
-					false;
+		if (!detectedCollision) {
+			detectedCollision = collisionDetector->Detect();
+		}
+		doEject = (detectedCollision && pastMinTime);
 	} else {
 		// we just wait for our delay
 		doEject = pastMinTime;
 	}
 
 	if (timedOut) {
+		std::cout << "Timed out so ejecting\n";
 		doEject = true;
 	}
 
+	std::cout << "EjectCube CollisionDetector => elapsed " << elapsed
+			<< " | timedOut? " << timedOut
+			<< " | passMinTime? " << pastMinTime
+			<< " | doEject? " << doEject << "\n";
 
 
 	// Wait until to delay to start ejecting or immediately on a bump
 	if (!ejecting && doEject) {
-		Robot::intake->Eject(1.0);
+		Robot::intake->Eject();	// TODO: FIXME
 		ejecting = true;
+		endEjectTime = currentTime + timeToRunEject;
 	}
 
 	// run eject for specified amount of time, then stop
-	if (ejecting && elapsed > timeToRunEject) {
+	if (ejecting && currentTime > endEjectTime) {
 		Robot::intake->Stop();
 		finished = true;
 	}

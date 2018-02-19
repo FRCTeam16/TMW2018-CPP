@@ -39,13 +39,12 @@ bool StepStrategy::Run(std::shared_ptr<World> world) {
 		return true;
 	}
 
-	std::cout << "\nStepStrategy::Run -> " << "currentStep = " << currentStep << "\n";
+	std::cout << "\n[" << world->GetClock() << "] StepStrategy::Run -> " << "currentStep = " << currentStep << "\n";
 	Step* step = steps[currentStep];
 	const bool stepComplete = step->Run(world);
 
 	if (!step->IsManualDriveControl()) {
-		std::cout << "    Non Manual Control, getting crab info\n";
-		RunDrives(step->GetCrabInfo());
+		RunDrives(step->GetCrabInfo(), true);
 	}
 
 	if (stepComplete) {

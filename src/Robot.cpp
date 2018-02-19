@@ -24,6 +24,7 @@ void Robot::RobotInit() {
 	oi.reset(new OI());
 
 	autoManager.reset(new AutoManager());
+	collisionDetector.reset(new CollisionDetector(RobotMap::gyro, 10));
 	std::cout << "Robot::RobotInit() complete - stratofortress is aloft\n";
 }
 
@@ -51,7 +52,6 @@ void Robot::AutonomousInit() {
 
 void Robot::AutonomousPeriodic() {
 	frc::Scheduler::GetInstance()->Run();
-
 	autoManager->Periodic(world);
 	RunSubsystems();
 	InstrumentSubsystems();
@@ -182,13 +182,13 @@ void Robot::TeleopPeriodic() {
 		Drive Control
 	 */
 	 double twistInput = oi->GetJoystickTwist(threshold);
-	if (oi->DL4->Pressed()) {
-		driveBase->SetTargetAngle(-45.0);
-		twistInput = driveBase->GetCrabTwistOutput();
-	} else 	if (oi->DL5->Pressed()) {
-		driveBase->SetTargetAngle(45.0);
-		twistInput = driveBase->GetCrabTwistOutput();
-	}
+//	if (oi->DL4->Pressed()) {
+//		driveBase->SetTargetAngle(-45.0);
+//		twistInput = driveBase->GetCrabTwistOutput();
+//	} else 	if (oi->DL5->Pressed()) {
+//		driveBase->SetTargetAngle(45.0);
+//		twistInput = driveBase->GetCrabTwistOutput();
+//	}
 
 	double start = frc::Timer::GetFPGATimestamp();
 	if (speedModeTest) {
@@ -251,6 +251,7 @@ void Robot::InstrumentSubsystems() {
 
 	autoManager->Instrument();
 
+	collisionDetector->Detect();
 
 	double now = frc::Timer::GetFPGATimestamp();
 	double elapsedMs = (now - lastTime) * 1000;

@@ -12,7 +12,7 @@ class CollisionDetector {
 public:
 	CollisionDetector(std::shared_ptr<BSGyro> imu, double threshold_=1.0);
 	virtual ~CollisionDetector();
-	bool Detect();
+	bool Detect(bool showOutput = false);
 private:
 	std::shared_ptr<BSGyro> imu;
 	const double threshold;

@@ -32,6 +32,8 @@ private:
 	std::unique_ptr<CollisionDetector> collisionDetector;
 	double startTime = -1;
 	bool ejecting = false;
+	bool detectedCollision = false;
+	double endEjectTime = -1;
 };
 
 #endif /* SRC_AUTONOMOUS_STEPS_EJECTCUBE_H_ */

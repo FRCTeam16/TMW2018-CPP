@@ -33,6 +33,7 @@ SideStrategy::SideStrategy(std::shared_ptr<World> world) {
 		haveScale = FieldInfo::Right == fieldInfo.scaleLocation;
 	}
 
+
 	if (haveSwitch && haveScale) {
 
 //		steps.push_back(__x)
@@ -40,7 +41,12 @@ SideStrategy::SideStrategy(std::shared_ptr<World> world) {
 
 
 	} else if (haveSwitch && !haveScale) {
-		// Switch
+		steps.push_back(
+				new ConcurrentStep({
+					new ClosedLoopDrive2(0.0, 0.3, 0, 85, -1, DriveUnit::Units::kInches, 10.0, 0.5, 30000),
+					new PositionElevator(Elevator::ElevatorPosition::kSwitch),
+					new PositionMast(Mast::MastPosition::kVertical, DelayParam(DelayParam::DelayType::kTime, 0.25)) })
+		);
 
 	} else if (!haveSwitch && haveScale) {
 		// scale only
