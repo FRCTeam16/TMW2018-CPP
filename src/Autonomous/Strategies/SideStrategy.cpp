@@ -16,6 +16,7 @@
 #include <Autonomous/Steps/EjectCube.h>
 #include <Subsystems/Elevator.h>
 #include <Autonomous/Steps/DelayParam.h>
+#include <Autonomous/Steps/Delay.h>
 
 SideStrategy::SideStrategy(std::shared_ptr<World> world) {
 	FieldInfo fieldInfo = world->GetFieldInfo();
@@ -65,18 +66,25 @@ void SideStrategy::DoScaleFirst() {
 	const double scaleX2 = PrefUtil::getSet("AutoScaleX2", -35);
 
 
-
 	steps.push_back(
 			new ConcurrentStep({
-				new ClosedLoopDrive2(0.0, scaleSpeed1, scaleX1 * inv, scaleY1, -1, DriveUnit::Units::kInches, 10.0, 0.5, -1),
+				new Delay(0.3),
 				new PositionElevator(Elevator::ElevatorPosition::kSwitch),
-				new PositionMast(Mast::MastPosition::kVertical, DelayParam(DelayParam::DelayType::kTime, 0.25), false) }, false)
+				new PositionMast(Mast::MastPosition::kVertical)
+			})
 	);
+//	steps.push_back(
+//			new ConcurrentStep({
+//				new ClosedLoopDrive2(0.0, scaleSpeed1, scaleX1 * inv, scaleY1, -1, DriveUnit::Units::kInches, 10.0, 0.5, -1),
+//			}, false)
+//	);
+	steps.push_back(new ClosedLoopDrive2(0.0, scaleSpeed1, scaleX1 * inv, scaleY1, -1, DriveUnit::Units::kInches, 10.0, 0.5, -1));
 	steps.push_back(
 			new ConcurrentStep({
 					new ClosedLoopDrive2(0.0, scaleSpeed2, scaleX2 * inv, scaleY2, -1, DriveUnit::Units::kInches, 5.0, -1, 33.33),
 					new PositionElevator(Elevator::ElevatorPosition::kHighScale)
-			}));
+			})
+	);
 	steps.push_back(new EjectCube(0.0,  2.0,  0.5));
 }
 

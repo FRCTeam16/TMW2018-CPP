@@ -42,5 +42,6 @@ bool PositionElevator::Run(std::shared_ptr<World> world) {
 		sentPosition = true;
 	}
 
-	return sentPosition && Robot::elevator->InPosition();
+	const bool positioned = (waitForPosition) ? Robot::elevator->InPosition() : true;
+	return sentPosition && positioned;
 }

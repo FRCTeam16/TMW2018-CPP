@@ -17,8 +17,8 @@ public:
 	PositionElevator(Elevator::ElevatorPosition elevatorPosition, DelayParam delayParam) :
 		position(elevatorPosition), delayParam(delayParam) {}
 
-	PositionElevator(Elevator::ElevatorPosition elevatorPosition) :
-		position(elevatorPosition) {}
+	PositionElevator(Elevator::ElevatorPosition elevatorPosition, bool _waitForPosition = false) :
+		position(elevatorPosition), waitForPosition(_waitForPosition) {}
 
 	virtual ~PositionElevator() {}
 	bool Run(std::shared_ptr<World> world) override;
@@ -29,6 +29,7 @@ private:
 	bool firstRun = true;
 	bool sentPosition = false;
 	double target = 0;	// tracks position or time if a delay was requeested
+	bool waitForPosition = false;
 
 };
 
