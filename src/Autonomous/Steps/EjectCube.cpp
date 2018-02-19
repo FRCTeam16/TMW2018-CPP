@@ -41,7 +41,7 @@ bool EjectCube::Run(std::shared_ptr<World> world) {
 
 	// Wait until to delay to start ejecting or immediately on a bump
 	if (!ejecting && doEject) {
-		Robot::intake->Eject();	// TODO: FIXME
+		Robot::intake->Eject(1.0);
 		ejecting = true;
 		endEjectTime = currentTime + timeToRunEject;
 	}

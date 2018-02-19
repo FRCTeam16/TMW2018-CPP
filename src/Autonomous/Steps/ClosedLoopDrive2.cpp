@@ -12,6 +12,7 @@ void ClosedLoopDrive2::setUseCurrentAngle() {
 }
 
 bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
+	bool doExit = false;
 	if (startTime < 0) {
 		startTime = world->GetClock();
 		const double hypotenuse = sqrt(XtargetDistance * XtargetDistance + YtargetDistance * YtargetDistance);
@@ -27,6 +28,7 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 	const double currentError = Robot::driveBase->GetDriveControlError();
 	const double elapsedTimeSecs = world->GetClock() - startTime;
 	const double currentPIDOutput = Robot::driveBase->GetDriveControlOutput();
+	double thresholdPassInverter = 1;	// when driving past the threshold, we will invert this value to avoid driving in a negative directoin
 
 	SmartDashboard::PutNumber("PIDController Output", currentPIDOutput);
 	std::cout << "XYPIDControlledDrive target setpoint          = " << targetSetpoint << "\n";
@@ -45,8 +47,9 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 
 	if (distanceThreshold == -1) {
 		if (currentEncoderPosition > targetSetpoint) {
-			std::cout << "Current encoder passed target\n";
-			return true;
+			std::cout << "!!!Current encoder passed target\n";
+			thresholdPassInverter = -1.0;
+			doExit = true;
 		}
 	} else if (abs(currentError) <= DriveUnit::ToPulses(distanceThreshold, units)) {
 		if (thresholdCounter++ >= thresholdCounterTarget) {
@@ -70,9 +73,9 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 		const double crabSpeed = currentPIDOutput * ((reverse) ? -1.0 : 1.0);
 
 		RampUtil ru;
-		double profiledSpeed = crabSpeed;
+		double profiledSpeed = crabSpeed * thresholdPassInverter;
 		if (rampUp > 0) {
-			profiledSpeed = ru.RampUp(crabSpeed, elapsedTimeSecs, rampUp);
+			profiledSpeed = ru.RampUp(profiledSpeed, elapsedTimeSecs, rampUp);
 		}
 		if (rampDown > 0) {
 			profiledSpeed =  ru.RampDown(profiledSpeed, currentEncoderPosition, targetSetpoint, DriveUnit::ToPulses(rampDown, units));
@@ -93,7 +96,7 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 				(float) yspeed,
 				(float) xspeed,
 				useGyro);
-		return false;
+		return doExit;
 	}
 }
 
