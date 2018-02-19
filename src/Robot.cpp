@@ -22,6 +22,8 @@ void Robot::RobotInit() {
 	// yet. Thus, their requires() statements may grab null pointers. Bad
 	// news. Don't move it.
 	oi.reset(new OI());
+
+	autoManager.reset(new AutoManager());
 }
 
 /**
@@ -42,10 +44,15 @@ void Robot::AutonomousInit() {
 	if (autonomousCommand != nullptr)
 		autonomousCommand->Start();
 	InitSubsystems();
+	world.reset(new World());
+	autoManager->Init(world);
 }
 
 void Robot::AutonomousPeriodic() {
 	frc::Scheduler::GetInstance()->Run();
+
+	autoManager->Periodic(world);
+	RunSubsystems();
 	InstrumentSubsystems();
 }
 
@@ -232,6 +239,7 @@ void Robot::InstrumentSubsystems() {
 	Robot::intake->Instrument();
 	Robot::mast->Instrument();
 
+	autoManager->Instrument();
 
 
 	double now = frc::Timer::GetFPGATimestamp();

@@ -9,15 +9,14 @@
 #define SRC_AUTONOMOUS_STEPS_RAMPUTIL_H_
 
 class RampUtil {
-private:
-    const int threshold;
-
 public:
-    RampUtil(int positionThreshold) : threshold(positionThreshold) {}
+	RampUtil() {}
     virtual ~RampUtil() {}
-    double RampUp(double crabSpeed, double elapsedTime);
-    double RampDown(double baseSpeed, double currentPosition, double target);
+    double RampUp(double crabSpeed, double elapsedTime, double ramp);
+    double RampDown(double baseSpeed, double currentPosition, double target, double threshold);
+
 };
+
 
 #endif /* SRC_AUTONOMOUS_STEPS_RAMPUTIL_H_ */
 

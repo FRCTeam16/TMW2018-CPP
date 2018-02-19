@@ -18,7 +18,7 @@ private:
 	double startTime = -1;
 public:
 	Delay(double _delay) : delay(_delay) {}
-	virtual ~Delay() {}
+	virtual ~Delay() {}	// TODO: Do I need to explicitly reset ptr here?
 	bool Run(std::shared_ptr<World> world) override;
 };
 

@@ -6,14 +6,15 @@
  */
 #include "WPILib.h"
 #include <Autonomous/World.h>
+#include "DriverStation.h"
 
 
 World::World() {
-//	timer.reset(new frc::Timer());
+	DriverStation::Alliance alliance = DriverStation::GetInstance().GetAlliance();
+	isRed = DriverStation::Alliance::kRed == alliance;
+	fieldInfo = FieldInfo();
 }
 
-World::~World() {
-}
 
 void World::Init() {
 //	timer->Start();
@@ -24,3 +25,10 @@ double World::GetClock() const {
 	return frc::Timer::GetFPGATimestamp();
 }
 
+FieldInfo World::GetFieldInfo() {
+	return fieldInfo;
+}
+
+bool World::IsRed() {
+	return isRed;
+}

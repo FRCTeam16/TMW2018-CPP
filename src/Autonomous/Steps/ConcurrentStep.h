@@ -8,26 +8,32 @@
 #ifndef SRC_AUTONOMOUS_STEPS_CONCURRENTSTEP_H_
 #define SRC_AUTONOMOUS_STEPS_CONCURRENTSTEP_H_
 
+#include "WPILib.h"
 #include <vector>
 #include <Autonomous/Step.h>
+#include <Autonomous/World.h>
+
+class WrappedStep;
 
 class ConcurrentStep: public Step {
 public:
 	ConcurrentStep(std::initializer_list<Step*> stepList);
 	virtual ~ConcurrentStep();
 	bool Run(std::shared_ptr<World> world) override;
-	const CrabInfo* GetCrabInfo();
+	const CrabInfo* GetCrabInfo() override;
 private:
-	std::vector<Step*> steps;
+	std::vector<WrappedStep*> steps;
 };
 
 class WrappedStep {
 public:
 	WrappedStep(Step* _step) : step(_step) {}
 	bool Run(std::shared_ptr<World> world);
+	bool IsFinished();
+	Step* GetStep() { return step; }
 private:
 	Step* step;
-	bool finished;
+	bool finished = false;
 };
 
 #endif /* SRC_AUTONOMOUS_STEPS_CONCURRENTSTEP_H_ */

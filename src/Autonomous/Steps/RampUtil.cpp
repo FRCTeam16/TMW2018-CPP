@@ -2,13 +2,12 @@
 #include <Autonomous/Steps/RampUtil.h>
 
 
-double RampUtil::RampUp(double crabSpeed, double elapsedTime) {
+double RampUtil::RampUp(double crabSpeed, double elapsedTime, double ramp) {
 	 /*
 		 /  |
 	   /    |
 	  -------
 	 */
-	const double ramp = 0.5;
 	double speed = crabSpeed;
 	if (elapsedTime < ramp) {
 		speed = (crabSpeed / ramp) * elapsedTime;
@@ -22,7 +21,7 @@ double RampUtil::RampUp(double crabSpeed, double elapsedTime) {
 	return speed;
 }
 
-double RampUtil::RampDown(double baseSpeed, double currentPosition, double target) {
+double RampUtil::RampDown(double baseSpeed, double currentPosition, double target, double threshold) {
 	double speed = baseSpeed;
 	double error = target - currentPosition;
 	if (abs(error) < abs(threshold) ) {

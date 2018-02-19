@@ -2,8 +2,11 @@
 #include <iostream>
 #include <Autonomous/Steps/ConcurrentStep.h>
 
-ConcurrentStep::ConcurrentStep(std::initializer_list<Step*> stepList) : steps(stepList) {
+ConcurrentStep::ConcurrentStep(std::initializer_list<Step*> stepList) {
 	std::cout << "Loaded " << steps.size() << " steps to process concurrently\n";
+	for (Step* step : stepList) {
+		steps.push_back(new WrappedStep(step));
+	}
 }
 
 ConcurrentStep::~ConcurrentStep() {
@@ -19,11 +22,21 @@ bool ConcurrentStep::Run(std::shared_ptr<World> world) {
 		std::cout << "ConcurrentStep running: " << step << "\n";
 		finished &= step->Run(world);
 	}
+	std::cout << "Concurrent::Run complete with " << finished << "\n\n";
 	return finished;
 }
 
+
 const CrabInfo* ConcurrentStep::GetCrabInfo() {
-	return steps.front()->GetCrabInfo();
+	WrappedStep *step = steps.front();
+	const CrabInfo* crabInfo = step->GetStep()->GetCrabInfo();
+	if (step->IsFinished()) {
+		std::cout << "ConcurrentStep Stop\n";
+		this->crab->Stop();
+		return this->GetCrabInfo();
+	} else {
+		return step->GetStep()->GetCrabInfo();
+	}
 }
 
 
@@ -31,5 +44,9 @@ bool WrappedStep::Run(std::shared_ptr<World> world) {
 	if (!finished) {
 		finished = step->Run(world);
 	}
+	return finished;
+}
+
+bool WrappedStep::IsFinished() {
 	return finished;
 }

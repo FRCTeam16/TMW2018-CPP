@@ -22,10 +22,10 @@ public:
 	void Instrument();
 private:
 	enum AutoStrategy {
-		kDebug = 0
+		kDebug = 0, kCenterSwitch, kScale
 	};
 	std::shared_ptr<frc::SendableChooser<void*>> strategies;
-	std::unique_ptr<Strategy> CreateStrategy(const AutoStrategy &key);
+	std::unique_ptr<Strategy> CreateStrategy(const AutoStrategy &key, std::shared_ptr<World> word);
 	std::unique_ptr<Strategy> currentStrategy;
 	double startTime = -1;
 	bool finalPhaseFired = false;

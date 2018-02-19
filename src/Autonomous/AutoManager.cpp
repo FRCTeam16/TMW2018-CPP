@@ -9,6 +9,7 @@
 #include "../RobotMap.h"
 #include "Strategies/DebugAutoStrategy.h"
 #include <Autonomous/Strategies/DebugAutoStrategy.h>
+#include <Autonomous/Strategies/CenterSwitchStrategy.h>
 #include <Robot.h>
 
 
@@ -17,27 +18,35 @@ AutoManager::AutoManager() :
 		strategies(new frc::SendableChooser<void*>())
 {
 	strategies->AddDefault("999 - Debug Auto Strategy", (void *) AutoStrategy::kDebug);
-	frc::SmartDashboard::PutData("Autonomous Strategy", strategies.get());
+	strategies->AddDefault("1 - Center Switch", (void *) AutoStrategy::kCenterSwitch);
 
+	frc::SmartDashboard::PutData("Autonomous Strategy", strategies.get());
 	const AutoStrategy selectedKey = static_cast<AutoStrategy>((int) strategies->GetSelected());
 	frc::SmartDashboard::PutNumber("Selected Auto", selectedKey);
+
 }
 
 AutoManager::~AutoManager() {
 }
 
-std::unique_ptr<Strategy> AutoManager::CreateStrategy(const AutoStrategy &key) {
+std::unique_ptr<Strategy> AutoManager::CreateStrategy(const AutoStrategy &key, std::shared_ptr<World> world) {
 	const frc::DriverStation::Alliance alliance = frc::DriverStation::GetInstance().GetAlliance();
 	const bool isRed =  alliance == frc::DriverStation::Alliance::kRed;
-	//|| alliance == frc::DriverStation::Alliance::kInvalid;
 
 	std::cout << "AutoManager::CreateStrategy -> isRed = " << isRed << "\n";
 
 	Strategy *strategy = 0;
 	switch (key) {
 	case kDebug:
+		std::cout << "Running DEBUG \n";
 		strategy = new DebugAutoStrategy();
 		break;
+	case kCenterSwitch:
+		std::cout << "Running Center Switch\n";
+		strategy = new CenterSwitchStrategy(world);
+		break;
+	case kScale:
+//		strategy = new ScaleStrategy();
 	default:
 		// TODO: Fill in sane default
 		std::cerr << "No valid strategy selected";
@@ -51,7 +60,7 @@ void AutoManager::Init(std::shared_ptr<World> world) {
 	const AutoStrategy selectedKey = static_cast<AutoStrategy>((int) strategies->GetSelected());
 	frc::SmartDashboard::PutNumber("Selected Auto", selectedKey);
 	std::cout << "Selected Strategy: " << selectedKey << "\n";
-	currentStrategy = CreateStrategy(selectedKey);
+	currentStrategy = CreateStrategy(selectedKey, world);
 	if (!currentStrategy) {
 		std::cerr << "NO AUTONOMOUS STRATEGY FOUND\n";
 	}

@@ -28,6 +28,9 @@
 
 #include "Subsystems/SubsystemManager.h"
 
+#include "Autonomous/AutoManager.h"
+#include "Autonomous/World.h"
+
 
 
 #include "OI.h"
@@ -43,6 +46,9 @@ public:
 	static std::shared_ptr<Intake> intake;
 	static std::shared_ptr<Elevator> elevator;
 	static std::shared_ptr<Mast> mast;
+
+	std::unique_ptr<AutoManager> autoManager;
+	std::shared_ptr<World> world;
 
 
 	void RobotInit() override;
