@@ -29,7 +29,7 @@ CenterSwitchStrategy::CenterSwitchStrategy(std::shared_ptr<World> world) {
 						new PositionElevator(Elevator::ElevatorPosition::kSwitch),
 						new PositionMast(
 								Mast::MastPosition::kVertical,
-								DelayParam(DelayParam::DelayType::kTime, 0.25)),
+								DelayParam(DelayParam::DelayType::kTime, 0.25), false),
 						new EjectCube(1.0,  5.0,  0.5,  collisionThreshold)
 		}));
 

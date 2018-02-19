@@ -24,7 +24,7 @@ DebugAutoStrategy::DebugAutoStrategy() {
 			new ConcurrentStep({
 				new ClosedLoopDrive2(0.0, 0.3, -13, 110.25, -1, DriveUnit::Units::kInches, 10.0, 0.5, 30000),
 		        new PositionElevator(Elevator::ElevatorPosition::kSwitch),
-		        new PositionMast(Mast::MastPosition::kVertical, DelayParam(DelayParam::DelayType::kTime, 0.25)),
+		        new PositionMast(Mast::MastPosition::kVertical, DelayParam(DelayParam::DelayType::kTime, 0.25), false),
 		        new PositionElevator(
 		        		Elevator::ElevatorPosition::kHighScale,
 		        		DelayParam(DelayParam::DelayType::kPosition, 100000))

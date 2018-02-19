@@ -18,8 +18,8 @@ public:
 	PositionMast(Mast::MastPosition _pos) :
 		position(_pos) {}
 
-	PositionMast(Mast::MastPosition _pos, DelayParam _delay) :
-			position(_pos), delay(_delay) {}
+	PositionMast(Mast::MastPosition _pos, DelayParam _delay, bool _waitForPosition) :
+			position(_pos), delay(_delay), waitForPosition(_waitForPosition) {}
 
 	virtual ~PositionMast() {}
 	bool Run(std::shared_ptr<World> world) override;
@@ -29,7 +29,8 @@ private:
      const DelayParam delay;
      bool firstRun = true;
      bool sentPosition = false;
-     double target = 0;	// tracks position or time if a delay was requeested
+     double target = 0;	// tracks position or time if a delay was requested
+     bool waitForPosition = false;
 };
 
 #endif /* SRC_AUTONOMOUS_STEPS_POSITIONMAST_H_ */

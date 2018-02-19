@@ -14,7 +14,11 @@
 class SideStrategy: public StepStrategy {
 public:
 	SideStrategy(std::shared_ptr<World> world);
-	virtual ~SideStrategy();
+	virtual ~SideStrategy() {}
+
+private:
+	bool isLeft = false;
+	void DoScaleFirst();
 };
 
 #endif /* SRC_AUTONOMOUS_STRATEGIES_SIDESTRATEGY_H_ */

@@ -46,6 +46,7 @@ bool PositionMast::Run(std::shared_ptr<World> world) {
 		sentPosition = true;
 	}
 
-	return sentPosition && Robot::mast->InPosition();
+	const bool inPosition = (waitForPosition) ? Robot::mast->InPosition() : true ;
+	return sentPosition && inPosition;
 
 }

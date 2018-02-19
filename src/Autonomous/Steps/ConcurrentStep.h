@@ -17,13 +17,14 @@ class WrappedStep;
 
 class ConcurrentStep: public Step {
 public:
-	ConcurrentStep(std::initializer_list<Step*> stepList);
+	ConcurrentStep(std::initializer_list<Step*> stepList, bool _haltOnEnd = false);
 	virtual ~ConcurrentStep();
 	bool Run(std::shared_ptr<World> world) override;
 	const CrabInfo* GetCrabInfo() override;
 private:
 	std::vector<WrappedStep*> steps;
 	const std::unique_ptr<CrabInfo> STOP { new CrabInfo() };
+	bool haltOnEnd = true;
 };
 
 class WrappedStep {
@@ -36,7 +37,6 @@ public:
 private:
 	Step* step;
 	bool finished = false;
-
 };
 
 #endif /* SRC_AUTONOMOUS_STEPS_CONCURRENTSTEP_H_ */

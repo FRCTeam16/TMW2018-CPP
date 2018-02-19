@@ -21,6 +21,8 @@ SideStrategy::SideStrategy(std::shared_ptr<World> world) {
 	FieldInfo fieldInfo = world->GetFieldInfo();
 	AutoStartPosition startPosition = world->GetStartPosition();
 
+	isLeft = AutoStartPosition::kLeft == startPosition;
+
 	bool haveSwitch;
 	bool haveScale;
 	if (AutoStartPosition::kCenter == startPosition) {
@@ -34,31 +36,39 @@ SideStrategy::SideStrategy(std::shared_ptr<World> world) {
 	}
 
 
+
 	if (haveSwitch && haveScale) {
-
-//		steps.push_back(__x)
-
-
-
+		DoScaleFirst();
 	} else if (haveSwitch && !haveScale) {
-		steps.push_back(
-				new ConcurrentStep({
-					new ClosedLoopDrive2(0.0, 0.3, 0, 85, -1, DriveUnit::Units::kInches, 10.0, 0.5, 30000),
-					new PositionElevator(Elevator::ElevatorPosition::kSwitch),
-					new PositionMast(Mast::MastPosition::kVertical, DelayParam(DelayParam::DelayType::kTime, 0.25)) })
-		);
 
 	} else if (!haveSwitch && haveScale) {
-		// scale only
-
+		DoScaleFirst();
 	} else {
 		// no switch and no scale
 	}
 
-
 }
 
-SideStrategy::~SideStrategy() {
-	// TODO Auto-generated destructor stub
+void SideStrategy::DoScaleFirst() {
+	const double inv = (isLeft) ? -1.0 : 1.0;
+	const double scaleSpeed1 = PrefUtil::getSet("AutoScaleSpeed1", 0.3);
+	const double scaleSpeed2 = PrefUtil::getSet("AutoScaleSpeed2", 0.3);
+	const double scaleY1 = PrefUtil::getSet("AutoScaleY1", 160);
+	const double scaleX1 = PrefUtil::getSet("AutoScaleX1", -15);
+	const double scaleY2 = PrefUtil::getSet("AutoScaleY2", 91);
+	const double scaleX2 = PrefUtil::getSet("AutoScaleX2", -35);
+	steps.push_back(
+			new ConcurrentStep({
+				new ClosedLoopDrive2(0.0, scaleSpeed1, scaleX1 * inv, scaleY1, -1, DriveUnit::Units::kInches, 10.0, 0.5, -1),
+				new PositionElevator(Elevator::ElevatorPosition::kSwitch),
+				new PositionMast(Mast::MastPosition::kVertical, DelayParam(DelayParam::DelayType::kTime, 0.25), false) }, false)
+	);
+	steps.push_back(
+			new ConcurrentStep({
+					new ClosedLoopDrive2(0.0, scaleSpeed2, scaleX2 * inv, scaleY2, -1, DriveUnit::Units::kInches, 10.0, -1, 33.33),
+					new PositionElevator(Elevator::ElevatorPosition::kHighScale)
+			})
+	);
 }
+
 

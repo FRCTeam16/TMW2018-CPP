@@ -2,7 +2,9 @@
 #include <iostream>
 #include <Autonomous/Steps/ConcurrentStep.h>
 
-ConcurrentStep::ConcurrentStep(std::initializer_list<Step*> stepList) {
+ConcurrentStep::ConcurrentStep(std::initializer_list<Step*> stepList, bool _haltOnEnd)
+	: haltOnEnd(_haltOnEnd)
+{
 	for (Step* step : stepList) {
 		steps.push_back(new WrappedStep(step));
 	}
@@ -30,11 +32,12 @@ bool ConcurrentStep::Run(std::shared_ptr<World> world) {
 
 const CrabInfo* ConcurrentStep::GetCrabInfo() {
 	WrappedStep *step = steps.front();
-	if (step->IsFinished()) {
-		std::cout << "ConcurrentStep Drive Step has finished, returning stop\n";
+	const bool finished = step->IsFinished();
+	if (haltOnEnd && finished) {
+		std::cout << "ConcurrentStep Drive Step has finished, returning stop.  HaltOnEnd? " << haltOnEnd << "\n";
 		return STOP.get();
 	} else {
-		std::cout << "ConcurrentStep returning real step info\n";
+		std::cout << "ConcurrentStep returning real step info [finished? " << finished << "]\n";
 		return step->GetStep()->GetCrabInfo();
 	}
 }
