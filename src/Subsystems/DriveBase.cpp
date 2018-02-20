@@ -522,6 +522,11 @@ void DriveBase::Instrument() {
 	SmartDashboard::PutNumber("FR SErr", frontRightSteer->GetClosedLoopError(0));
 	SmartDashboard::PutNumber("RL SErr", rearLeftSteer->GetClosedLoopError(0));
 	SmartDashboard::PutNumber("RR SErr", rearRightSteer->GetClosedLoopError(0));
+
+	SmartDashboard::PutNumber("FL Pos", frontLeftDrive->GetSelectedSensorPosition(0));
+	SmartDashboard::PutNumber("FR Pos", frontRightDrive->GetSelectedSensorPosition(0));
+	SmartDashboard::PutNumber("RL Pos", rearLeftDrive->GetSelectedSensorPosition(0));
+	SmartDashboard::PutNumber("RR Pos", rearRightDrive->GetSelectedSensorPosition(0));
 }
 
 

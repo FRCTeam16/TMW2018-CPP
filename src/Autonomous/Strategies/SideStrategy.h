@@ -21,6 +21,10 @@ private:
 	bool isLeft = false;
 	void DoScaleFirst();
 	void DoScaleFirstSecondPickup();
+	void DoScaleFirstSecondScale();
+	void DoScaleFirstSecondSwitch();
+
+
 	void DoSwitchFirst();
 };
 

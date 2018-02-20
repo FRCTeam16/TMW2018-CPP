@@ -85,6 +85,7 @@ void AutoManager::Init(std::shared_ptr<World> world) {
 	}
 
 	RobotMap::gyro->ZeroYaw();
+
 	startTime = -1;
 	finalPhaseFired = false;
 	std::cout << "AutoManager::Init COMPLETE\n";

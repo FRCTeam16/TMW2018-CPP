@@ -45,11 +45,13 @@ SideStrategy::SideStrategy(std::shared_ptr<World> world) {
 	if (haveSwitch && haveScale) {
 		DoScaleFirst();
 		DoScaleFirstSecondPickup();
+	    DoScaleFirstSecondSwitch();
 	} else if (haveSwitch && !haveScale) {
 		DoSwitchFirst();
 	} else if (!haveSwitch && haveScale) {
 		DoScaleFirst();
 		DoScaleFirstSecondPickup();
+		DoScaleFirstSecondScale();
 	} else {
 		// no switch and no scale
 		// TODO: cross the line or try traverse
@@ -98,7 +100,7 @@ void SideStrategy::DoScaleFirstSecondPickup() {
 
 	const double autoScalePickupSpeed = 0.3;
 	const double autoScalePickupY = -48;
-	const double autoScalePickupX = -10 * inv;
+	const double autoScalePickupX = -14 * inv;
 
 	steps.push_back(new RotateUntilPast(isRight, firstAngleTarget, firstAngleThreshold));
 	steps.push_back(
@@ -112,6 +114,48 @@ void SideStrategy::DoScaleFirstSecondPickup() {
 					new ClosedLoopDrive2(firstAngleTarget, autoScalePickupSpeed, autoScalePickupX, autoScalePickupY, -1, DriveUnit::Units::kInches, 5.0, -1, -1),
 					new IntakeCube(3.0, 3.5, 4.0)
 	}));
+}
+
+void SideStrategy::DoScaleFirstSecondScale() {
+	const bool isRight = !isLeft;
+	const int inv = isRight ? 1 : -1;
+	const double firstAngleTarget = -15.0 * inv;
+
+	const double autoScalePickupSpeed = 0.3;
+	const double autoScalePickupY = 48;
+	const double autoScalePickupX = 14 * inv;
+
+
+	steps.push_back(new ConcurrentStep({
+		new TimedDrive(-180.0, 0.2, 0.0, 0.2),
+		new PositionElevator(Elevator::ElevatorPosition::kSwitch)
+	}));
+	steps.push_back(
+			new ConcurrentStep({
+				new Rotate(firstAngleTarget, 5.0, 5.0, 10),
+				new PositionElevator(Elevator::ElevatorPosition::kHighScale, true),
+	}));
+	steps.push_back(
+		new ClosedLoopDrive2(firstAngleTarget, autoScalePickupSpeed, autoScalePickupX, autoScalePickupY, -1, DriveUnit::Units::kInches, 5.0, 0.5, 24)
+	);
+	steps.push_back(new EjectCube(0.0, 5.0, 1.0));
+}
+
+void SideStrategy::DoScaleFirstSecondSwitch() {
+	const bool isRight = !isLeft;
+	const int inv = isRight ? 1 : -1;
+	const double angle = -165.0 * inv;
+
+	const double driveInSpeed = -0.2;
+	const double timeToDrive = 1.5;
+
+
+	steps.push_back(new ConcurrentStep({
+		new TimedDrive(angle, 0.2, 0.0, 0.5),
+		new PositionElevator(Elevator::ElevatorPosition::kSwitch, true)
+	}, true));
+	steps.push_back(new TimedDrive(angle, driveInSpeed, 0.0, timeToDrive));
+	steps.push_back(new EjectCube(0.0, 5.0, 1.0));
 }
 
 
@@ -131,6 +175,7 @@ void SideStrategy::DoSwitchFirst() {
 		new PositionElevator(Elevator::ElevatorPosition::kSwitch),
 		new PositionMast(Mast::MastPosition::kVertical)
 	}));
+	// Need to travel 172 inches if we switch to position drive
 	steps.push_back(new ConcurrentStep({
 		new TimedDrive(angle, ySpeed1, xSpeed1, timeToDrive1)
 	}));
