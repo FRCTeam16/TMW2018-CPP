@@ -99,6 +99,10 @@ void Elevator::SetElevatorPosition(ElevatorPosition _elevatorPosition) {
 	}
 }
 
+void Elevator::SetElevatorSetpoint(int _setpoint) {
+	setpoint = _setpoint;
+}
+
 
 bool Elevator::InPosition() {
     double error = setpoint - mainElevatorMotor->GetSelectedSensorPosition(0);

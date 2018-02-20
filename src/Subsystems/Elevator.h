@@ -43,6 +43,7 @@ public:
 	void SetInitialPosition();
 	ElevatorPosition GetElevatorPosition();
 	void SetElevatorPosition(ElevatorPosition position);
+	void SetElevatorSetpoint(int setpoint);
 	bool InPosition();
 	void IncreaseElevatorPosition();
 	void DecreaseElevatorPosition();

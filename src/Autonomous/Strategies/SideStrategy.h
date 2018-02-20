@@ -8,6 +8,7 @@
 #ifndef SRC_AUTONOMOUS_STRATEGIES_SIDESTRATEGY_H_
 #define SRC_AUTONOMOUS_STRATEGIES_SIDESTRATEGY_H_
 
+#include <WPILib.h>
 #include <Autonomous/Strategy.h>
 #include <Autonomous/World.h>
 
@@ -20,6 +21,7 @@ private:
 	bool isLeft = false;
 	void DoScaleFirst();
 	void DoScaleFirstSecondPickup();
+	void DoSwitchFirst();
 };
 
 #endif /* SRC_AUTONOMOUS_STRATEGIES_SIDESTRATEGY_H_ */

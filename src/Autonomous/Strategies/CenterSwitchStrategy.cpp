@@ -22,10 +22,13 @@ CenterSwitchStrategy::CenterSwitchStrategy(std::shared_ptr<World> world) {
 		inv = -1;
 	}
 
+	const double ySpeed = 0.3;
+	const double xSpeed = 0.1665 * inv;
 	const double collisionThreshold = 0.5;
+
 	steps.push_back(
 				new ConcurrentStep({
-						new DriveToBump(0.0, 0.3, 0.1665 * inv, 4, 1.0, collisionThreshold ),
+						new DriveToBump(0.0, ySpeed, xSpeed, 4, 1.0, collisionThreshold ),
 						new PositionElevator(Elevator::ElevatorPosition::kSwitch),
 						new PositionMast(
 								Mast::MastPosition::kVertical,

@@ -21,6 +21,7 @@
 #include <Autonomous/Steps/RotateUntilPast.h>
 #include <Autonomous/Steps/IntakeCube.h>
 #include <Autonomous/Steps/IntakeSolenoid.h>
+#include <Autonomous/Steps/TimedDrive.h>
 
 SideStrategy::SideStrategy(std::shared_ptr<World> world) {
 	FieldInfo fieldInfo = world->GetFieldInfo();
@@ -41,17 +42,17 @@ SideStrategy::SideStrategy(std::shared_ptr<World> world) {
 	}
 
 
-
 	if (haveSwitch && haveScale) {
 		DoScaleFirst();
 		DoScaleFirstSecondPickup();
 	} else if (haveSwitch && !haveScale) {
-
+		DoSwitchFirst();
 	} else if (!haveSwitch && haveScale) {
 		DoScaleFirst();
 		DoScaleFirstSecondPickup();
 	} else {
 		// no switch and no scale
+		// TODO: cross the line or try traverse
 	}
 
 }
@@ -91,19 +92,50 @@ void SideStrategy::DoScaleFirst() {
 
 void SideStrategy::DoScaleFirstSecondPickup() {
 	const bool isRight = !isLeft;
+	const int inv = isRight ? 1 : -1;
+	const double firstAngleTarget = 180.0 * inv;
+	const double firstAngleThreshold = 90.0 * inv;
 
-	steps.push_back(new RotateUntilPast(isRight, 180.0, 90.0));
+	const double autoScalePickupSpeed = 0.3;
+	const double autoScalePickupY = -48;
+	const double autoScalePickupX = -10 * inv;
+
+	steps.push_back(new RotateUntilPast(isRight, firstAngleTarget, firstAngleThreshold));
 	steps.push_back(
 			new ConcurrentStep({
-				new Rotate(180.0, 5.0, 5.0, 10),
+				new Rotate(firstAngleTarget, 5.0, 5.0, 10),
 				new PositionElevator(Elevator::ElevatorPosition::kFloor, true),
 				new IntakeSolenoid(true)
 	}));
-
 	steps.push_back(
 				new ConcurrentStep({
-					new ClosedLoopDrive2(180.0, 0.3, -10, -48, -1, DriveUnit::Units::kInches, 5.0, -1, -1),
+					new ClosedLoopDrive2(firstAngleTarget, autoScalePickupSpeed, autoScalePickupX, autoScalePickupY, -1, DriveUnit::Units::kInches, 5.0, -1, -1),
 					new IntakeCube(3.0, 3.5, 4.0)
 	}));
 }
 
+
+void SideStrategy::DoSwitchFirst() {
+	const double angle = isLeft ? 90.0 : -90.0;
+	const double ySpeed1 = 0.4;
+	const double xSpeed1 = 0.0;
+	const double timeToDrive1 = PrefUtil::getSet("AutoSwitchFirstDriveTime1", 3.0);
+
+	const double ySpeed2 = 0.0;
+	const double xSpeed2 = isLeft ? 0.3 : -0.3;
+	const double collisionThreshold = 0.5;
+
+
+	steps.push_back(new ConcurrentStep({
+		new TimedDrive(0.0, 0.2, 0.0, 0.5),
+		new PositionElevator(Elevator::ElevatorPosition::kSwitch),
+		new PositionMast(Mast::MastPosition::kVertical)
+	}));
+	steps.push_back(new ConcurrentStep({
+		new TimedDrive(angle, ySpeed1, xSpeed1, timeToDrive1)
+	}));
+	steps.push_back(new ConcurrentStep({
+		new DriveToBump(angle, ySpeed2, xSpeed2, 4, 1.0, collisionThreshold ),
+		new EjectCube(1.0,  5.0,  0.5,  collisionThreshold)
+	}));
+}

@@ -133,6 +133,8 @@ void Robot::TeleopPeriodic() {
 		elevator->SetOpenLoopPercent(-elevatorDown);
 	} else if (elevatorUp > threshold) {
 		elevator->SetOpenLoopPercent(elevatorUp);
+	} else if (OI::DPad::kUp == oi->GetGamepadDPad()) {
+		elevator->SetElevatorSetpoint(PrefUtil::getSet("ElevatorPosPortal", 19203));
 	} else {
 		elevator->HoldPosition();
 	}

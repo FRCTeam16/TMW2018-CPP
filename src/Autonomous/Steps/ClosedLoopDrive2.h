@@ -36,11 +36,11 @@ private:
 	const double YtargetDistance;
 	const double distanceThreshold;     // -1 value simply checks for passing the setpoint
 	const DriveUnit::Units units;
+	const double timeoutCommand = 10;
 	const double rampUp;	// ramp up time length, -1 to disable
 	const double rampDown;	// ramp down position threshold, -1 to disable
 	CollisionDetector collisionDetector;
 	const bool reverse = false;
-	const double timeoutCommand = 10;
 	const bool useGyro = true;
 	const int thresholdCounterTarget = 5;
 
