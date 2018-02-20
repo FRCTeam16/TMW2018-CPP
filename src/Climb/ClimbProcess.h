@@ -28,10 +28,15 @@ public:
 
 private:
 	ClimbState currentState = ClimbState::kDisabled;
-	ClimbState nextState;
+	ClimbState nextState = ClimbState::kDisabled;
 	std::shared_ptr<StateTransition> activeTransition;
 	bool inProgress = false;
 	void LoadTransition(ClimbProcess::ClimbState climbState);
+
+	enum Direction {
+		kForward, kBackward, kNone
+	};
+	Direction lastDirection = kNone;
 };
 
 #endif /* SRC_CLIMBPROCESS_H_ */

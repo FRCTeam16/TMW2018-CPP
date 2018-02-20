@@ -27,41 +27,45 @@ void ClimbProcess::Run() {
 		// If we just completed running our transition, set our next state
 		if (!inProgress) {
 			currentState = nextState;
+			lastDirection = kNone;
 			activeTransition.reset();
 		}
 	}
 }
 
 void ClimbProcess::Next() {
-	if (!inProgress) {
-		int nextOrdinal = currentState + 1;
+	if (lastDirection != kForward) {
+		if (inProgress) {
+			std::cout << "*** ABORTING ACTIVE CLIMB STEP ***\n";
+		}
+		int nextOrdinal = (inProgress) ? currentState : currentState + 1;
 		if (nextOrdinal < NUM_CLIMB_STATES) {
 			inProgress = true;
 			nextState = static_cast<ClimbState>(nextOrdinal);
 			LoadTransition(currentState);
 			activeTransition->Initialize(true);
+			lastDirection = kForward;
 			std::cout << "******************************** next() SET NEXT STATE TO " << nextState << "\n";
-		} else {
-			// We are at the end transition
 		}
-	} else {
-		std::cout << "Currently in process at state: " << currentState << "\n";
 	}
 }
 
 
 void ClimbProcess::Previous() {
-	if (!inProgress) {
-		int prevOrdinal = currentState - 1;
+	if (lastDirection != kBackward) {
+		if (inProgress) {
+			std::cout << "*** ABORTING ACTIVE CLIMB STEP ***\n";
+		}
+		// When reversing, transition based on previous (i.e. next) state action
+		int prevOrdinal = (inProgress) ? currentState : currentState - 1;
 		if (prevOrdinal >= 0) {
 			inProgress = true;
 			nextState = static_cast<ClimbState>(prevOrdinal);
-			LoadTransition(nextState);	// When reversing, transition based on previous (i.e. next) state action
+			LoadTransition(nextState);
 			activeTransition->Initialize(false);
+			lastDirection = kBackward;
 			std::cout << "******************************** previous() SET NEXT STATE TO " << nextState << "\n";
 		}
-	} else {
-		std::cout << "Currently in process at state: " << currentState << "\n";
 	}
 }
 
