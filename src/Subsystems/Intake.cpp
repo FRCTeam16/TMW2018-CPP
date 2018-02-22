@@ -33,7 +33,7 @@ void Intake::Init() {
 	leftIntakeAmpThresholdCounter.reset(new ThresholdCounter(intakeAmpThreshold, intakeAmpThresholdScans));
 	rightIntakeAmpThresholdCounter.reset(new ThresholdCounter(intakeAmpThreshold, intakeAmpThresholdScans));
 
-	std::cout << "Initialized Threshold Counters: "
+	std::cout << "Intake::Init() Initialized Threshold Counters: "
 					  << leftIntakeAmpThresholdCounter.get()
 					  << " | "
 					  << rightIntakeAmpThresholdCounter.get()
@@ -113,7 +113,7 @@ void Intake::SetMotorPercent(double amount) {
 }
 
 void Intake::SetExtendSolenoidState(bool extend) {
-	extendSolenoidState = extend;
+	extendSolenoidState = !extend;
 }
 
 void Intake::ToggleExtendSolenoidState() {

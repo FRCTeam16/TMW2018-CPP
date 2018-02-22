@@ -9,6 +9,7 @@
 #include <Robot.h>
 
 bool PositionMast::Run(std::shared_ptr<World> world) {
+	std::cout << "PositionMast::Run()\n";
 	const bool useDelay = DelayParam::DelayType::kNone != delay.delayType;
 	double target = 0;
 

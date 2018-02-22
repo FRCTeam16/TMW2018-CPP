@@ -46,6 +46,8 @@ void Robot::AutonomousInit() {
 	if (autonomousCommand != nullptr)
 		autonomousCommand->Start();
 	InitSubsystems();
+
+	intake->SetExtendSolenoidState(true);
 	world.reset(new World());
 	autoManager->Init(world);
 }

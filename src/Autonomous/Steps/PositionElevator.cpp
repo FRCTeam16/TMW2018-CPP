@@ -4,6 +4,7 @@
 #include "DelayParam.h"
 
 bool PositionElevator::Run(std::shared_ptr<World> world) {
+	std::cout << "PositionElevator::Run()\n";
 	const bool useDelay = DelayParam::DelayType::kNone != delayParam.delayType;
 	std::cout << "Position Elevator using delay? " << useDelay << "\n";
 

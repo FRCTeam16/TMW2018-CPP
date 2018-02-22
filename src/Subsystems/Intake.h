@@ -54,7 +54,7 @@ private:
 	 std::shared_ptr<Solenoid> rotateSolenoid = RobotMap::intakeRotateActuator;
 
 	 IntakeState state = IntakeState::kStop;
-	 bool extendSolenoidState = false;
+	 bool extendSolenoidState = true;
 	 bool rotateSolenoidState = false;
 	 double intakeSpeed = 1.0;
 	 double defaultEjectSpeed = -1.0;

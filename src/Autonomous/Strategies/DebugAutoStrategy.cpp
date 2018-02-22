@@ -21,6 +21,9 @@
 #include <Autonomous/Steps/IntakeSolenoid.h>
 #include <Autonomous/Steps/IntakeCube.h>
 #include <Autonomous/Steps/TimedDrive.h>
+#include <Autonomous/Steps/SetGyroOffset.h>
+#include <Autonomous/Steps/EjectCubeWithDelay.h>
+#include <Autonomous/Steps/RunIntake.h>
 
 
 
@@ -29,18 +32,50 @@ DebugAutoStrategy::DebugAutoStrategy(std::shared_ptr<World> world) {
 	const bool isRight = AutoStartPosition::kRight == startPosition;
 
 	const int inv = isRight ? 1 : -1;
-	const double angle = -165.0 * inv;
+	const double angle = -90.0 * inv;
 
-	const double driveInSpeed = -0.2;
-	const double timeToDrive = 1.5;
+	const double firstDriveSpeed = 0.2;
+	const double firstDriveX = 0.0;
+	const double firstDriveY = 146;
+	const double firstEjectY = 142;
+
+
+	const double secondDriveX = 20.0 * inv;
+	const double secondDriveY = 70.0;
+
+	steps.push_back(new SetGyroOffset(angle));
+
+	steps.push_back(new ConcurrentStep({
+		new ClosedLoopDrive2(angle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 8.0, 0.5, -1),
+		new PositionMast(Mast::MastPosition::kVertical,	DelayParam(DelayParam::DelayType::kTime, 0.25), false),
+		new PositionElevator(Elevator::ElevatorPosition::kSwitch),
+		new EjectCubeWithDelay(DelayParam(DelayParam::DelayType::kPosition, firstEjectY), 2.0, -1.0)
+	}));
 
 
 	steps.push_back(new ConcurrentStep({
-		new TimedDrive(angle, 0.2, 0.0, 0.5),
-		new PositionElevator(Elevator::ElevatorPosition::kSwitch, true)
+		new ClosedLoopDrive2(angle, firstDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 4.0, -1, 24),
+		new RunIntake(false, false),
+		new PositionElevator(Elevator::ElevatorPosition::kFloor)
+	}));
+
+
+	const double drive3Angle = angle - (45 * inv);
+	const double drive3X = -36.0 * inv;
+
+	ClosedLoopDrive2 *drive3 = new ClosedLoopDrive2(drive3Angle, firstDriveSpeed, drive3X, 0.0, -1, DriveUnit::Units::kInches, 4.0, 0.5, -1);
+	drive3->SetHaltOnIntakePickup(true);
+	steps.push_back(new ConcurrentStep({
+		drive3,
+		new RunIntake(true, false)
+	}));
+
+
+	steps.push_back(new ConcurrentStep({
+		new IntakeSolenoid(false)
 	}, true));
-	steps.push_back(new TimedDrive(angle, driveInSpeed, 0.0, timeToDrive));
-	steps.push_back(new EjectCube(0.0, 5.0, 1.0));
+
+	// todo drive forward to pickup
 }
 
 /**

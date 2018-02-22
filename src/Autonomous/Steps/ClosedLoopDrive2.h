@@ -29,6 +29,8 @@ public:
 	bool Run(std::shared_ptr<World> world) override;
 	void setUseCurrentAngle();
 
+	void SetHaltOnIntakePickup(bool _halt) { haltOnIntakePickup = _halt; }
+
 private:
 	const double angle;
 	const double speed;
@@ -49,6 +51,8 @@ private:
 	bool useCurrentAngle = false;
 	int thresholdCounter = 0;
 	double targetSetpoint = 0;
+
+	bool haltOnIntakePickup = false;	// TODO: replace with strategy
 };
 
 #endif /* SRC_AUTONOMOUS_STEPS_CLOSEDLOOPDRIVE2_H_ */

@@ -48,7 +48,7 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 	if (distanceThreshold == -1) {
 		if (currentEncoderPosition > targetSetpoint) {
 			std::cout << "!!!Current encoder passed target\n";
-			thresholdPassInverter = -1.0;
+			thresholdPassInverter = -1.0;	// FIXME: Weirdness
 			doExit = true;
 		}
 	} else if (abs(currentError) <= DriveUnit::ToPulses(distanceThreshold, units)) {
@@ -59,6 +59,13 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 		}
 	} else {
 		thresholdCounter = 0;
+	}
+
+	if (haltOnIntakePickup) {
+		if (Robot::intake->IsPickupTriggered()) {
+			std::cout << "!!! Detected Halt on Intake Pickup! \n";
+			return true;
+		}
 	}
 
 	if (elapsedTimeSecs > timeoutCommand) {
