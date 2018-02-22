@@ -1,10 +1,10 @@
+#include <Autonomous/Steps/RunIntakeWithDelay.h>
 
-#include <Autonomous/Steps/EjectCubeWithDelay.h>
 #include <Robot.h>
 #include <Autonomous/DriveUnit.h>
 
-bool EjectCubeWithDelay::Run(std::shared_ptr<World> world) {
-	std::cout << "EjectCubeWithDelay::Run()\n";
+bool RunIntakeWithDelay::Run(std::shared_ptr<World> world) {
+	std::cout << "RunIntakeWithDelay::Run()\n";
 	if (firstRun) {
 		firstRun = false;
 		if (DelayParam::DelayType::kTime == delayParam.delayType) {
@@ -13,38 +13,52 @@ bool EjectCubeWithDelay::Run(std::shared_ptr<World> world) {
 			target = Robot::driveBase->GetDriveControlEncoderPosition()
 					+ DriveUnit::ToPulses(delayParam.value, DriveUnit::kInches);
 		}
-		std::cout << "EjectCubeWithDelay Target = " << target << "\n";
+		std::cout << "RunIntakeWithDelay Target = " << target << "\n";
 	}
 	const double currentTime = world->GetClock();
 
-	if (ejectStartedTime < 0) {
+	if (startedTime < 0) {
 		bool targetHit = false;
 		switch(delayParam.delayType) {
 			case DelayParam::DelayType::kPosition:
 				targetHit = Robot::driveBase->GetDriveControlEncoderPosition() >= target;
 				break;
 			case DelayParam::DelayType::kTime:
-				targetHit = currentTime > target;
+				targetHit = currentTime >= target;
 				break;
 			default:
-				std::cout << "! EjectCubeWithDelay Warning using default\n";
+				std::cout << "! RunIntakeWithDelay Warning using default\n";
 				targetHit = true;
 		}
 		if (targetHit) {
-			ejectStartedTime = currentTime;
-			Robot::intake->Eject(1.0);
+			startedTime = currentTime;
+			ConfigIntake();
 
 			// Exit if we're just turning on
-			if (timeToRunEject < 0) {
+			if (timeToRun <= 0) {
 				return true;
 			}
 		}
 	} else {
-		if ((currentTime - ejectStartedTime) > timeToRunEject) {
+		if ((currentTime - startedTime) > timeToRun) {
 			Robot::intake->Stop();
 			return true;
 		}
 	}
 	return false;
-
 }
+
+void RunIntakeWithDelay::ConfigIntake() {
+	switch (state) {
+	case Start:
+		Robot::intake->Start();
+		break;
+	case Stop:
+		Robot::intake->Stop();
+		break;
+	case Eject:
+		Robot::intake->Eject(1.0);
+		break;
+	}
+}
+

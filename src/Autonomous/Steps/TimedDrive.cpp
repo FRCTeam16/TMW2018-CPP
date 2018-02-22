@@ -19,8 +19,9 @@ bool TimedDrive::Run(std::shared_ptr<World> world) {
 		Robot::driveBase->UseClosedLoopDrive();
 		return true;
 	} else {
+		const double twist = (useTwist) ? Robot::driveBase->GetTwistControlOutput() : 0.0;
 		crab->Update(
-				(float) Robot::driveBase->GetTwistControlOutput(),
+				(float) twist,
 				(float) ySpeed,
 				(float) xSpeed,
 				true);

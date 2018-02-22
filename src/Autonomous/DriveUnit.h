@@ -12,6 +12,7 @@ class DriveUnit {
 public:
 	enum Units { kPulses, kInches };
 	static double ToPulses(double value, Units units);
+	static double ToInches(double value, Units units);
 	static const std::string PULSES_PER_INCH;
 };
 

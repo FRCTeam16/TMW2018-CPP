@@ -16,6 +16,7 @@ class DebugAutoStrategy : public StepStrategy {
 public:
 	DebugAutoStrategy(std::shared_ptr<World> world);
 	virtual ~DebugAutoStrategy() {}
+	void Init(std::shared_ptr<World> world) override;
 
 private:
 	void DebugShootScoot();

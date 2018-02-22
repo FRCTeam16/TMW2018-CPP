@@ -1,10 +1,3 @@
-/*
- * EjectCubeWithDelay.h
- *
- *  Created on: Feb 21, 2018
- *      Author: jsmith
- */
-
 #ifndef SRC_AUTONOMOUS_STEPS_EJECTCUBEWITHDELAY_H_
 #define SRC_AUTONOMOUS_STEPS_EJECTCUBEWITHDELAY_H_
 

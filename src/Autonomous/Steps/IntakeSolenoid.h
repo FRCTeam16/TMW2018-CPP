@@ -9,18 +9,28 @@
 
 class IntakeSolenoid : public Step {
 public:
-	IntakeSolenoid(bool _doOpen) : doOpen(_doOpen) {}
+	IntakeSolenoid(bool _doOpen, double _delay = 0) : doOpen(_doOpen), delay(_delay) {}
 	virtual ~IntakeSolenoid() {}
 	bool Run(std::shared_ptr<World> world) {
+		std::cout << "IntakeSolenoid::Run(" << doOpen << ")\n";
+		const double currentTime = world->GetClock();
 		if (firstRun) {
-			Robot::intake->SetExtendSolenoidState(doOpen);
 			firstRun = false;
+			startTime = currentTime;
 		}
-		return true;
+
+		if (currentTime > (startTime + delay)) {
+			Robot::intake->SetExtendSolenoidState(doOpen);
+			return true;
+		} else {
+			return false;
+		}
 	}
 private:
 	const bool doOpen;
 	bool firstRun = true;
+	const double delay;
+	double startTime = 0;
 
 };
 

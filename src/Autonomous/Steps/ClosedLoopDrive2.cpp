@@ -15,6 +15,13 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 	bool doExit = false;
 	if (startTime < 0) {
 		startTime = world->GetClock();
+
+		if (usePickupDistance) {
+			std::cout << "ClosedLoopDrive2 using pickup distance: original = " << XtargetDistance;
+			XtargetDistance += DriveUnit::ToInches(world->GetDriveDistance(), DriveUnit::kPulses);
+			std::cout << " new = " << XtargetDistance << "\n";
+		}
+
 		const double hypotenuse = sqrt(XtargetDistance * XtargetDistance + YtargetDistance * YtargetDistance);
 		targetSetpoint = DriveUnit::ToPulses(hypotenuse, units);
 		const double targetAngle = (!useCurrentAngle) ? angle : RobotMap::gyro->GetYaw();
@@ -22,6 +29,10 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 
 		Robot::driveBase->SetTargetDriveDistance(targetSetpoint, speed);
 		Robot::driveBase->UseClosedLoopDrive();
+
+		startEncoderPosition = Robot::driveBase->GetDriveControlEncoderPosition();
+
+
 	}
 
 	const double currentEncoderPosition = Robot::driveBase->GetDriveControlEncoderPosition();
@@ -61,13 +72,8 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 		thresholdCounter = 0;
 	}
 
-	if (haltOnIntakePickup) {
-		if (Robot::intake->IsPickupTriggered()) {
-			std::cout << "!!! Detected Halt on Intake Pickup! \n";
-			return true;
-		}
-	}
 
+	StoreDistance(world.get());
 	if (elapsedTimeSecs > timeoutCommand) {
 		std::cerr << "**** EMERGENCY EXIT OF STEP DUE TO TIMEOUT ***\n";
 		crab->Stop();
@@ -75,6 +81,9 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 	} else if (elapsedTimeSecs > 1.0 &&  collisionDetector.Detect()) {
 		std::cerr << "**** EMERGENCY HALT DUE TO COLLISION ****\n";
 		crab->Stop();
+		return true;
+	} else if (haltOnIntakePickup && Robot::intake->IsPickupTriggered()) {
+		std::cout << "!!! Detected Halt on Intake Pickup! \n";
 		return true;
 	} else {
 		const double crabSpeed = currentPIDOutput * ((reverse) ? -1.0 : 1.0);
@@ -98,13 +107,20 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 		std::cout << "XYPIDController yspeed    = " << yspeed << "\n";
 
 
+		const double twistOutput =  (elapsedTimeSecs < rampUp) ? 0.0 : Robot::driveBase->GetTwistControlOutput();
+
 		crab->Update(
-				(float) Robot::driveBase->GetTwistControlOutput(),
+				(float) twistOutput,
 				(float) yspeed,
 				(float) xspeed,
 				useGyro);
 		return doExit;
 	}
+}
+
+void ClosedLoopDrive2::StoreDistance(World* world) {
+	double endDecoderPosition = Robot::driveBase->GetDriveControlEncoderPosition();
+	world->SetDriveDistance(endDecoderPosition - startEncoderPosition);
 }
 
 

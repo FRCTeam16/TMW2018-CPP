@@ -24,7 +24,20 @@
 #include <Autonomous/Steps/SetGyroOffset.h>
 #include <Autonomous/Steps/EjectCubeWithDelay.h>
 #include <Autonomous/Steps/RunIntake.h>
+#include <Autonomous/Steps/RunIntakeWithDelay.h>
+#include <Autonomous/Steps/IntakeSolenoidWithDelay.h>
 
+
+void DebugAutoStrategy::Init(std::shared_ptr<World> world) {
+	std::cout << "DebugAutoStrategy::Init()\n";
+	AutoStartPosition startPosition = world->GetStartPosition();
+	const bool isRight = AutoStartPosition::kRight == startPosition;
+
+	const int inv = isRight ? 1 : -1;
+	const double angle = -90.0 * inv;
+	SetGyroOffset *step = new SetGyroOffset(angle);
+	step->Run(world);
+}
 
 
 DebugAutoStrategy::DebugAutoStrategy(std::shared_ptr<World> world) {
@@ -39,41 +52,55 @@ DebugAutoStrategy::DebugAutoStrategy(std::shared_ptr<World> world) {
 	const double firstDriveY = 146;
 	const double firstEjectY = 142;
 
+	steps.push_back(new ConcurrentStep({
+		new TimedDrive(angle, 0.0001, 0.0, 0.1, false),
+		new Delay(1.0),
+		new PositionElevator(Elevator::ElevatorPosition::kLowScale),
+		new PositionMast(Mast::MastPosition::kVertical)
+	}));
 
-	const double secondDriveX = 20.0 * inv;
-	const double secondDriveY = 70.0;
-
-	steps.push_back(new SetGyroOffset(angle));
 
 	steps.push_back(new ConcurrentStep({
 		new ClosedLoopDrive2(angle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 8.0, 0.5, -1),
-		new PositionMast(Mast::MastPosition::kVertical,	DelayParam(DelayParam::DelayType::kTime, 0.25), false),
-		new PositionElevator(Elevator::ElevatorPosition::kSwitch),
-		new EjectCubeWithDelay(DelayParam(DelayParam::DelayType::kPosition, firstEjectY), 2.0, -1.0)
+		new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Eject, DelayParam(DelayParam::DelayType::kPosition, firstEjectY), 2.0, -1.0)
 	}));
 
+
+	const double drive2Angle = angle - (45 * inv);
+	const double secondDriveX = 20.0 * inv;
+	const double secondDriveY = 75.0;
 
 	steps.push_back(new ConcurrentStep({
-		new ClosedLoopDrive2(angle, firstDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 4.0, -1, 24),
-		new RunIntake(false, false),
-		new PositionElevator(Elevator::ElevatorPosition::kFloor)
+		new ClosedLoopDrive2(drive2Angle, firstDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 4.0, -1, 6),
+		new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Stop, DelayParam(DelayParam::DelayType::kNone, 0.0), 0.1, -1),	// was RunIntake(false, false)
+		new PositionElevator(Elevator::ElevatorPosition::kFloor, DelayParam(DelayParam::DelayType::kTime, 0.5))
 	}));
 
 
+	/**
+	 * Drive until we pickup or timeout
+	 */
 	const double drive3Angle = angle - (45 * inv);
-	const double drive3X = -36.0 * inv;
+	const double drive3X = -60.0 * inv;
+	const double intakeDelayPos = 2 * fabs(drive3X) / 3;
 
 	ClosedLoopDrive2 *drive3 = new ClosedLoopDrive2(drive3Angle, firstDriveSpeed, drive3X, 0.0, -1, DriveUnit::Units::kInches, 4.0, 0.5, -1);
 	drive3->SetHaltOnIntakePickup(true);
 	steps.push_back(new ConcurrentStep({
 		drive3,
-		new RunIntake(true, false)
-	}));
-
-
-	steps.push_back(new ConcurrentStep({
-		new IntakeSolenoid(false)
+		new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Start, DelayParam(DelayParam::DelayType::kNone, 0.0), 0.1, 0.0),
+		new IntakeSolenoidWithDelay(false, DelayParam(DelayParam::DelayType::kPosition, intakeDelayPos), 5.0)
 	}, true));
+
+
+	const double drive4X = 12 * inv;
+	const double drive4Y = 90.0;
+	ClosedLoopDrive2 *drive4 = new ClosedLoopDrive2(drive3Angle, firstDriveSpeed, drive4X, drive4Y, -1, DriveUnit::Units::kInches, 5.0, 0.5, 12);
+	drive4->UsePickupDistance();
+	steps.push_back(new ConcurrentStep({
+		drive4,
+		new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Stop, DelayParam(DelayParam::DelayType::kNone, 0.0), 0.1, -1)
+	}));
 
 	// todo drive forward to pickup
 }

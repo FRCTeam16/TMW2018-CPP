@@ -475,7 +475,8 @@ void DriveBase::SetTargetAngle(double angle) {
 }
 
 double DriveBase::GetTwistControlOutput() {
-	return driveControlTwist->Get();
+//	return driveControlTwist->Get();
+	return crabSpeedTwist->Get();
 }
 
 double DriveBase::GetTwistControlError() {

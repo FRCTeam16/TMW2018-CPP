@@ -29,12 +29,16 @@ public:
 	bool Run(std::shared_ptr<World> world) override;
 	void setUseCurrentAngle();
 
+	// Custom behaviors
 	void SetHaltOnIntakePickup(bool _halt) { haltOnIntakePickup = _halt; }
+	void UsePickupDistance() { usePickupDistance = true; }
 
 private:
+	void StoreDistance(World* world);
+
 	const double angle;
 	const double speed;
-	const double XtargetDistance;
+	double XtargetDistance;
 	const double YtargetDistance;
 	const double distanceThreshold;     // -1 value simply checks for passing the setpoint
 	const DriveUnit::Units units;
@@ -51,8 +55,11 @@ private:
 	bool useCurrentAngle = false;
 	int thresholdCounter = 0;
 	double targetSetpoint = 0;
+	double startEncoderPosition = 0;
 
 	bool haltOnIntakePickup = false;	// TODO: replace with strategy
+	bool usePickupDistance = false;
+
 };
 
 #endif /* SRC_AUTONOMOUS_STEPS_CLOSEDLOOPDRIVE2_H_ */

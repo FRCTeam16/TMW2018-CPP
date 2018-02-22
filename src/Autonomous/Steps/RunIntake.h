@@ -13,10 +13,13 @@ public:
 
 	bool Run(std::shared_ptr<World> world) override {
 		if (start) {
+			std::cout << "RunIntake->Start\n";
 			Robot::intake->Start();
 		} else if (eject) {
+			std::cout << "RunIntake->Eject\n";
 			Robot::intake->Eject();
 		} else {
+			std::cout << "RunIntake->Stop\n";
 			Robot::intake->Stop();
 		}
 		return true;
