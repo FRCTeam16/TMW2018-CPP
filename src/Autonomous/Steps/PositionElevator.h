@@ -14,8 +14,8 @@
 
 class PositionElevator: public Step {
 public:
-	PositionElevator(Elevator::ElevatorPosition elevatorPosition, DelayParam delayParam) :
-		position(elevatorPosition), delayParam(delayParam) {}
+	PositionElevator(Elevator::ElevatorPosition elevatorPosition, DelayParam delayParam, bool _waitForPosition = false) :
+		position(elevatorPosition), delayParam(delayParam), waitForPosition(_waitForPosition) {}
 
 	PositionElevator(Elevator::ElevatorPosition elevatorPosition, bool _waitForPosition = false) :
 		position(elevatorPosition), waitForPosition(_waitForPosition) {}

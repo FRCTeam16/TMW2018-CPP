@@ -22,6 +22,9 @@ private:
 	void DebugShootScoot();
 	void JoshDebug();
 	void DebugShootScootHang();
+
+	void SwitchScale(std::shared_ptr<World> world);
+	void ScalePickup(std::shared_ptr<World> world);
 };
 
 #endif /* SRC_AUTONOMOUS_DEBUGAUTOSTRATEGY_H_ */

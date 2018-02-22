@@ -21,7 +21,7 @@ public:
 		timeoutCommand(_timeout),
 		rampUp(_rampUp),
 		rampDown(_rampDown),
-		collisionDetector(CollisionDetector(RobotMap::gyro, 1.0))
+		collisionDetector(CollisionDetector(RobotMap::gyro, 2.0))
 	{
 	}
 

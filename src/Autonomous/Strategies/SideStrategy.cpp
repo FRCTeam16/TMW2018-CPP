@@ -23,6 +23,7 @@
 #include <Autonomous/Steps/IntakeSolenoid.h>
 #include <Autonomous/Steps/TimedDrive.h>
 
+
 SideStrategy::SideStrategy(std::shared_ptr<World> world) {
 	FieldInfo fieldInfo = world->GetFieldInfo();
 	AutoStartPosition startPosition = world->GetStartPosition();
