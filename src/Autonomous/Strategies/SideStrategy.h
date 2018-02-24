@@ -1,10 +1,3 @@
-/*
- * SideStrategy.h
- *
- *  Created on: Feb 18, 2018
- *      Author: jsmith
- */
-
 #ifndef SRC_AUTONOMOUS_STRATEGIES_SIDESTRATEGY_H_
 #define SRC_AUTONOMOUS_STRATEGIES_SIDESTRATEGY_H_
 
@@ -19,13 +12,21 @@ public:
 
 private:
 	bool isLeft = false;
-	void DoScaleFirst();
-	void DoScaleFirstSecondPickup();
-	void DoScaleFirstSecondScale();
-	void DoScaleFirstSecondSwitch();
+	bool isRight = false;
+	int inv = 1;			// invert angle multiplier (should be for left starts)
+	double startAngle;		// initial orientation of robot
 
+	void StartInitialPose();	// run before other code paths to begin configuring robot pose
+	void DoSwitchScale();		// runs a switch score - pickup - scale score
+	void DoScaleScale();		// runs a scale - pickup - scale
+	void DoSwitchPickup();		// runs a switch score - pickup
+	void DoTraverse();			// runs a traverse
 
-	void DoSwitchFirst();
+	// Helpers
+
+	void DoSecondCubePickup(double robotAngle, double xDriveDistance);
+	void DoSecondCubeScale();
+
 };
 
 #endif /* SRC_AUTONOMOUS_STRATEGIES_SIDESTRATEGY_H_ */

@@ -5,6 +5,7 @@
 #include <Autonomous/Step.h>
 #include <Autonomous/DriveUnit.h>
 #include <Util/CollisionDetector.h>
+#include <RobotMap.h>
 
 class ClosedLoopDrive2: public Step {
 public:
