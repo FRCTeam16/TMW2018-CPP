@@ -34,6 +34,9 @@ SideStrategy::SideStrategy(std::shared_ptr<World> world) {
 
 	inv = isRight ? 1 : -1;
 	startAngle = -90.0 * inv;
+	SetGyroOffset *step = new SetGyroOffset(startAngle);
+	step->Run(world);
+
 
 	bool haveSwitch;
 	bool haveScale;
@@ -72,7 +75,7 @@ SideStrategy::SideStrategy(std::shared_ptr<World> world) {
  * Allows minimization of structural forces which affect drive accuracy.
  */
 void SideStrategy::StartInitialPose() {
-	const double poseDelay = PrefUtil::getSet("AutoSideInitialPoseDelay", 1.0);
+	const double poseDelay = PrefUtil::getSet("AutoSideInitialPoseDelay", 4.0);
 
 
 	steps.push_back(new ConcurrentStep({

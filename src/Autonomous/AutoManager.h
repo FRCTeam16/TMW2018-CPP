@@ -26,8 +26,8 @@ private:
 		kDebug = 0, kCenterSwitch, kSide
 	};
 
-	std::shared_ptr<frc::SendableChooser<int>> strategies;
 	std::shared_ptr<frc::SendableChooser<int>> positions;
+	std::shared_ptr<frc::SendableChooser<int>> strategies;
 	std::unique_ptr<Strategy> CreateStrategy(const AutoStrategy &key, std::shared_ptr<World> word);
 	std::unique_ptr<Strategy> currentStrategy;
 	double startTime = -1;

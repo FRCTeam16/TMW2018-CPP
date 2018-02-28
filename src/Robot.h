@@ -38,7 +38,7 @@ class Robot : public frc::TimedRobot {
 public:
 	frc::Command* autonomousCommand = nullptr;
 	static std::unique_ptr<OI> oi;
-	frc::SendableChooser<frc::Command*> chooser;
+	//frc::SendableChooser<frc::Command*> chooser;
 
 	static std::shared_ptr<DriveBase> driveBase;
 	static std::shared_ptr<Intake> intake;

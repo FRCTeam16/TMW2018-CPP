@@ -49,7 +49,7 @@ private:
 	CollisionDetector collisionDetector;
 	const bool reverse = false;
 	const bool useGyro = true;
-	const int thresholdCounterTarget = 5;
+	const int thresholdCounterTarget = 1;
 
 
 	double startTime = -1;

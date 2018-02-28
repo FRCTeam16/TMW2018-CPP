@@ -27,6 +27,7 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 		const double targetAngle = (!useCurrentAngle) ? angle : RobotMap::gyro->GetYaw();
 		Robot::driveBase->SetTargetAngle(targetAngle);
 
+		std::cout << "Setting Target Drive Distance:" << targetSetpoint << "| Speed:" << speed << "/n";
 		Robot::driveBase->SetTargetDriveDistance(targetSetpoint, speed);
 		Robot::driveBase->UseClosedLoopDrive();
 
@@ -36,7 +37,7 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 	}
 
 	const double currentEncoderPosition = Robot::driveBase->GetDriveControlEncoderPosition();
-	const double currentError = Robot::driveBase->GetDriveControlError();
+	const double currentError = targetSetpoint - currentEncoderPosition;
 	const double elapsedTimeSecs = world->GetClock() - startTime;
 	const double currentPIDOutput = Robot::driveBase->GetDriveControlOutput();
 	double thresholdPassInverter = 1;	// when driving past the threshold, we will invert this value to avoid driving in a negative directoin
@@ -86,7 +87,7 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 		std::cout << "!!! Detected Halt on Intake Pickup! \n";
 		return true;
 	} else {
-		const double crabSpeed = currentPIDOutput * ((reverse) ? -1.0 : 1.0);
+		const double crabSpeed = speed * ((reverse) ? -1.0 : 1.0);
 
 		RampUtil ru;
 		double profiledSpeed = crabSpeed * thresholdPassInverter;
