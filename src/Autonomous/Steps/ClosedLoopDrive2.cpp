@@ -27,13 +27,11 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 		const double targetAngle = (!useCurrentAngle) ? angle : RobotMap::gyro->GetYaw();
 		Robot::driveBase->SetTargetAngle(targetAngle);
 
-		std::cout << "Setting Target Drive Distance:" << targetSetpoint << "| Speed:" << speed << "/n";
+		std::cout << "Setting Target Drive Distance:" << targetSetpoint << "| Speed:" << speed << "\n";
 		Robot::driveBase->SetTargetDriveDistance(targetSetpoint, speed);
 		Robot::driveBase->UseClosedLoopDrive();
 
 		startEncoderPosition = Robot::driveBase->GetDriveControlEncoderPosition();
-
-
 	}
 
 	const double currentEncoderPosition = Robot::driveBase->GetDriveControlEncoderPosition();
@@ -45,14 +43,14 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 	SmartDashboard::PutNumber("PIDController Output", currentPIDOutput);
 	std::cout << "XYPIDControlledDrive target setpoint          = " << targetSetpoint << "\n";
 	std::cout << "XYPIDControlledDrive Current Encoder Position = " << currentEncoderPosition << "\n";
-	std::cout << "XYPIDControlledDrive Current Error            = " << currentError << "\n";
-	std::cout << "XYPIDControlledDrive Current Threshold        = " << DriveUnit::ToPulses(distanceThreshold, units) << "\n";
-	std::cout << "XYPIDControlledDrive PID Output:              " << currentPIDOutput << "\n";
+//	std::cout << "XYPIDControlledDrive Current Error            = " << currentError << "\n";
+//	std::cout << "XYPIDControlledDrive Current Threshold        = " << DriveUnit::ToPulses(distanceThreshold, units) << "\n";
+//	std::cout << "XYPIDControlledDrive PID Output:              " << currentPIDOutput << "\n";
 
 
-	std::cout << "Start Time  : " << startTime << "\n";
+//	std::cout << "Start Time  : " << startTime << "\n";
 	std::cout << "Elapsed Time: " << elapsedTimeSecs << "\n";
-	std::cout << "Clock: " << world->GetClock() << "\n";
+//	std::cout << "Clock: " << world->GetClock() << "\n";
 
 
 	SmartDashboard::PutNumber("DriveControl P", Robot::driveBase->GetDriveControlP());
@@ -63,7 +61,7 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 			thresholdPassInverter = -1.0;	// FIXME: Weirdness
 			doExit = true;
 		}
-	} else if (abs(currentError) <= DriveUnit::ToPulses(distanceThreshold, units)) {
+	} else if (currentEncoderPosition > targetSetpoint) {
 		if (thresholdCounter++ >= thresholdCounterTarget) {
 			std::cout << "!!!Position reached in " << elapsedTimeSecs << "\n";
 			crab->Stop();
@@ -102,10 +100,10 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 		const double xspeed = profiledSpeed * sin(angleRadians);
 		const double yspeed = profiledSpeed * cos(angleRadians);
 
-		std::cout << "XYPIDController crabSpeed = " << crabSpeed << "\n";
-		std::cout << "XYPIDController angleRads = " << angleRadians << "\n";
-		std::cout << "XYPIDController xspeed    = " << xspeed << "\n";
-		std::cout << "XYPIDController yspeed    = " << yspeed << "\n";
+//		std::cout << "XYPIDController crabSpeed = " << crabSpeed << "\n";
+//		std::cout << "XYPIDController angleRads = " << angleRadians << "\n";
+//		std::cout << "XYPIDController xspeed    = " << xspeed << "\n";
+//		std::cout << "XYPIDController yspeed    = " << yspeed << "\n";
 
 
 		const double twistOutput =  (elapsedTimeSecs < rampUp) ? 0.0 : Robot::driveBase->GetTwistControlOutput();

@@ -27,6 +27,8 @@ double FrontTwoAveragingDriveEncoderPIDSource::PIDGet() {
 	error.FL = fabs(motor.FL->GetSelectedSensorPosition(0) - initialEncoderValue.FL);
 	error.FR = fabs(motor.FR->GetSelectedSensorPosition(0) - initialEncoderValue.FR);
 
+	SmartDashboard::PutNumber("FLEncoderTravel", error.FL);
+	SmartDashboard::PutNumber("FREncoderTravel", error.FR);
 
 	if (showDebug) {
 		std::cout << "AvgDrivePID error.FL " << error.FL << "\n";

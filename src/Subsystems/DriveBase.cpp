@@ -514,7 +514,7 @@ double DriveBase::GetCrabTwistOutput() {
 }
 
 void DriveBase::Instrument() {
-	SmartDashboard::PutNumber("FL V", frontLeftDrive->GetSelectedSensorVelocity(0));
+/*	SmartDashboard::PutNumber("FL V", frontLeftDrive->GetSelectedSensorVelocity(0));
 	SmartDashboard::PutNumber("FR V", frontRightDrive->GetSelectedSensorVelocity(0));
 	SmartDashboard::PutNumber("RL V", rearLeftDrive->GetSelectedSensorVelocity(0));
 	SmartDashboard::PutNumber("RR V", rearRightDrive->GetSelectedSensorVelocity(0));
@@ -528,6 +528,9 @@ void DriveBase::Instrument() {
 	SmartDashboard::PutNumber("FR Pos", frontRightDrive->GetSelectedSensorPosition(0));
 	SmartDashboard::PutNumber("RL Pos", rearLeftDrive->GetSelectedSensorPosition(0));
 	SmartDashboard::PutNumber("RR Pos", rearRightDrive->GetSelectedSensorPosition(0));
+	*/
+	SmartDashboard::PutNumber("RawYaw",RobotMap::gyro->ReadYaw());
+	SmartDashboard::PutNumber("Yaw",RobotMap::gyro->GetYaw());
 }
 
 

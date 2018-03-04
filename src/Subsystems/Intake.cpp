@@ -129,11 +129,11 @@ void Intake::ToggleRotateSolenoidState() {
 }
 
 double Intake::GetLeftIntakeCurrent() {
-	return RobotMap::powerDistributionPanel->GetCurrent(5);
+	return 0;  // RobotMap::powerDistributionPanel->GetCurrent(5);
 }
 
 double Intake::GetRightIntakeCurrent() {
-	return RobotMap::powerDistributionPanel->GetCurrent(10);
+	return 0; //RobotMap::powerDistributionPanel->GetCurrent(10);
 }
 
 void Intake::ResetPickupTriggerState() {

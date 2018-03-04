@@ -16,7 +16,6 @@ private:
 	std::unique_ptr<PigeonIMU> pigeon;
 	float GetOffset();
 	float offset = 0.0;
-	double ReadYaw();
 public:
 	BSGyro(WPI_TalonSRX *talon);
 	virtual ~BSGyro();
@@ -26,6 +25,8 @@ public:
 
     float GetYaw();
     void ZeroYaw();
+
+	double ReadYaw();
 
 };
 

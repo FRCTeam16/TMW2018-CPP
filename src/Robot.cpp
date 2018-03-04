@@ -252,6 +252,7 @@ void Robot::InstrumentSubsystems() {
 	Robot::elevator->Instrument();
 	Robot::intake->Instrument();
 	Robot::mast->Instrument();
+	Robot::driveBase->Instrument();
 
 	autoManager->Instrument();
 

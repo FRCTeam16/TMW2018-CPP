@@ -41,7 +41,14 @@ double BSGyro::ReadYaw() {
 	if (ErrorCode::OK != static_cast<ErrorCode>(errorCode)) {
 		std::cerr << "Error from gyro: " << errorCode << "\n";
 	}
-	return GetOffset() + ypr[0];
+
+	double trimmedYaw = fmod(ypr[0],360.0);
+
+	SmartDashboard::PutNumber("YawOffset", GetOffset());
+	SmartDashboard::PutNumber("PigeonYaw", ypr[0]);
+	SmartDashboard::PutNumber("TrimmedYaw", trimmedYaw);
+
+	return GetOffset() + trimmedYaw;
 }
 
 double BSGyro::PIDGet() {

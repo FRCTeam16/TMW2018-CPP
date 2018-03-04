@@ -72,12 +72,10 @@ void AutoManager::Init(std::shared_ptr<World> world) {
 	std::cout << "AutoMan Init\n";
 
 	const AutoStartPosition selectedPosition = static_cast<AutoStartPosition>(positions->GetSelected());
-	frc::SmartDashboard::PutNumber("Auto Selected Position", selectedPosition);
 	std::cout << "AutoMan Position selectedKey: " << selectedPosition << "\n";
 	world->SetStartPosition(selectedPosition);
 
 	const AutoStrategy selectedKey = static_cast<AutoStrategy>(2);
-	frc::SmartDashboard::PutNumber("Selected Auto", selectedKey);
 	std::cout << "AutoMan Init selectedKey: " << selectedKey << "\n";
 
 	currentStrategy = CreateStrategy(selectedKey, world);
@@ -118,4 +116,6 @@ void AutoManager::Periodic(std::shared_ptr<World> world) {
 void AutoManager::Instrument() {
 	const AutoStrategy selectedKey = static_cast<AutoStrategy>((int) 1);
 	frc::SmartDashboard::PutNumber("Selected Auto", selectedKey);
+	const AutoStartPosition selectedPosition = static_cast<AutoStartPosition>(positions->GetSelected());
+	frc::SmartDashboard::PutNumber("Auto Selected Position", selectedPosition);
 }

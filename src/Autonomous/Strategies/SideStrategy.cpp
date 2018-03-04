@@ -34,6 +34,7 @@ SideStrategy::SideStrategy(std::shared_ptr<World> world) {
 
 	inv = isRight ? 1 : -1;
 	startAngle = -90.0 * inv;
+	std::cout << "Start Angle = " << startAngle << "\n";
 	SetGyroOffset *step = new SetGyroOffset(startAngle);
 	step->Run(world);
 
@@ -79,7 +80,7 @@ void SideStrategy::StartInitialPose() {
 
 
 	steps.push_back(new ConcurrentStep({
-		new TimedDrive(startAngle, 0.0001, 0.0, 0.1, false),
+		new TimedDrive(startAngle, 0.0001, 0.0, poseDelay, false),
 		new Delay(poseDelay),
 		new PositionElevator(Elevator::ElevatorPosition::kSwitch),
 		new PositionMast(Mast::MastPosition::kVertical),
@@ -94,15 +95,19 @@ void SideStrategy::StartInitialPose() {
 void SideStrategy::DoTraverse() {
 	const double firstDriveSpeed = PrefUtil::getSet("AutoSideTraverseSpeed1", 0.5);
 	const double firstDriveX = PrefUtil::getSet("AutoSideTraverseX1", 15.0);
-	const double firstDriveY = PrefUtil::getSet("AutoSideTraverseY1", 216.0);
+	const double firstDriveY = PrefUtil::getSet("AutoSideTraverseY1", 228.0);
 
 	steps.push_back(new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 8.0, 0.5, 30));
 
 	const double secondDriveSpeed = PrefUtil::getSet("AutoSideTraverseSpeed2", 0.3);
-	const double secondDriveX = PrefUtil::getSet("AutoSideTraverseX2", -90.0) * inv;
+	const double secondDriveX = PrefUtil::getSet("AutoSideTraverseX2", -114.0) * inv;
 	const double secondDriveY = PrefUtil::getSet("AutoSideTraverseY2", 0.0);
 
+	steps.push_back(new PositionElevator(Elevator::ElevatorPosition::kHighScale));
 	steps.push_back(new ClosedLoopDrive2(startAngle, secondDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 8.0, 0.5, 30));
+	steps.push_back(new Rotate(-135, 5, 10.0, 1));
+	steps.push_back(new TimedDrive(-135, -1, -1, 1, false));
+	steps.push_back(new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Eject, DelayParam(DelayParam::DelayType::kNone, 0.0), 2.0, -1.0));
 }
 
 
@@ -125,8 +130,8 @@ void SideStrategy::DoSwitchPickup() {
 	const double firstEjectY = PrefUtil::getSet("AutoSideSwitchEjectY1", 142);
 
 	steps.push_back(new ConcurrentStep({
-		new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 8.0, 0.5, -1),
-		new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Eject, DelayParam(DelayParam::DelayType::kPosition, firstEjectY), 2.0, -1.0)
+		new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 24.0, 0.5, -1),
+		new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Eject, DelayParam(DelayParam::DelayType::kPosition, firstEjectY), 2.0, -1)
 	}));
 
 
@@ -138,7 +143,6 @@ void SideStrategy::DoSwitchPickup() {
 
 	steps.push_back(new ConcurrentStep({
 		new ClosedLoopDrive2(startAngle, firstDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 4.0, -1, 6),
-		new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Stop, DelayParam(DelayParam::DelayType::kNone, 0.0), 0.1, -1),
 	}));
 
 
@@ -150,7 +154,8 @@ void SideStrategy::DoSwitchPickup() {
 
 	steps.push_back(new ConcurrentStep({
 		new Rotate(turnAngle, rotateAngleThreshold, 10.0, rotateAngleThresholdScans),
-		new PositionElevator(Elevator::ElevatorPosition::kFloor, DelayParam(DelayParam::DelayType::kTime, 0.5), true)
+		new PositionElevator(Elevator::ElevatorPosition::kFloor, DelayParam(DelayParam::DelayType::kTime, 0.5), true),
+		new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Stop, DelayParam(DelayParam::DelayType::kNone, 0.0), 0.1, -1),
 	}, true));
 
 
@@ -168,7 +173,8 @@ void SideStrategy::DoScaleScale() {
 	const double firstDriveX = PrefUtil::getSet("AutoSideScaleX1", 15.0) * inv;
 	const double firstDriveY = PrefUtil::getSet("AutoSideScaleY1", 313);
 
-	steps.push_back(new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 8.0, 0.5, 30));
+	steps.push_back(new PositionElevator(Elevator::ElevatorPosition::kHighScale));
+	steps.push_back(new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 30.0, 0.5, 30));
 	steps.push_back(new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Eject, DelayParam(DelayParam::DelayType::kNone, 0.0), 2.0, -1.0));
 
 
