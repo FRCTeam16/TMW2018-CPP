@@ -17,9 +17,13 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 		startTime = world->GetClock();
 
 		if (usePickupDistance) {
-			std::cout << "ClosedLoopDrive2 using pickup distance: original = " << XtargetDistance;
-			XtargetDistance += DriveUnit::ToInches(world->GetDriveDistance(), DriveUnit::kPulses);
-			std::cout << " new = " << XtargetDistance << "\n";
+			if (debug) std::cout << "ClosedLoopDrive2 using pickup distance: original = " << XtargetDistance;
+			 double driveDistance = DriveUnit::ToInches(world->GetDriveDistance(), DriveUnit::kPulses);
+			if (invertPickupDistance) {
+				driveDistance *= -1.0;
+			}
+			XtargetDistance += driveDistance;
+			if (debug) std::cout << " new = " << XtargetDistance << "\n";
 		}
 
 		const double hypotenuse = sqrt(XtargetDistance * XtargetDistance + YtargetDistance * YtargetDistance);
@@ -27,7 +31,7 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 		const double targetAngle = (!useCurrentAngle) ? angle : RobotMap::gyro->GetYaw();
 		Robot::driveBase->SetTargetAngle(targetAngle);
 
-		std::cout << "Setting Target Drive Distance:" << targetSetpoint << "| Speed:" << speed << "\n";
+		if (debug) std::cout << "Setting Target Drive Distance:" << targetSetpoint << "| Speed:" << speed << "\n";
 		Robot::driveBase->SetTargetDriveDistance(targetSetpoint, speed);
 		Robot::driveBase->UseClosedLoopDrive();
 
@@ -40,26 +44,28 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 	const double currentPIDOutput = Robot::driveBase->GetDriveControlOutput();
 	double thresholdPassInverter = 1;	// when driving past the threshold, we will invert this value to avoid driving in a negative directoin
 
-	SmartDashboard::PutNumber("PIDController Output", currentPIDOutput);
-	std::cout << "XYPIDControlledDrive target setpoint          = " << targetSetpoint << "\n";
-	std::cout << "XYPIDControlledDrive Current Encoder Position = " << currentEncoderPosition << "\n";
-//	std::cout << "XYPIDControlledDrive Current Error            = " << currentError << "\n";
-//	std::cout << "XYPIDControlledDrive Current Threshold        = " << DriveUnit::ToPulses(distanceThreshold, units) << "\n";
-//	std::cout << "XYPIDControlledDrive PID Output:              " << currentPIDOutput << "\n";
+	if (debug) {
+		SmartDashboard::PutNumber("PIDController Output", currentPIDOutput);
+		std::cout << "XYPIDControlledDrive target setpoint          = " << targetSetpoint << "\n";
+		std::cout << "XYPIDControlledDrive Current Encoder Position = " << currentEncoderPosition << "\n";
+	//	std::cout << "XYPIDControlledDrive Current Error            = " << currentError << "\n";
+	//	std::cout << "XYPIDControlledDrive Current Threshold        = " << DriveUnit::ToPulses(distanceThreshold, units) << "\n";
+	//	std::cout << "XYPIDControlledDrive PID Output:              " << currentPIDOutput << "\n";
 
 
-//	std::cout << "Start Time  : " << startTime << "\n";
-	std::cout << "Elapsed Time: " << elapsedTimeSecs << "\n";
-//	std::cout << "Clock: " << world->GetClock() << "\n";
-
+	//	std::cout << "Start Time  : " << startTime << "\n";
+		std::cout << "Elapsed Time: " << elapsedTimeSecs << "\n";
+	//	std::cout << "Clock: " << world->GetClock() << "\n";
+	}
 
 	SmartDashboard::PutNumber("DriveControl P", Robot::driveBase->GetDriveControlP());
 
 	if (distanceThreshold == -1) {
 		if (currentEncoderPosition > targetSetpoint) {
 			std::cout << "!!!Current encoder passed target\n";
-			thresholdPassInverter = -1.0;	// FIXME: Weirdness
-			doExit = true;
+//			thresholdPassInverter = -1.0;	// FIXME: Weirdness
+//			doExit = true;
+			return true;
 		}
 	} else if (currentEncoderPosition > targetSetpoint) {
 		if (thresholdCounter++ >= thresholdCounterTarget) {
@@ -76,11 +82,11 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 	if (elapsedTimeSecs > timeoutCommand) {
 		std::cerr << "**** EMERGENCY EXIT OF STEP DUE TO TIMEOUT ***\n";
 		crab->Stop();
-		return true;
+		return hardStopsContinueFromStep;
 	} else if (elapsedTimeSecs > 1.0 &&  collisionDetector.Detect()) {
 		std::cerr << "**** EMERGENCY HALT DUE TO COLLISION ****\n";
 		crab->Stop();
-		return true;
+		return hardStopsContinueFromStep;
 	} else if (haltOnIntakePickup && Robot::intake->IsPickupTriggered()) {
 		std::cout << "!!! Detected Halt on Intake Pickup! \n";
 		return true;

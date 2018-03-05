@@ -26,9 +26,9 @@ AutoManager::AutoManager() :
 	std::cout << "AutoManager::Added Strategies\n";
 
 	std::cout << "AutoManager::AutoManager() start\n";
-	positions->AddDefault("2 - Center", AutoStartPosition::kCenter);
+	positions->AddObject("2 - Center", AutoStartPosition::kCenter);
 	positions->AddObject("1 - Left",  AutoStartPosition::kLeft);
-	positions->AddObject("3 - Right", AutoStartPosition::kRight);
+	positions->AddDefault("3 - Right", AutoStartPosition::kRight);
 //	std::cout << "AutoManager::Added Positions\n";
 
 

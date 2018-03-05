@@ -129,8 +129,10 @@ void SideStrategy::DoSwitchPickup() {
 	const double firstDriveY = PrefUtil::getSet("AutoSideSwitchY1", 146);
 	const double firstEjectY = PrefUtil::getSet("AutoSideSwitchEjectY1", 142);
 
+	ClosedLoopDrive2 *step = new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 5.0, 0.5, -1);
+	step->SetHardStopsContinueFromStep(false);
 	steps.push_back(new ConcurrentStep({
-		new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 24.0, 0.5, -1),
+		step,
 		new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Eject, DelayParam(DelayParam::DelayType::kPosition, firstEjectY), 2.0, -1)
 	}));
 
@@ -141,8 +143,10 @@ void SideStrategy::DoSwitchPickup() {
 	const double secondDriveX = PrefUtil::getSet("AutoSideSwitchX2", 0.0) * inv;
 	const double secondDriveY = PrefUtil::getSet("AutoSideSwitchY2", 75.0);
 
+	ClosedLoopDrive2 *step2 = new ClosedLoopDrive2(startAngle, firstDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 4.0, -1, 6);
+	step2->SetHardStopsContinueFromStep(false);
 	steps.push_back(new ConcurrentStep({
-		new ClosedLoopDrive2(startAngle, firstDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 4.0, -1, 6),
+		step2,
 	}));
 
 
@@ -212,6 +216,7 @@ void SideStrategy::DoSecondCubePickup(double robotAngle, double xDriveDistance) 
 
 	ClosedLoopDrive2 *drive = new ClosedLoopDrive2(robotAngle, speed, xDriveDistance, driveY, -1, DriveUnit::Units::kInches, 4.0, 0.5, -1);
 	drive->SetHaltOnIntakePickup(true);
+	drive->SetHardStopsContinueFromStep(false);
 	steps.push_back(new ConcurrentStep({
 		drive,
 		new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Start, DelayParam(DelayParam::DelayType::kNone, 0.0), 0.1, 0.0),
@@ -229,7 +234,7 @@ void SideStrategy::DoSecondCubeScale() {
 	const double Y = PrefUtil::getSet("AutoSidePickupScaleY", 90.0);
 
 	ClosedLoopDrive2 *drive = new ClosedLoopDrive2(driveAngle, speed, X, Y, -1, DriveUnit::Units::kInches, 5.0, 0.5, 12);
-	drive->UsePickupDistance();
+	drive->UsePickupDistance(isLeft);	// use pickup distance as additional x offset, inverting the direction if we are on the left side
 	steps.push_back(new ConcurrentStep({
 		drive,
 		new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Stop, DelayParam(DelayParam::DelayType::kNone, 0.0), 0.1, -1),

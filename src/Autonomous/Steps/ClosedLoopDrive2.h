@@ -32,7 +32,8 @@ public:
 
 	// Custom behaviors
 	void SetHaltOnIntakePickup(bool _halt) { haltOnIntakePickup = _halt; }
-	void UsePickupDistance() { usePickupDistance = true; }
+	void UsePickupDistance(bool _invertDistance = false) { usePickupDistance = true; invertPickupDistance = _invertDistance; }
+	void SetHardStopsContinueFromStep(bool _stay) { hardStopsContinueFromStep = _stay; }
 
 private:
 	void StoreDistance(World* world);
@@ -60,6 +61,10 @@ private:
 
 	bool haltOnIntakePickup = false;	// TODO: replace with strategy
 	bool usePickupDistance = false;
+	bool invertPickupDistance = false;		// whether to invert the direction of the pickup distance
+	bool hardStopsContinueFromStep = true;	// when collisions or timeouts occur, whether to stay on step or continue
+
+	const bool debug = false;
 
 };
 

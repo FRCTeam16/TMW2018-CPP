@@ -22,10 +22,10 @@ bool ConcurrentStep::Run(std::shared_ptr<World> world) {
 	bool finished = true;
 	int counter = 0;
 	for (auto step : steps) {
-		std::cout << "==> ConcurrentStep::Run(): " << counter++ << "\n";
+		if (debug) std::cout << "==> ConcurrentStep::Run(): " << counter++ << "\n";
 		finished &= step->Run(world);
 	}
-	std::cout << "Concurrent::Run complete, finished? " << finished << "\n";
+	if (debug) std::cout << "Concurrent::Run complete, finished? " << finished << "\n";
 	return finished;
 }
 
@@ -34,10 +34,10 @@ const CrabInfo* ConcurrentStep::GetCrabInfo() {
 	WrappedStep *step = steps.front();
 	const bool finished = step->IsFinished();
 	if (haltOnEnd && finished) {
-		std::cout << "ConcurrentStep Drive Step has finished, returning stop.  HaltOnEnd? " << haltOnEnd << "\n";
+		if (debug) std::cout << "ConcurrentStep Drive Step has finished, returning stop.  HaltOnEnd? " << haltOnEnd << "\n";
 		return STOP.get();
 	} else {
-		std::cout << "ConcurrentStep returning real step info [finished? " << finished << "]\n";
+		if (debug) std::cout << "ConcurrentStep returning real step info [finished? " << finished << "]\n";
 		return step->GetStep()->GetCrabInfo();
 	}
 }
