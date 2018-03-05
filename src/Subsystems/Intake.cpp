@@ -27,7 +27,8 @@ Intake::~Intake() {}
 
 void Intake::Init() {
 	intakeSpeed = PrefUtil::getSet("IntakeIntakeSpeed", -1.0);
-	defaultEjectSpeed = PrefUtil::getSet("IntakeEjectSpeed", 1.0);
+	switchEjectSpeed = PrefUtil::getSet("IntakeEjectSpeedSwitch", 1.0);
+	scaleEjectSpeed = PrefUtil::getSet("IntakeEjectSpeedScale", 0.6);
 	double intakeAmpThreshold = PrefUtil::getSet("IntakeAmpThreshold", 15);
 	int intakeAmpThresholdScans = PrefUtil::getSetInt("IntakeAmpThresholdScans", 5);
 	leftIntakeAmpThresholdCounter.reset(new ThresholdCounter(intakeAmpThreshold, intakeAmpThresholdScans));
@@ -97,7 +98,11 @@ void Intake::Stop() {
 }
 
 void Intake::Eject() {
-	Eject(defaultEjectSpeed);
+	double speed = switchEjectSpeed;
+	if (Robot::elevator->IsAboveSwitch()) {
+		speed = scaleEjectSpeed;
+	}
+	Eject(speed);
 }
 
 void Intake::Eject(double speed) {

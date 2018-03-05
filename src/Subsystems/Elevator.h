@@ -48,6 +48,7 @@ public:
 	void IncreaseElevatorPosition();
 	void DecreaseElevatorPosition();
 	void HoldPosition();
+	bool IsAboveSwitch();
 
 	void HoldClimb();
 	void UnholdClimb();

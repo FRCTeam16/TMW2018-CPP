@@ -104,9 +104,19 @@ void SideStrategy::DoTraverse() {
 	const double secondDriveY = PrefUtil::getSet("AutoSideTraverseY2", 0.0);
 
 	steps.push_back(new PositionElevator(Elevator::ElevatorPosition::kHighScale));
-	steps.push_back(new ClosedLoopDrive2(startAngle, secondDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 8.0, 0.5, 30));
-	steps.push_back(new Rotate(-135, 5, 10.0, 1));
-	steps.push_back(new TimedDrive(-135, -1, -1, 1, false));
+	steps.push_back(new ClosedLoopDrive2(startAngle, secondDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 8.0, 0.5, 12));
+
+
+	const double rotateAngle = PrefUtil::getSet("AutoSideTraverseRotate", -180.0);
+	const double driveInX = PrefUtil::getSet("AutoSideTraverseDriveInX", -1);
+	const double driveInY = PrefUtil::getSet("AutoSideTraverseDriveInY", -1);
+	const double driveInTime = PrefUtil::getSet("AutoSideTraverseDriveInTime", 1.0);
+
+	steps.push_back(new Rotate(rotateAngle, 5, 10.0, 1));
+	steps.push_back(new ConcurrentStep({
+		new TimedDrive(rotateAngle, driveInY, driveInX, driveInTime, false),
+		new IntakeSolenoidWithDelay(true, DelayParam(DelayParam::DelayType::kNone, 0.0), 1.0)
+	}));
 	steps.push_back(new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Eject, DelayParam(DelayParam::DelayType::kNone, 0.0), 2.0, -1.0));
 }
 
@@ -185,7 +195,7 @@ void SideStrategy::DoScaleScale() {
 
 
 	const double secondDriveSpeed = PrefUtil::getSet("AutoSideScaleSpeed2", 0.3);
-	const double secondDriveX = PrefUtil::getSet("AutoSideScaleX2", 0.0);
+	const double secondDriveX = PrefUtil::getSet("AutoSideScaleX2", 0.0) * inv;
 	const double secondDriveY = PrefUtil::getSet("AutoSideScaleY2", -79.0);
 	const double secondDriveRampUp = PrefUtil::getSet("AutoSideScaleRampUp", 0.5);
 	const double secondDriveRampDown = PrefUtil::getSet("AutoSideScaleRampDown", 10);

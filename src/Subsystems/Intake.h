@@ -57,7 +57,8 @@ private:
 	 bool extendSolenoidState = true;
 	 bool rotateSolenoidState = false;
 	 double intakeSpeed = 1.0;
-	 double defaultEjectSpeed = -1.0;
+	 double switchEjectSpeed = 1.0;
+	 double scaleEjectSpeed = 0.75;
 	 bool pickupTriggered = false;
 	 std::shared_ptr<ThresholdCounter> leftIntakeAmpThresholdCounter;
 	 std::shared_ptr<ThresholdCounter> rightIntakeAmpThresholdCounter;

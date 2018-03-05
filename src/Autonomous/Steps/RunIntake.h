@@ -17,7 +17,7 @@ public:
 			Robot::intake->Start();
 		} else if (eject) {
 			std::cout << "RunIntake->Eject\n";
-			Robot::intake->Eject();
+			Robot::intake->Eject(1.0);
 		} else {
 			std::cout << "RunIntake->Stop\n";
 			Robot::intake->Stop();

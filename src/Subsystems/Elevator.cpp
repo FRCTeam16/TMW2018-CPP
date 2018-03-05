@@ -135,6 +135,12 @@ void Elevator::DecreaseElevatorPosition() {
 	}
 }
 
+bool Elevator::IsAboveSwitch() {
+	const double threshold = Preferences::GetInstance()->GetDouble("ElevatorPosSwitch", 23900);
+	const double current = mainElevatorMotor->GetSelectedSensorPosition(0);
+	return current > threshold;
+}
+
 
 void Elevator::HoldPosition() {
 	if (RunMode::kManual == runMode) {
