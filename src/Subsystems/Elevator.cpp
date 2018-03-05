@@ -107,7 +107,7 @@ void Elevator::SetElevatorSetpoint(int _setpoint) {
 bool Elevator::InPosition() {
     double error = setpoint - mainElevatorMotor->GetSelectedSensorPosition(0);
     bool inPosition = (abs(error) < elevatorPositionThreshold);
-	std::cout << "Elevator in position: " << inPosition << "\n";
+//	std::cout << "Elevator in position: " << inPosition << "\n";
 	return inPosition;
 }
 

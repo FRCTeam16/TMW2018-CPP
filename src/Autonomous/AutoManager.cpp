@@ -1,10 +1,3 @@
-/*
- * AutoManager.cpp
- *
- *  Created on: Feb 9, 2017
- *      Author: User
- */
-
 #include <Autonomous/AutoManager.h>
 #include "AutoPositions.h"
 #include "../RobotMap.h"
@@ -20,20 +13,21 @@ AutoManager::AutoManager() :
 		positions(new frc::SendableChooser<int>()),
 		strategies(new frc::SendableChooser<int>())
 {
-	strategies->AddObject("1 - Center Switch", AutoStrategy::kCenterSwitch);
-	strategies->AddDefault("2 - Side Start", AutoStrategy::kSide);
-	strategies->AddObject("3 - Debug Auto Strategy", AutoStrategy::kDebug);
+	strategies->AddObject("0 - Center Switch", AutoStrategy::kCenterSwitch);
+	strategies->AddDefault("1 - Side Start", AutoStrategy::kSide);
+	strategies->AddObject("2 - Debug Auto Strategy", AutoStrategy::kDebug);
 	std::cout << "AutoManager::Added Strategies\n";
 
 	std::cout << "AutoManager::AutoManager() start\n";
-	positions->AddObject("2 - Center", AutoStartPosition::kCenter);
-	positions->AddObject("1 - Left",  AutoStartPosition::kLeft);
-	positions->AddDefault("3 - Right", AutoStartPosition::kRight);
+	positions->AddDefault("2 - Right", AutoStartPosition::kRight);
+	positions->AddObject("1 - Center", AutoStartPosition::kCenter);
+	positions->AddObject("0 - Left",  AutoStartPosition::kLeft);
+
 //	std::cout << "AutoManager::Added Positions\n";
 
 
-	frc::SmartDashboard::PutData("Autonomous Start Pos", positions.get());
-	frc::SmartDashboard::PutData("Autonomous Strategy7", strategies.get());
+	frc::SmartDashboard::PutData("Autonomous Start Pos0", positions.get());
+	frc::SmartDashboard::PutData("Autonomous Strategy0", strategies.get());
 	std::cout << "AutoManager::AutoManager() finished\n";
 }
 
@@ -75,7 +69,7 @@ void AutoManager::Init(std::shared_ptr<World> world) {
 	std::cout << "AutoMan Position selectedKey: " << selectedPosition << "\n";
 	world->SetStartPosition(selectedPosition);
 
-	const AutoStrategy selectedKey = static_cast<AutoStrategy>(2);
+	const AutoStrategy selectedKey = static_cast<AutoStrategy>(strategies->GetSelected());
 	std::cout << "AutoMan Init selectedKey: " << selectedKey << "\n";
 
 	currentStrategy = CreateStrategy(selectedKey, world);
@@ -114,8 +108,9 @@ void AutoManager::Periodic(std::shared_ptr<World> world) {
 }
 
 void AutoManager::Instrument() {
-	const AutoStrategy selectedKey = static_cast<AutoStrategy>((int) 1);
+	const AutoStrategy selectedKey = static_cast<AutoStrategy>(strategies->GetSelected());
 	frc::SmartDashboard::PutNumber("Selected Auto", selectedKey);
+
 	const AutoStartPosition selectedPosition = static_cast<AutoStartPosition>(positions->GetSelected());
 	frc::SmartDashboard::PutNumber("Auto Selected Position", selectedPosition);
 }

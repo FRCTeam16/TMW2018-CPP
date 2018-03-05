@@ -37,7 +37,7 @@ bool PositionElevator::Run(std::shared_ptr<World> world) {
 	}
 
 	if (targetHit) {
-		std::cout << "Delay Param target hit, requesting elevator position: " << position << "\n";
+//		std::cout << "Delay Param target hit, requesting elevator position: " << position << "\n";
 		Robot::elevator->SetElevatorPosition(position);
 		sentPosition = true;
 	}

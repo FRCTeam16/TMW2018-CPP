@@ -23,7 +23,7 @@ public:
 
 private:
 	enum AutoStrategy {
-		kDebug = 0, kCenterSwitch, kSide
+		kCenterSwitch = 0, kSide = 1, kDebug = 2
 	};
 
 	std::shared_ptr<frc::SendableChooser<int>> positions;
