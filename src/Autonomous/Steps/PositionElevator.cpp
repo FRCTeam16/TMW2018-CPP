@@ -4,9 +4,8 @@
 #include "DelayParam.h"
 
 bool PositionElevator::Run(std::shared_ptr<World> world) {
-	std::cout << "PositionElevator::Run()\n";
 	const bool useDelay = DelayParam::DelayType::kNone != delayParam.delayType;
-	std::cout << "Position Elevator using delay? " << useDelay << "\n";
+	std::cout << "PositionElevator::Run(useDelay? " << useDelay << " )\n";
 
 	 if (firstRun) {
 		firstRun = false;
@@ -38,7 +37,7 @@ bool PositionElevator::Run(std::shared_ptr<World> world) {
 	}
 
 	if (targetHit) {
-		std::cout << "Delay Param target hit, requesting position: " << position << "\n";
+		std::cout << "Delay Param target hit, requesting elevator position: " << position << "\n";
 		Robot::elevator->SetElevatorPosition(position);
 		sentPosition = true;
 	}

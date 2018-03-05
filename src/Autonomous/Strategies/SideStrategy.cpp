@@ -128,8 +128,9 @@ void SideStrategy::DoSwitchPickup() {
 	const double firstDriveX = PrefUtil::getSet("AutoSideSwitchX1", 0.0) * inv;
 	const double firstDriveY = PrefUtil::getSet("AutoSideSwitchY1", 146);
 	const double firstEjectY = PrefUtil::getSet("AutoSideSwitchEjectY1", 142);
+	const double firstRampUp = PrefUtil::getSet("AutoSideSwitchRampUp1", 0.5);
 
-	ClosedLoopDrive2 *step = new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 5.0, 0.5, -1);
+	ClosedLoopDrive2 *step = new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 5.0, firstRampUp, -1);
 	step->SetHardStopsContinueFromStep(false);
 	steps.push_back(new ConcurrentStep({
 		step,
@@ -142,8 +143,9 @@ void SideStrategy::DoSwitchPickup() {
 	//
 	const double secondDriveX = PrefUtil::getSet("AutoSideSwitchX2", 0.0) * inv;
 	const double secondDriveY = PrefUtil::getSet("AutoSideSwitchY2", 75.0);
+	const double secondRampDown = PrefUtil::getSet("AutoSideSwitchRampDown2", 6.0);
 
-	ClosedLoopDrive2 *step2 = new ClosedLoopDrive2(startAngle, firstDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 4.0, -1, 6);
+	ClosedLoopDrive2 *step2 = new ClosedLoopDrive2(startAngle, firstDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 4.0, -1, secondRampDown);
 	step2->SetHardStopsContinueFromStep(false);
 	steps.push_back(new ConcurrentStep({
 		step2,
@@ -185,9 +187,11 @@ void SideStrategy::DoScaleScale() {
 	const double secondDriveSpeed = PrefUtil::getSet("AutoSideScaleSpeed2", 0.3);
 	const double secondDriveX = PrefUtil::getSet("AutoSideScaleX2", 0.0);
 	const double secondDriveY = PrefUtil::getSet("AutoSideScaleY2", -79.0);
+	const double secondDriveRampUp = PrefUtil::getSet("AutoSideScaleRampUp", 0.5);
+	const double secondDriveRampDown = PrefUtil::getSet("AutoSideScaleRampDown", 10);
 
 	steps.push_back(new ConcurrentStep({
-		new ClosedLoopDrive2(startAngle, secondDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 8.0, 0.5, 30),
+		new ClosedLoopDrive2(startAngle, secondDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 8.0, secondDriveRampUp, secondDriveRampDown),
 		new PositionElevator(Elevator::ElevatorPosition::kFloor, true),
 		new IntakeSolenoidWithDelay(true, DelayParam(DelayParam::DelayType::kNone, 0.0), 1.0)
 	}));
@@ -233,7 +237,7 @@ void SideStrategy::DoSecondCubeScale() {
 	const double X = PrefUtil::getSet("AutoSidePickupScaleX", 12) * inv;
 	const double Y = PrefUtil::getSet("AutoSidePickupScaleY", 90.0);
 
-	ClosedLoopDrive2 *drive = new ClosedLoopDrive2(driveAngle, speed, X, Y, -1, DriveUnit::Units::kInches, 5.0, 0.5, 12);
+	ClosedLoopDrive2 *drive = new ClosedLoopDrive2(driveAngle, speed, X, Y, -1, DriveUnit::Units::kInches, 5.0, 0.5, -1);
 	drive->UsePickupDistance(isLeft);	// use pickup distance as additional x offset, inverting the direction if we are on the left side
 	steps.push_back(new ConcurrentStep({
 		drive,
