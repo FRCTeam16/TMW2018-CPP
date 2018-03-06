@@ -26,7 +26,7 @@ void StatusReporter::Run() {
 }
 
 void StatusReporter::SendData() {
-	const int DATA_SIZE = 2;
+	const int DATA_SIZE = 8;
 	uint8_t data[DATA_SIZE];
 	data[0] = DriverStation::Alliance::kRed == DriverStation::GetInstance().GetAlliance();
 	data[1] = map(DriverStation::GetInstance().GetMatchTime(), 0, 135, 135, 0);
