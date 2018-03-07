@@ -14,7 +14,9 @@
 class CenterSwitchStrategy: public StepStrategy {
 public:
 	CenterSwitchStrategy(std::shared_ptr<World> world);
-	virtual ~CenterSwitchStrategy();
+	virtual ~CenterSwitchStrategy() {}
+private:
+	void DoTimedDrive(World *world);
 };
 
 #endif /* SRC_AUTONOMOUS_STRATEGIES_CENTERSWITCHSTRATEGY_H_ */
