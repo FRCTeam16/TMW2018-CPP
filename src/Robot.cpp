@@ -78,8 +78,6 @@ void Robot::TeleopPeriodic() {
 	double startTime = frc::Timer::GetFPGATimestamp();
 	frc::Scheduler::GetInstance()->Run();
 	double threshold = 0.1;
-	bool lockAngle = false;
-	double lockedAngle = 0.0;
 
 
 	if (oi->GPRB->RisingEdge()) {
@@ -175,12 +173,12 @@ void Robot::TeleopPeriodic() {
 
 
 	const bool speedModeTest = oi->DL7->Pressed();
-	if (oi->DL7->RisingEdge()) {
+	/*if (oi->DL7->RisingEdge()) {
 		driveBase->UseClosedLoopDrive();
 	}
 	if (oi->DL7->FallingEdge()) {
 		driveBase->UseOpenLoopDrive();
-	}
+	}*/
 
 	/*
 		Drive Control
@@ -196,7 +194,8 @@ void Robot::TeleopPeriodic() {
 
 	double start = frc::Timer::GetFPGATimestamp();
 	if (speedModeTest) {
-		driveBase->SetConstantVelocity(twistInput, 0.38);
+		driveBase->SetConstantVelocity(twistInput, 0.60);
+		driveBase->Diagnostics();
 	} else if (!lockWheels) {
 		driveBase->Crab(
 				twistInput,

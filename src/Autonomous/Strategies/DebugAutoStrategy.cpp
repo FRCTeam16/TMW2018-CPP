@@ -43,7 +43,7 @@ void DebugAutoStrategy::Init(std::shared_ptr<World> world) {
 DebugAutoStrategy::DebugAutoStrategy(std::shared_ptr<World> world) {
 //	SwitchScale(world);
 //	ScalePickup(world);
-	CrossField(world);
+//	CrossField(world);
 }
 
 void DebugAutoStrategy::CrossField(std::shared_ptr<World> world) {

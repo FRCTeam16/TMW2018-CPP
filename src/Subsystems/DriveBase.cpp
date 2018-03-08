@@ -533,4 +533,16 @@ void DriveBase::Instrument() {
 	SmartDashboard::PutNumber("Yaw",RobotMap::gyro->GetYaw());
 }
 
+void DriveBase::Diagnostics() {
+	frc::SmartDashboard::PutNumber("FL V", frontLeftDrive->GetSelectedSensorVelocity(0));
+	frc::SmartDashboard::PutNumber("FR V", frontRightDrive->GetSelectedSensorVelocity(0));
+	frc::SmartDashboard::PutNumber("RL V", rearLeftDrive->GetSelectedSensorVelocity(0));
+	frc::SmartDashboard::PutNumber("RR V", rearRightDrive->GetSelectedSensorVelocity(0));
+
+	frc::SmartDashboard::PutNumber("FL A", frontLeftDrive->GetOutputCurrent());
+	frc::SmartDashboard::PutNumber("FR A", frontRightDrive->GetOutputCurrent());
+	frc::SmartDashboard::PutNumber("RL A", rearLeftDrive->GetOutputCurrent());
+	frc::SmartDashboard::PutNumber("RR A", rearRightDrive->GetOutputCurrent());
+}
+
 

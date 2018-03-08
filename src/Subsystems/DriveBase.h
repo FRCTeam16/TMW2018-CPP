@@ -121,6 +121,7 @@ public:
 	void SetConstantVelocity(double twistInput, double velocity);
 
 	void Instrument();
+	void Diagnostics();	// used for more detailed diagnostics displayed on smart dashboard
 
 	std::unique_ptr<PIDController> driveControlSpeedController;
 
