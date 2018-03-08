@@ -26,6 +26,8 @@ public:
 	void Next();
 	void Previous();
 
+	void DoCurlOverride();
+
 private:
 	ClimbState currentState = ClimbState::kDisabled;
 	ClimbState nextState = ClimbState::kDisabled;

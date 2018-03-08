@@ -50,6 +50,16 @@ void ClimbProcess::Next() {
 	}
 }
 
+void ClimbProcess::DoCurlOverride() {
+	inProgress = true;
+	nextState = static_cast<ClimbState>(kCurledUp);
+	currentState = kRotatedDown;
+	LoadTransition(currentState);
+	activeTransition->Initialize(true);
+	lastDirection = kForward;
+	std::cout << "******************************** Manually Set to Do Curl!!" << "\n";
+}
+
 
 void ClimbProcess::Previous() {
 	if (lastDirection != kBackward) {
@@ -69,7 +79,7 @@ void ClimbProcess::Previous() {
 	}
 }
 
-
+// FIXME: This needs to use passed in argument, not currentState
 void ClimbProcess::LoadTransition(ClimbProcess::ClimbState state) {
 	StateTransition *transition;
 	switch (currentState) {
@@ -92,6 +102,7 @@ void ClimbProcess::LoadTransition(ClimbProcess::ClimbState state) {
 	}
 	activeTransition.reset(transition);
 }
+
 
 void ClimbProcess::Instrument() {
     SmartDashboard::PutNumber("ClimbProcess State", currentState);

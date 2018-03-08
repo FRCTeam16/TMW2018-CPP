@@ -144,6 +144,7 @@ void SideStrategy::DoSwitchPickup() {
 	step->SetHardStopsContinueFromStep(false);
 	steps.push_back(new ConcurrentStep({
 		step,
+		new IntakeSolenoidWithDelay(true, DelayParam(DelayParam::DelayType::kNone, 0.0), 1.0),
 		new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Eject, DelayParam(DelayParam::DelayType::kPosition, firstEjectY), 2.0, -1)
 	}));
 

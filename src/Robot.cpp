@@ -84,6 +84,8 @@ void Robot::TeleopPeriodic() {
 		climbProcess->Next();
 	} else if (oi->GPLB->RisingEdge()) {
 		climbProcess->Previous();
+	} else if (OI::DPad::kUp == oi->GetGamepadDPad()) {
+		climbProcess->DoCurlOverride();
 	}
 
 	bool lockWheels = false;
@@ -133,9 +135,11 @@ void Robot::TeleopPeriodic() {
 		elevator->SetOpenLoopPercent(-elevatorDown);
 	} else if (elevatorUp > threshold) {
 		elevator->SetOpenLoopPercent(elevatorUp);
-	} else if (OI::DPad::kUp == oi->GetGamepadDPad()) {
+	}
+	/*else if (OI::DPad::kUp == oi->GetGamepadDPad()) {
 		elevator->SetElevatorSetpoint(PrefUtil::getSet("ElevatorPosPortal", 19203));
-	} else {
+	}*/
+	else {
 		elevator->HoldPosition();
 	}
 
