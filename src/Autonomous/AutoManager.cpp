@@ -15,7 +15,8 @@ AutoManager::AutoManager() :
 {
 	strategies->AddObject("0 - Center Switch", AutoStrategy::kCenterSwitch);
 	strategies->AddDefault("1 - Side Start", AutoStrategy::kSide);
-	strategies->AddObject("2 - Debug Auto Strategy", AutoStrategy::kDebug);
+	strategies->AddObject("2 - Team Side Start", AutoStrategy::kTeammateSide);
+	strategies->AddObject("99 - Debug Auto Strategy", AutoStrategy::kDebug);
 	std::cout << "AutoManager::Added Strategies\n";
 
 	std::cout << "AutoManager::AutoManager() start\n";
@@ -27,7 +28,7 @@ AutoManager::AutoManager() :
 
 
 	frc::SmartDashboard::PutData("Autonomous Start Pos0", positions.get());
-	frc::SmartDashboard::PutData("Autonomous Strategy0", strategies.get());
+	frc::SmartDashboard::PutData("Autonomous Strategy1", strategies.get());
 	std::cout << "AutoManager::AutoManager() finished\n";
 }
 
@@ -52,6 +53,11 @@ std::unique_ptr<Strategy> AutoManager::CreateStrategy(const AutoStrategy &key, s
 		break;
 	case kSide:
 		std::cout << "AUTOMAN: Selected Side Strategy\n";
+		strategy = new SideStrategy(world);
+		break;
+	case kTeammateSide:
+		std::cout << "AUTOMAN: Selected Teammate Side Strategy\n";
+		world->SetTeamSideMode(true);
 		strategy = new SideStrategy(world);
 		break;
 	default:

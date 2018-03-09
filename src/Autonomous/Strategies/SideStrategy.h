@@ -15,10 +15,14 @@ private:
 	bool isRight = false;
 	int inv = 1;			// invert angle multiplier (should be for left starts)
 	double startAngle;		// initial orientation of robot
+	bool teamSideMode = false;
 
 	void StartInitialPose();	// run before other code paths to begin configuring robot pose
 	void DoSwitchScale();		// runs a switch score - pickup - scale score
-	void DoScaleScale();		// runs a scale - pickup - scale
+
+	void DoFirstScale();		// first cube scale
+	void DoSecondScale();		// second cube scale after intitial score
+
 	void DoSwitchPickup();		// runs a switch score - pickup
 	void DoTraverse();			// runs a traverse
 

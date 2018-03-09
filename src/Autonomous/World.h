@@ -22,6 +22,7 @@ private:
 	AutoStartPosition startPosition;
 
 	double driveDistance = 0;
+	bool teamSideMode = false;
 public:
 	World();
 	virtual ~World() {}
@@ -35,6 +36,9 @@ public:
 
 	void SetDriveDistance(double d) { driveDistance = d; }
 	double GetDriveDistance() { return driveDistance; }
+
+	void SetTeamSideMode(bool _mode) { teamSideMode = _mode; }
+	bool GetTeamSideMode() { return teamSideMode; }
 };
 
 #endif /* SRC_AUTONOMOUS_WORLD_H_ */

@@ -31,6 +31,7 @@ SideStrategy::SideStrategy(std::shared_ptr<World> world) {
 
 	isLeft = AutoStartPosition::kLeft == startPosition;
 	isRight = AutoStartPosition::kRight == startPosition;
+	teamSideMode = world->GetTeamSideMode();
 
 	inv = isRight ? 1 : -1;
 	startAngle = -90.0 * inv;
@@ -59,13 +60,21 @@ SideStrategy::SideStrategy(std::shared_ptr<World> world) {
 
 
 	if (haveSwitch && haveScale) {
-		DoSwitchScale();
+		if (!teamSideMode) {
+			DoSwitchScale();
+		} else {
+			// Assumes teammate will hit switch for us, so we'll target the scale
+			DoSwitchPickup();	// will only eject if teamSideMode = true
+		}
 	} else if (haveSwitch && !haveScale) {
-		DoSwitchPickup();
+		DoSwitchPickup();	// internal switch whether to do eject only
 	} else if (!haveSwitch && haveScale) {
-		DoScaleScale();
+		DoFirstScale();
+		if (!teamSideMode) {
+			DoSecondScale();
+		}
 	} else {
-		DoTraverse();
+		DoTraverse();	// internal switch whether to drive in based on teamSideMode
 	}
 }
 
@@ -76,8 +85,9 @@ SideStrategy::SideStrategy(std::shared_ptr<World> world) {
  * Allows minimization of structural forces which affect drive accuracy.
  */
 void SideStrategy::StartInitialPose() {
-	const double poseDelay = PrefUtil::getSet("AutoSideInitialPoseDelay", 4.0);
-
+	const double poseDelay = (!teamSideMode) ?
+			PrefUtil::getSet("AutoSideInitialPoseDelay", 1.0) :
+			PrefUtil::getSet("AutoSideTeamInitialPoseDelay", 2.5);
 
 	steps.push_back(new ConcurrentStep({
 		new TimedDrive(startAngle, 0.0001, 0.0, poseDelay, false),
@@ -99,25 +109,27 @@ void SideStrategy::DoTraverse() {
 
 	steps.push_back(new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 8.0, 0.5, 30));
 
-	const double secondDriveSpeed = PrefUtil::getSet("AutoSideTraverseSpeed2", 0.3);
-	const double secondDriveX = PrefUtil::getSet("AutoSideTraverseX2", -114.0) * inv;
-	const double secondDriveY = PrefUtil::getSet("AutoSideTraverseY2", 0.0);
+	if (!teamSideMode) {
+		const double secondDriveSpeed = PrefUtil::getSet("AutoSideTraverseSpeed2", 0.3);
+		const double secondDriveX = PrefUtil::getSet("AutoSideTraverseX2", -114.0) * inv;
+		const double secondDriveY = PrefUtil::getSet("AutoSideTraverseY2", 0.0);
 
-	steps.push_back(new PositionElevator(Elevator::ElevatorPosition::kHighScale));
-	steps.push_back(new ClosedLoopDrive2(startAngle, secondDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 8.0, 0.5, 12));
+		steps.push_back(new PositionElevator(Elevator::ElevatorPosition::kHighScale));
+		steps.push_back(new ClosedLoopDrive2(startAngle, secondDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 8.0, 0.5, 12));
 
 
-	const double rotateAngle = PrefUtil::getSet("AutoSideTraverseRotate", -180.0);
-	const double driveInX = PrefUtil::getSet("AutoSideTraverseDriveInX", -1);
-	const double driveInY = PrefUtil::getSet("AutoSideTraverseDriveInY", -1);
-	const double driveInTime = PrefUtil::getSet("AutoSideTraverseDriveInTime", 1.0);
+		const double rotateAngle = PrefUtil::getSet("AutoSideTraverseRotate", -180.0);
+		const double driveInX = PrefUtil::getSet("AutoSideTraverseDriveInX", -1);
+		const double driveInY = PrefUtil::getSet("AutoSideTraverseDriveInY", -1);
+		const double driveInTime = PrefUtil::getSet("AutoSideTraverseDriveInTime", 1.0);
 
-	steps.push_back(new Rotate(rotateAngle, 5, 10.0, 1));
-	steps.push_back(new ConcurrentStep({
-		new TimedDrive(rotateAngle, driveInY, driveInX, driveInTime, false),
-		new IntakeSolenoidWithDelay(true, DelayParam(DelayParam::DelayType::kNone, 0.0), 1.0)
-	}));
-	steps.push_back(new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Eject, DelayParam(DelayParam::DelayType::kNone, 0.0), 2.0, -1.0));
+		steps.push_back(new Rotate(rotateAngle, 5, 10.0, 1));
+		steps.push_back(new ConcurrentStep({
+			new TimedDrive(rotateAngle, driveInY, driveInX, driveInTime, false),
+			new IntakeSolenoidWithDelay(true, DelayParam(DelayParam::DelayType::kNone, 0.0), 1.0)
+		}));
+		steps.push_back(new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Eject, DelayParam(DelayParam::DelayType::kNone, 0.0), 2.0, -1.0));
+	}
 }
 
 
@@ -148,44 +160,42 @@ void SideStrategy::DoSwitchPickup() {
 		new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Eject, DelayParam(DelayParam::DelayType::kPosition, firstEjectY), 2.0, -1)
 	}));
 
+	if (!teamSideMode) {
+		//
+		// Drive to location to prepare for second cube pickup
+		//
+		const double secondDriveX = PrefUtil::getSet("AutoSideSwitchX2", 0.0) * inv;
+		const double secondDriveY = PrefUtil::getSet("AutoSideSwitchY2", 75.0);
+		const double secondRampDown = PrefUtil::getSet("AutoSideSwitchRampDown2", 6.0);
 
-	//
-	// Drive to location to prepare for second cube pickup
-	//
-	const double secondDriveX = PrefUtil::getSet("AutoSideSwitchX2", 0.0) * inv;
-	const double secondDriveY = PrefUtil::getSet("AutoSideSwitchY2", 75.0);
-	const double secondRampDown = PrefUtil::getSet("AutoSideSwitchRampDown2", 6.0);
-
-	ClosedLoopDrive2 *step2 = new ClosedLoopDrive2(startAngle, firstDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 4.0, -1, secondRampDown);
-	step2->SetHardStopsContinueFromStep(false);
-	steps.push_back(new ConcurrentStep({
-		step2,
-	}));
-
-
-	// Turn and drop elevator
-	const double rotateAngleOffset = PrefUtil::getSet("AutoSideSwitchRotateAngle", 45.0) * inv;
-	const double turnAngle = startAngle - rotateAngleOffset;
-	const double rotateAngleThreshold = PrefUtil::getSet("AutoSideSwitchRotateAngleThreshold", 10.0);
-	const int rotateAngleThresholdScans = PrefUtil::getSet("AutoSideSwitchRotateAngleThresholdScans", 5);
-
-	steps.push_back(new ConcurrentStep({
-		new Rotate(turnAngle, rotateAngleThreshold, 10.0, rotateAngleThresholdScans),
-		new PositionElevator(Elevator::ElevatorPosition::kFloor, DelayParam(DelayParam::DelayType::kTime, 0.5), true),
-		new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Stop, DelayParam(DelayParam::DelayType::kNone, 0.0), 0.1, -1),
-	}, true));
+		ClosedLoopDrive2 *step2 = new ClosedLoopDrive2(startAngle, firstDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 4.0, -1, secondRampDown);
+		step2->SetHardStopsContinueFromStep(false);
+		steps.push_back(new ConcurrentStep({
+			step2,
+		}));
 
 
-	/************ DOING PICKUP OF SECOND CUBE *****/
-	const double xPickupDistance = PrefUtil::getSet("AutoSideSwitchPickupX", -24.0) * inv;
-	DoSecondCubePickup(turnAngle, xPickupDistance);
+		// Turn and drop elevator
+		const double rotateAngleOffset = PrefUtil::getSet("AutoSideSwitchRotateAngle", 45.0) * inv;
+		const double turnAngle = startAngle - rotateAngleOffset;
+		const double rotateAngleThreshold = PrefUtil::getSet("AutoSideSwitchRotateAngleThreshold", 10.0);
+		const int rotateAngleThresholdScans = PrefUtil::getSet("AutoSideSwitchRotateAngleThresholdScans", 5);
+
+		steps.push_back(new ConcurrentStep({
+			new Rotate(turnAngle, rotateAngleThreshold, 10.0, rotateAngleThresholdScans),
+			new PositionElevator(Elevator::ElevatorPosition::kFloor, DelayParam(DelayParam::DelayType::kTime, 0.5), true),
+			new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Stop, DelayParam(DelayParam::DelayType::kNone, 0.0), 0.1, -1),
+		}, true));
+
+
+		/************ DOING PICKUP OF SECOND CUBE *****/
+		const double xPickupDistance = PrefUtil::getSet("AutoSideSwitchPickupX", -24.0) * inv;
+		DoSecondCubePickup(turnAngle, xPickupDistance);
+	}
 }
 
-/**
-* When we have only scale
-* */
-void SideStrategy::DoScaleScale() {
 
+void SideStrategy::DoFirstScale() {
 	const double firstDriveSpeed = PrefUtil::getSet("AutoSideScaleSpeed1", 0.5);
 	const double firstDriveX = PrefUtil::getSet("AutoSideScaleX1", 15.0) * inv;
 	const double firstDriveY = PrefUtil::getSet("AutoSideScaleY1", 313);
@@ -193,8 +203,12 @@ void SideStrategy::DoScaleScale() {
 	steps.push_back(new PositionElevator(Elevator::ElevatorPosition::kHighScale));
 	steps.push_back(new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 30.0, 0.5, 30));
 	steps.push_back(new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Eject, DelayParam(DelayParam::DelayType::kNone, 0.0), 2.0, -1.0));
+}
 
-
+/**
+* When we have only scale
+* */
+void SideStrategy::DoSecondScale() {
 	const double secondDriveSpeed = PrefUtil::getSet("AutoSideScaleSpeed2", 0.3);
 	const double secondDriveX = PrefUtil::getSet("AutoSideScaleX2", 0.0) * inv;
 	const double secondDriveY = PrefUtil::getSet("AutoSideScaleY2", -79.0);
@@ -204,7 +218,7 @@ void SideStrategy::DoScaleScale() {
 
 	steps.push_back(new ConcurrentStep({
 		new ClosedLoopDrive2(startAngle, secondDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 8.0, secondDriveRampUp, secondDriveRampDown),
-		new PositionElevator(Elevator::ElevatorPosition::kFloor, DelayParam(DelayParam::DelayType::kTime, secondDriveElevatorDelay), true),
+		new PositionElevator(Elevator::ElevatorPosition::kFloor, DelayParam(DelayParam::DelayType::kTime, secondDriveElevatorDelay), false),
 		new IntakeSolenoidWithDelay(true, DelayParam(DelayParam::DelayType::kNone, 0.0), 1.0)
 	}));
 
