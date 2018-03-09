@@ -200,10 +200,11 @@ void SideStrategy::DoScaleScale() {
 	const double secondDriveY = PrefUtil::getSet("AutoSideScaleY2", -79.0);
 	const double secondDriveRampUp = PrefUtil::getSet("AutoSideScaleRampUp", 0.5);
 	const double secondDriveRampDown = PrefUtil::getSet("AutoSideScaleRampDown", 10);
+	const double secondDriveElevatorDelay = PrefUtil::getSet("AutoSideScaleElevatorDelay2", 1.0);
 
 	steps.push_back(new ConcurrentStep({
 		new ClosedLoopDrive2(startAngle, secondDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 8.0, secondDriveRampUp, secondDriveRampDown),
-		new PositionElevator(Elevator::ElevatorPosition::kFloor, true),
+		new PositionElevator(Elevator::ElevatorPosition::kFloor, DelayParam(DelayParam::DelayType::kTime, secondDriveElevatorDelay), true),
 		new IntakeSolenoidWithDelay(true, DelayParam(DelayParam::DelayType::kNone, 0.0), 1.0)
 	}));
 
