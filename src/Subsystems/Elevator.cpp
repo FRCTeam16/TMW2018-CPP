@@ -189,6 +189,11 @@ void Elevator::ShiftHigh() {
 	SetShift(true);
 }
 
+void Elevator::SetHomePosition() {
+	mainElevatorMotor->SetSelectedSensorPosition(0, 0, 0);
+	setpoint = 0;
+}
+
 void Elevator::Instrument() {
 	SmartDashboard::PutNumber("Elevator Position", mainElevatorMotor->GetSelectedSensorPosition(0));
 	SmartDashboard::PutNumber("Elevator Current (Main)", mainElevatorMotor->GetOutputCurrent());

@@ -57,6 +57,8 @@ public:
 	void ShiftLow();
 	void ShiftHigh();
 
+	void SetHomePosition();
+
 
 private:
 	std::shared_ptr<WPI_TalonSRX> mainElevatorMotor = RobotMap::elevatorElevatorMotor1;

@@ -127,6 +127,11 @@ void Robot::TeleopPeriodic() {
 	const double elevatorUp = oi->GetGamepadRT();
 
 
+	if (OI::DPad::kDown == oi->GetGamepadDPad()) {
+		elevator->SetHomePosition();
+	}
+
+
 	if (oi->DL3->RisingEdge()) {
 		elevator->IncreaseElevatorPosition();
 	} else if (oi->DL2->RisingEdge()) {
