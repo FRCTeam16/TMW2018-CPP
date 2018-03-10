@@ -17,12 +17,14 @@ DoLowerRamp::~DoLowerRamp() {
 void DoLowerRamp::Forward() {
 	if (IsFirstRun()) {
 		Robot::mast->SetMastPosition(Mast::MastPosition::kClimb);
+		std::cout << frc::Timer::GetFPGATimestamp() << " DoLowerRamp:Forward | First Run\n";
 	}
 }
 
 void DoLowerRamp::Reverse() {
 	if (IsFirstRun()) {
 		Robot::mast->SetMastPosition(Mast::MastPosition::kVertical);
+		std::cout << frc::Timer::GetFPGATimestamp() << " DoLowerRamp:Reverse | First Run\n";
 	}
 }
 

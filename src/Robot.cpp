@@ -82,10 +82,13 @@ void Robot::TeleopPeriodic() {
 
 	if (oi->GPRB->RisingEdge()) {
 		climbProcess->Next();
+		std::cout << frc::Timer::GetFPGATimestamp() << " GPRB Rising Edge\n";
 	} else if (oi->GPLB->RisingEdge()) {
 		climbProcess->Previous();
+		std::cout << frc::Timer::GetFPGATimestamp() << " GPLB Rising Edge\n";
 	} else if (OI::DPad::kUp == oi->GetGamepadDPad()) {
 		climbProcess->DoCurlOverride();
+		std::cout << frc::Timer::GetFPGATimestamp() << " DPAD-D\n";
 	}
 
 	bool lockWheels = false;

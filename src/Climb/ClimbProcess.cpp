@@ -29,6 +29,7 @@ void ClimbProcess::Run() {
 			currentState = nextState;
 			lastDirection = kNone;
 			activeTransition.reset();
+			std::cout << frc::Timer::GetFPGATimestamp() << " ClimbProcess | Completed Transition\n";
 		}
 	}
 }
@@ -36,10 +37,11 @@ void ClimbProcess::Run() {
 void ClimbProcess::Next() {
 	if (lastDirection != kForward) {
 		if (inProgress) {
-			std::cout << "*** ABORTING ACTIVE CLIMB STEP ***\n";
+			std::cout << "*** REVERSING ACTIVE CLIMB STEP ***\n";
 		}
 		int nextOrdinal = (inProgress) ? currentState : currentState + 1;
 		if (nextOrdinal < NUM_CLIMB_STATES) {
+			std::cout << frc::Timer::GetFPGATimestamp() << " ClimbProcess:Next | Initializing to Run\n";
 			inProgress = true;
 			nextState = static_cast<ClimbState>(nextOrdinal);
 			LoadTransition(currentState);
@@ -64,11 +66,12 @@ void ClimbProcess::DoCurlOverride() {
 void ClimbProcess::Previous() {
 	if (lastDirection != kBackward) {
 		if (inProgress) {
-			std::cout << "*** ABORTING ACTIVE CLIMB STEP ***\n";
+			std::cout << "*** REVERSING ACTIVE CLIMB STEP ***\n";
 		}
 		// When reversing, transition based on previous (i.e. next) state action
 		int prevOrdinal = (inProgress) ? currentState : currentState - 1;
 		if (prevOrdinal >= 0) {
+			std::cout << frc::Timer::GetFPGATimestamp() << " ClimbProcess:Previous | Initializing to Run\n";
 			inProgress = true;
 			nextState = static_cast<ClimbState>(prevOrdinal);
 			LoadTransition(nextState);
