@@ -64,7 +64,8 @@ SideStrategy::SideStrategy(std::shared_ptr<World> world) {
 			DoSwitchScale();
 		} else {
 			// Assumes teammate will hit switch for us, so we'll target the scale
-			DoSwitchPickup();	// will only eject if teamSideMode = true
+			//DoSwitchPickup();	// will only eject if teamSideMode = true
+			DoFirstScale();
 		}
 	} else if (haveSwitch && !haveScale) {
 		DoSwitchPickup();	// internal switch whether to do eject only
