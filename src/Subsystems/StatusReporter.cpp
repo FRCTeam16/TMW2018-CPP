@@ -1,15 +1,29 @@
 #include <Subsystems/StatusReporter.h>
+#include <iomanip>
 #include <iostream>
+#include <sstream>
+#include <Robot.h>
 
-static uint8_t map(double x, double in_min, double in_max, uint8_t out_min, uint8_t out_max) {
-	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+using namespace std;
+
+namespace StatusReporterUtil {
+	static uint8_t map(double x, double in_min, double in_max, uint8_t out_min, uint8_t out_max) {
+		return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+	}
 }
 
 
-StatusReporter::StatusReporter(int deviceAddress) {
-	// TODO Auto-generated constructor stub
-	i2c.reset(new I2C(I2C::kOnboard, deviceAddress));
+StatusReporter::StatusReporter() {
+	serial.reset(
+		new SerialPort(
+			9600,
+			SerialPort::Port::kOnboard,
+			8,
+			SerialPort::Parity::kParity_None,
+			SerialPort::StopBits::kStopBits_One));
+
 }
+
 
 void StatusReporter::Run() {
 	frc::SetCurrentThreadPriority(true, 10);
@@ -26,12 +40,35 @@ void StatusReporter::Run() {
 }
 
 void StatusReporter::SendData() {
-	const int DATA_SIZE = 8;
-	uint8_t data[DATA_SIZE];
-	data[0] = DriverStation::Alliance::kRed == DriverStation::GetInstance().GetAlliance();
-	data[1] = map(DriverStation::GetInstance().GetMatchTime(), 0, 135, 135, 0);
+	stringstream ss;
+	const bool isRed = DriverStation::Alliance::kRed == DriverStation::GetInstance().GetAlliance();
+	ss << ((isRed) ? 0 : 1) << delimiter;
+	ss << StatusReporterUtil::map(DriverStation::GetInstance().GetMatchTime(), 0, 135, 135, 0) << delimiter;
 
-	i2c->WriteBulk(data, DATA_SIZE);
+	DriveInfo<int> driveEncoders = Robot::driveBase->GetDriveControlEncoderPosition();
+	DriveInfo<double> driveCurrents = Robot::driveBase->GetDriveCurrent();
+	DriveInfo<int> steerEncoders = Robot::driveBase->GetSteerEncoderPositions();
+	DriveInfo<double> steerCurrents = Robot::driveBase->GetSteerCurrent();
+
+	ss << driveEncoders.FL << delimiter;
+	ss << driveEncoders.FR << delimiter;
+	ss << driveEncoders.RR << delimiter;
+	ss << driveEncoders.RL << delimiter;
+
+	ss << driveCurrents.FL << delimiter;
+	ss << driveCurrents.FR << delimiter;
+	ss << driveCurrents.RR << delimiter;
+	ss << driveCurrents.RL << delimiter;
+
+	ss << steerEncoders.FL << delimiter;
+	ss << steerEncoders.FR << delimiter;
+	ss << steerEncoders.RR << delimiter;
+	ss << steerEncoders.RL << delimiter;
+
+	ss << steerCurrents.FL << delimiter;
+	ss << steerCurrents.FR << delimiter;
+	ss << steerCurrents.RR << delimiter;
+	ss << steerCurrents.RL << delimiter;
+
+	serial->Write(ss.str());
 }
-
-

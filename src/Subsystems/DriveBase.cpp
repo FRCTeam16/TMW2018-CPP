@@ -545,4 +545,39 @@ void DriveBase::Diagnostics() {
 	frc::SmartDashboard::PutNumber("RR A", rearRightDrive->GetOutputCurrent());
 }
 
+DriveInfo<int> DriveBase::GetDriveEncoderPositions() {
+	DriveInfo<int> info;
+	info.FL = frontLeftDrive->GetSelectedSensorPosition(0);
+	info.FR = frontRightDrive->GetSelectedSensorPosition(0);
+	info.RR = rearRightDrive->GetSelectedSensorPosition(0);
+	info.RL = rearLeftDrive->GetSelectedSensorPosition(0);
+	return info;
+}
+
+DriveInfo<double> DriveBase::GetDriveCurrent() {
+	DriveInfo<double> info;
+	info.FL = frontLeftDrive->GetOutputCurrent();
+	info.FR = frontRightDrive->GetOutputCurrent();
+	info.RR = rearRightDrive->GetOutputCurrent();
+	info.RL = rearLeftDrive->GetOutputCurrent();
+	return info;
+}
+ DriveInfo <int> DriveBase:: GetSteerEncoderPositions() {
+ 	 DriveInfo<int> info;
+ 	 info.FL = frontLeftSteer->GetSelectedSensorPosition(0);
+ 	 info.FR = frontRightSteer->GetSelectedSensorPosition(0);
+ 	 info.RR = rearRightSteer->GetSelectedSensorPosition(0);
+ 	 info.RL = rearLeftSteer->GetSelectedSensorPosition(0);
+ 	 return info;
+ }
+
+ DriveInfo <double> DriveBase::GetSteerCurrent() {
+ 	 DriveInfo<double> info;
+ 	 info.FL = frontLeftSteer->GetOutputCurrent();
+ 	 info.FR = frontRightSteer->GetOutputCurrent();
+ 	 info.RR = rearRightSteer->GetOutputCurrent();
+ 	 info.RL = rearLeftSteer->GetOutputCurrent();
+ 	 return info;
+ }
+
 

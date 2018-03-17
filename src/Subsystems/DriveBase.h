@@ -123,6 +123,11 @@ public:
 	void Instrument();
 	void Diagnostics();	// used for more detailed diagnostics displayed on smart dashboard
 
+	DriveInfo<int> GetDriveEncoderPositions();
+	DriveInfo<double> GetDriveCurrent();
+	DriveInfo<int> GetSteerEncoderPositions();
+	DriveInfo<double> GetSteerCurrent();
+
 	std::unique_ptr<PIDController> driveControlSpeedController;
 
 };

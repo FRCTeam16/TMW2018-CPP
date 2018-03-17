@@ -59,6 +59,9 @@ public:
 
 	void SetHomePosition();
 
+	int GetElevatorEncoderPosition();
+	std::tuple<double, double> GetElevatorMotorCurrents();
+
 
 private:
 	std::shared_ptr<WPI_TalonSRX> mainElevatorMotor = RobotMap::elevatorElevatorMotor1;

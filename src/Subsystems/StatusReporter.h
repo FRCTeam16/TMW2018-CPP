@@ -8,15 +8,17 @@
 #ifndef SRC_SUBSYSTEMS_STATUSREPORTER_H_
 #define SRC_SUBSYSTEMS_STATUSREPORTER_H_
 
+#include <sstream>
 #include "WPILib.h"
 
 class StatusReporter {
 public:
-	StatusReporter(int deviceAddress = 16);
+	StatusReporter();
 	virtual ~StatusReporter() {}
 	void Run();
 private:
-	std::unique_ptr<I2C> i2c;
+	std::unique_ptr<SerialPort> serial;
+	const char delimiter = ',';
 
 	void SendData();
 };

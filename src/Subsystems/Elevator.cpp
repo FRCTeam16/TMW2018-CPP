@@ -203,3 +203,15 @@ void Elevator::Instrument() {
 	SmartDashboard::PutBoolean("Elevator Limit Switch FWD", mainElevatorMotor->GetSensorCollection().IsFwdLimitSwitchClosed());
 	SmartDashboard::PutBoolean("Elevator Limit Switch REV", mainElevatorMotor->GetSensorCollection().IsRevLimitSwitchClosed());
 }
+
+int Elevator::GetElevatorEncoderPosition() {
+	return mainElevatorMotor->GetOutputCurrent();
+
+}
+
+std::tuple<double, double> Elevator::GetElevatorMotorCurrents() {
+	return std::make_tuple(
+			mainElevatorMotor->GetOutputCurrent(),
+			followerElevatorMotor->GetOutputCurrent());
+}
+
