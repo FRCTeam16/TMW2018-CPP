@@ -12,7 +12,8 @@
 #include <Util/PrefUtil.h>
 #include <Subsystems/Elevator.h>
 
-Intake::Intake() : frc::Subsystem("Intake") {
+Intake::Intake() : frc::Subsystem("Intake"),
+				   rotateCounter(new Counter(RobotMap::intakeRotateEncoder)) {
 	std::cout << "Starting Intake\n";
 	const std::vector<std::shared_ptr<WPI_VictorSPX>> motors { leftIntakeMotor, rightIntakeMotor };
 	for (auto &motor : motors) {
@@ -33,6 +34,9 @@ void Intake::Init() {
 	int intakeAmpThresholdScans = PrefUtil::getSetInt("IntakeAmpThresholdScans", 5);
 	leftIntakeAmpThresholdCounter.reset(new ThresholdCounter(intakeAmpThreshold, intakeAmpThresholdScans));
 	rightIntakeAmpThresholdCounter.reset(new ThresholdCounter(intakeAmpThreshold, intakeAmpThresholdScans));
+
+	minRotatePosition = PrefUtil::getSetInt("IntakeMinRotatePos", 0);
+	maxRotatePosition = PrefUtil::getSetInt("IntakeMaxRotatePos", 0);
 
 	std::cout << "Intake::Init() Initialized Threshold Counters: "
 					  << leftIntakeAmpThresholdCounter.get()
@@ -86,7 +90,9 @@ void Intake::Run() {
 	if (extendSolenoid->Get() != extendSolenoidState) {
 		extendSolenoid->Set(extendSolenoidState);
 	}
-	rotateSolenoid->Set(rotateSolenoidState);
+
+	rotateMotor->Set(rotateSpeed);
+//	rotateMotor->Set(rotationState.getMotorOutput(rotateCounter));
 }
 
 void Intake::Start() {
@@ -125,13 +131,23 @@ void Intake::ToggleExtendSolenoidState() {
 	SetExtendSolenoidState(!extendSolenoidState);
 }
 
-void Intake::SetRotateSolenoidState(bool rotate) {
-	rotateSolenoidState = rotate;
+void Intake::SetRotateIntakeSpeed(double _speed) {
+	rotateSpeed = _speed;
 }
 
-void Intake::ToggleRotateSolenoidState() {
-	SetRotateSolenoidState(!rotateSolenoidState);
+void Intake::RotateIntakeUp() {
+	rotationState.setPosition(maxRotatePosition, true);
 }
+
+void Intake::RotateIntakeDown() {
+	rotationState.setPosition(minRotatePosition, false);
+}
+
+void Intake::SetRotateIntakePosition(int position, bool _direction) {
+	rotationState.setPosition(position, _direction);
+}
+
+
 
 double Intake::GetLeftIntakeCurrent() {
 	return 0;  // RobotMap::powerDistributionPanel->GetCurrent(5);
@@ -156,6 +172,7 @@ bool Intake::IsPickupTriggered() {
 void Intake::Instrument() {
 	SmartDashboard::PutNumber("Intake Motor", leftIntakeMotor->Get());
 	SmartDashboard::PutBoolean("Intake Solenoid", extendSolenoid->Get());
+	SmartDashboard::PutNumber("Rotate Counter", rotateCounter->Get());
 
 	if ((loopCounter++ % 10) == 0) {
 		SmartDashboard::PutNumber("Left Intake Current", GetLeftIntakeCurrent());

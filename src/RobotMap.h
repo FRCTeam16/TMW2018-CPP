@@ -32,7 +32,6 @@ public:
 	static std::shared_ptr<WPI_VictorSPX> intakeLeftIntakeMotor;
 	static std::shared_ptr<WPI_VictorSPX> intakeRightIntakeMotor;
 	static std::shared_ptr<Solenoid> intakeExtendActuator;
-	static std::shared_ptr<Solenoid> intakeRotateActuator;
 	static std::shared_ptr<WPI_TalonSRX> elevatorElevatorMotor1;
 	static std::shared_ptr<WPI_TalonSRX> elevatorElevatorMotor2;
 	static std::shared_ptr<BSGyro> gyro;
@@ -44,7 +43,9 @@ public:
 	static std::shared_ptr<WPI_TalonSRX> driveBaseFrontRightSteer;
 	static std::shared_ptr<WPI_TalonSRX> driveBaseRearLeftSteer;
 	static std::shared_ptr<WPI_TalonSRX> driveBaseRearRightSteer;
-	static std::shared_ptr<PowerDistributionPanel> powerDistributionPanel;
+//	static std::shared_ptr<PowerDistributionPanel> powerDistributionPanel;
+	static std::shared_ptr<WPI_TalonSRX> intakeRotateMotor;
+	static std::shared_ptr<DigitalInput> intakeRotateEncoder;
 
 	static void init();
 };

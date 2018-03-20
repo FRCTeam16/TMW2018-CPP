@@ -57,6 +57,7 @@ private:
 	double driveLimit = 1.0;
 
 	Wheelbase wheelbase;
+	std::unique_ptr<PIDController> driveControlSpeedController;
 	std::unique_ptr<PIDController> driveControlTwist;
 	std::unique_ptr<CrabSpeed> driveControlDistanceSpeed;
 
@@ -115,6 +116,7 @@ public:
 	double GetDriveControlOutput();
 	double GetDriveControlError();
 	double GetDriveControlP();
+	double GetDriveControlSetpoint();
 
 	Wheelbase GetWheelbase();
 
@@ -128,7 +130,6 @@ public:
 	DriveInfo<int> GetSteerEncoderPositions();
 	DriveInfo<double> GetSteerCurrent();
 
-	std::unique_ptr<PIDController> driveControlSpeedController;
 
 };
 #endif

@@ -19,7 +19,6 @@ std::shared_ptr<Compressor> RobotMap::compressor;
 std::shared_ptr<WPI_VictorSPX> RobotMap::intakeLeftIntakeMotor;
 std::shared_ptr<WPI_VictorSPX> RobotMap::intakeRightIntakeMotor;
 std::shared_ptr<Solenoid> RobotMap::intakeExtendActuator;
-std::shared_ptr<Solenoid> RobotMap::intakeRotateActuator;
 std::shared_ptr<WPI_TalonSRX> RobotMap::elevatorElevatorMotor1;
 std::shared_ptr<WPI_TalonSRX> RobotMap::elevatorElevatorMotor2;
 std::shared_ptr<BSGyro> RobotMap::gyro;
@@ -31,7 +30,10 @@ std::shared_ptr<WPI_TalonSRX> RobotMap::driveBaseFrontLeftSteer;
 std::shared_ptr<WPI_TalonSRX> RobotMap::driveBaseFrontRightSteer;
 std::shared_ptr<WPI_TalonSRX> RobotMap::driveBaseRearLeftSteer;
 std::shared_ptr<WPI_TalonSRX> RobotMap::driveBaseRearRightSteer;
-std::shared_ptr<PowerDistributionPanel> RobotMap::powerDistributionPanel;
+//std::shared_ptr<PowerDistributionPanel> RobotMap::powerDistributionPanel;
+
+std::shared_ptr<WPI_TalonSRX> RobotMap::intakeRotateMotor;
+std::shared_ptr<DigitalInput> RobotMap::intakeRotateEncoder;
 
 
 void RobotMap::init() {
@@ -46,7 +48,8 @@ void RobotMap::init() {
     driveBaseRearLeftSteer.reset(new WPI_TalonSRX(6));
     driveBaseRearRightSteer.reset(new WPI_TalonSRX(8));
 
-    powerDistributionPanel.reset(new PowerDistributionPanel(0));
+//    powerDistributionPanel.reset(new PowerDistributionPanel(0));
+
     compressor.reset(new Compressor(0));
     mastShifter.reset(new DoubleSolenoid(2, 3));
 
@@ -56,12 +59,13 @@ void RobotMap::init() {
     intakeLeftIntakeMotor.reset(new WPI_VictorSPX(11));
     intakeRightIntakeMotor.reset(new WPI_VictorSPX(12));
     intakeExtendActuator.reset(new Solenoid(0));
-    intakeRotateActuator.reset(new Solenoid(1));
+
+    intakeRotateMotor.reset(new WPI_TalonSRX(15));
+    intakeRotateEncoder.reset(new DigitalInput(0));
 
 
     elevatorElevatorMotor1.reset(new WPI_TalonSRX(13));
     elevatorElevatorMotor2.reset(new WPI_TalonSRX(14));
 
     gyro.reset(new BSGyro(elevatorElevatorMotor2.get()));
-
 }

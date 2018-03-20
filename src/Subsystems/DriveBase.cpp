@@ -489,6 +489,10 @@ void DriveBase::SetTargetDriveDistance(double distance, double maxSpeed) {
 	driveControlEncoderSource->SetInitialEncoderValue();
 }
 
+double DriveBase::GetDriveControlSetpoint() {
+	return driveControlSpeedController->GetSetpoint();
+}
+
 double DriveBase::GetDriveControlEncoderPosition() {
 	return driveControlEncoderSource->PIDGet();
 }

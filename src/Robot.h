@@ -30,6 +30,7 @@
 #include "Autonomous/AutoManager.h"
 #include "Autonomous/World.h"
 #include "Util/CollisionDetector.h"
+#include "Util/TelemetryLogger.h"
 
 
 #include "OI.h"
@@ -38,7 +39,6 @@ class Robot : public frc::TimedRobot {
 public:
 	frc::Command* autonomousCommand = nullptr;
 	static std::unique_ptr<OI> oi;
-	//frc::SendableChooser<frc::Command*> chooser;
 
 	static std::shared_ptr<DriveBase> driveBase;
 	static std::shared_ptr<Intake> intake;
@@ -64,6 +64,6 @@ private:
 	std::unique_ptr<ClimbProcess> climbProcess;
 	double lastTime = 0.0;
 	std::unique_ptr<CollisionDetector> collisionDetector;
-
+	std::unique_ptr<TelemetryLogger> telemetryLogger;
 };
 #endif

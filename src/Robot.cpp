@@ -25,6 +25,10 @@ void Robot::RobotInit() {
 
 	autoManager.reset(new AutoManager());
 	collisionDetector.reset(new CollisionDetector(RobotMap::gyro, 10));
+	telemetryLogger.reset(new TelemetryLogger());
+//	std::thread t(&TelemetryLogger::Run, telemetryLogger);
+//	t.detach();
+
 	std::cout << "Robot::RobotInit() complete - stratofortress is aloft\n";
 }
 
@@ -33,7 +37,7 @@ void Robot::RobotInit() {
  * You can use it to reset subsystems before shutting down.
  */
 void Robot::DisabledInit(){
-
+	telemetryLogger->End();
 }
 
 void Robot::DisabledPeriodic() {
@@ -45,7 +49,9 @@ void Robot::AutonomousInit() {
 /*	autonomousCommand = chooser.GetSelected();
 	if (autonomousCommand != nullptr)
 		autonomousCommand->Start();
-*/	InitSubsystems();
+*/
+	InitSubsystems();
+	telemetryLogger->Begin();
 
 	intake->SetExtendSolenoidState(true);
 	world.reset(new World());
@@ -67,6 +73,7 @@ void Robot::TeleopInit() {
 	if (autonomousCommand != nullptr)
 		autonomousCommand->Cancel();
 
+	telemetryLogger->End();
 	driveBase->InitTeleop();
 	climbProcess.release();
 	climbProcess.reset(new ClimbProcess());
@@ -172,12 +179,18 @@ void Robot::TeleopPeriodic() {
 		intake->SetExtendSolenoidState(false);
 	}
 
-	// 5 - open/close
-	// 4 - up/down
-	// 6 - shift
-	if (oi->DR4->RisingEdge()) {
-		intake->ToggleRotateSolenoidState();
+	double intakeRotateSpeed = 0.0;
+	if (OI::DPad::kLeft == oi->GetGamepadDPad()) {
+		intakeRotateSpeed = 1.0;
 	}
+	if (OI::DPad::kRight == oi->GetGamepadDPad()) {
+		intakeRotateSpeed = -1.0;
+	}
+	intake->SetRotateIntakeSpeed(intakeRotateSpeed);
+
+	// 5 - open/close
+	// 6 - shift
+
 
 	if (oi->DR6->RisingEdge()) {
 		elevator->ToggleShifter();
