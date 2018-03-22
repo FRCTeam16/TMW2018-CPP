@@ -25,9 +25,13 @@ void Robot::RobotInit() {
 
 	autoManager.reset(new AutoManager());
 	collisionDetector.reset(new CollisionDetector(RobotMap::gyro, 10));
+
 	telemetryLogger.reset(new TelemetryLogger());
-//	std::thread t(&TelemetryLogger::Run, telemetryLogger);
-//	t.detach();
+//	telemetryLogger->Launch();
+//
+//	statusReporter.reset(new StatusReporter());
+//	statusReporter->Launch();
+
 
 	std::cout << "Robot::RobotInit() complete - stratofortress is aloft\n";
 }

@@ -12,6 +12,12 @@ namespace StatusReporterUtil {
 	}
 }
 
+void StatusReporter::Launch() {
+	std::cout << "StatusReporter::Launch...";
+	reporterThread = std::thread(&StatusReporter::Run, this);
+	reporterThread.detach();
+	std::cout << "done\n";
+}
 
 StatusReporter::StatusReporter() {
 	serial.reset(
@@ -21,6 +27,11 @@ StatusReporter::StatusReporter() {
 			8,
 			SerialPort::Parity::kParity_None,
 			SerialPort::StopBits::kStopBits_One));
+	if (serial.get()) {
+		running = true;
+	} else {
+		std::cout << "!!! Unable to start serial communications !!!\n";
+	}
 
 }
 
@@ -28,7 +39,7 @@ StatusReporter::StatusReporter() {
 void StatusReporter::Run() {
 	frc::SetCurrentThreadPriority(true, 10);
 
-	while (true) {
+	while (running) {
 		try {
 			SendData();
 		} catch(...) {
@@ -37,6 +48,7 @@ void StatusReporter::Run() {
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
+	std::cout << "StatusReporter::Run exited\n";
 }
 
 void StatusReporter::SendData() {

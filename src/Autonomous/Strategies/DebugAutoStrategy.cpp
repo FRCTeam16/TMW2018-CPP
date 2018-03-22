@@ -50,9 +50,10 @@ DebugAutoStrategy::DebugAutoStrategy(std::shared_ptr<World> world) {
 
 	steps.push_back(new ConcurrentStep({
 		new TimedDrive(angle, 0.0001, 0.0, 0.1, false),
-		new Delay(0.5),
-		new PositionElevator(Elevator::ElevatorPosition::kSwitch),
+		new Delay(1.5),
+		new PositionElevator(Elevator::ElevatorPosition::kFloor),
 		new PositionMast(Mast::MastPosition::kDrive),
+		new IntakeRotate(false, 1.5),
 		new IntakeSolenoidWithDelay(false, DelayParam(DelayParam::DelayType::kNone, 0.0), 5.0)
 	}));
 
@@ -68,7 +69,6 @@ DebugAutoStrategy::DebugAutoStrategy(std::shared_ptr<World> world) {
 	steps.push_back(new ConcurrentStep({
 		new ClosedLoopDrive2(angle, firstDriveSpeed, firstDriveX, ydist, -1, DriveUnit::Units::kInches, 8.0, 0.5, 24),
 		new PositionElevator(Elevator::ElevatorPosition::kHighScale, DelayParam(DelayParam::DelayType::kTime, 1.5)),
-		new IntakeRotate(false, 1.5),
 		new PositionMast(Mast::MastPosition::kDrive),
 	}));
 

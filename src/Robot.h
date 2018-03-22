@@ -26,6 +26,7 @@
 #include "Climb/ClimbProcess.h"
 
 #include "Subsystems/SubsystemManager.h"
+#include "Subsystems/StatusReporter.h"
 
 #include "Autonomous/AutoManager.h"
 #include "Autonomous/World.h"
@@ -65,5 +66,6 @@ private:
 	double lastTime = 0.0;
 	std::unique_ptr<CollisionDetector> collisionDetector;
 	std::unique_ptr<TelemetryLogger> telemetryLogger;
+	std::unique_ptr<StatusReporter> statusReporter;
 };
 #endif

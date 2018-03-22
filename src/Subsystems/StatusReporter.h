@@ -16,7 +16,10 @@ public:
 	StatusReporter();
 	virtual ~StatusReporter() {}
 	void Run();
+	void Launch();
 private:
+	bool running = false;
+	std::thread reporterThread;
 	std::unique_ptr<SerialPort> serial;
 	const char delimiter = ',';
 

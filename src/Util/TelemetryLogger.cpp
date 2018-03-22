@@ -14,6 +14,13 @@ TelemetryLogger::TelemetryLogger() {
 TelemetryLogger::~TelemetryLogger() {
 }
 
+void TelemetryLogger::Launch() {
+	std::cout << "TelemetryLogger::Launch...";
+	this->telemetryThread = std::thread(&TelemetryLogger::Run, this);
+	this->telemetryThread.detach();
+	std::cout << "done\n";
+}
+
 void TelemetryLogger::Run() {
 	frc::SetCurrentThreadPriority(false, 10);
 
@@ -32,6 +39,7 @@ void TelemetryLogger::Run() {
 
 
 void TelemetryLogger::Begin() {
+	std::cout << "TelemetryLogger::Begin...";
     static char name[LOGNAME_SIZE];
     time_t now = time(0);
     strftime(name, sizeof(name), LOGNAME_FORMAT, localtime(&now));
@@ -42,6 +50,7 @@ void TelemetryLogger::Begin() {
 			<< "encoder.pos, encoder.error, setpoint"
 			<< '\n';
 	running = true;
+	std::cout << "Writing to " << name << "\n";
 }
 
 void TelemetryLogger::End() {
