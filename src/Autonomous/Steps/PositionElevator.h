@@ -14,11 +14,11 @@
 
 class PositionElevator: public Step {
 public:
-	PositionElevator(Elevator::ElevatorPosition elevatorPosition, DelayParam delayParam, bool _waitForPosition = false) :
-		position(elevatorPosition), delayParam(delayParam), waitForPosition(_waitForPosition) {}
+	PositionElevator(Elevator::ElevatorPosition elevatorPosition, DelayParam delayParam, bool _waitForPosition = false, double _timeout=3.0) :
+		position(elevatorPosition), delayParam(delayParam), waitForPosition(_waitForPosition), timeout(_timeout) {}
 
-	PositionElevator(Elevator::ElevatorPosition elevatorPosition, bool _waitForPosition = false) :
-		position(elevatorPosition), waitForPosition(_waitForPosition) {}
+	PositionElevator(Elevator::ElevatorPosition elevatorPosition, bool _waitForPosition = false, double _timeout=3.0) :
+		position(elevatorPosition), waitForPosition(_waitForPosition), timeout(_timeout) {}
 
 	virtual ~PositionElevator() {}
 	bool Run(std::shared_ptr<World> world) override;
@@ -30,6 +30,7 @@ private:
 	bool sentPosition = false;
 	double target = 0;	// tracks position or time if a delay was requeested
 	bool waitForPosition = false;
+	const double timeout;
 
 };
 

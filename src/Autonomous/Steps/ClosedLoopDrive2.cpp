@@ -99,7 +99,7 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 			profiledSpeed = ru.RampUp(profiledSpeed, elapsedTimeSecs, rampUp);
 		}
 		if (rampDown > 0) {
-			profiledSpeed =  ru.RampDown(profiledSpeed, currentEncoderPosition, targetSetpoint, DriveUnit::ToPulses(rampDown, units));
+			profiledSpeed =  ru.RampDown(profiledSpeed, currentEncoderPosition, targetSetpoint, DriveUnit::ToPulses(rampDown, units), rampDownMin);
 		}
 
 		const double angleRadians = atan2(XtargetDistance, YtargetDistance);

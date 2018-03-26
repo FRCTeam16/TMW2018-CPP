@@ -54,13 +54,28 @@ void StatusReporter::Run() {
 void StatusReporter::SendData() {
 	stringstream ss;
 	const bool isRed = DriverStation::Alliance::kRed == DriverStation::GetInstance().GetAlliance();
-	ss << ((isRed) ? 0 : 1) << delimiter;
-	ss << StatusReporterUtil::map(DriverStation::GetInstance().GetMatchTime(), 0, 135, 135, 0) << delimiter;
 
 	DriveInfo<int> driveEncoders = Robot::driveBase->GetDriveControlEncoderPosition();
 	DriveInfo<double> driveCurrents = Robot::driveBase->GetDriveCurrent();
 	DriveInfo<int> steerEncoders = Robot::driveBase->GetSteerEncoderPositions();
 	DriveInfo<double> steerCurrents = Robot::driveBase->GetSteerCurrent();
+
+
+	// TODO: Evaluate drive currents and send whether it is good or bad 0-4
+	// 10% threshold range | Example - 0 (red) 1 - 9, 11 - ? (orange), 9-11 (green)
+	// Evaluate encoders via averaging dropout
+
+	// 1-4 solid, 5-7 flashing
+
+	// alliance color
+	// have cube?
+	// disabled, auto, teleop
+	// climb sequence #s (ClimbState)
+	// 4 drive motor currents (evalution?)
+
+	ss << ((isRed) ? 0 : 1) << delimiter;
+	ss << StatusReporterUtil::map(DriverStation::GetInstance().GetMatchTime(), 0, 135, 135, 0) << delimiter;
+
 
 	ss << driveEncoders.FL << delimiter;
 	ss << driveEncoders.FR << delimiter;
@@ -81,6 +96,8 @@ void StatusReporter::SendData() {
 	ss << steerCurrents.FR << delimiter;
 	ss << steerCurrents.RR << delimiter;
 	ss << steerCurrents.RL << delimiter;
+
+
 
 	serial->Write(ss.str());
 }

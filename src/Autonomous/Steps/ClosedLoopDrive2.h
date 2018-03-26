@@ -34,6 +34,8 @@ public:
 	void SetHaltOnIntakePickup(bool _halt) { haltOnIntakePickup = _halt; }
 	void UsePickupDistance(bool _invertDistance = false) { usePickupDistance = true; invertPickupDistance = _invertDistance; }
 	void SetHardStopsContinueFromStep(bool _stay) { hardStopsContinueFromStep = _stay; }
+	void SetRampDownMin(double _min) { rampDownMin = _min; }
+
 
 private:
 	void StoreDistance(World* world);
@@ -47,6 +49,9 @@ private:
 	const double timeoutCommand = 10;
 	const double rampUp;	// ramp up time length, -1 to disable
 	const double rampDown;	// ramp down position threshold, -1 to disable
+
+	double rampDownMin = 0.10;	// ramp down min speed
+
 	CollisionDetector collisionDetector;
 	const bool reverse = false;
 	const bool useGyro = true;

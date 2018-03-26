@@ -57,7 +57,7 @@ void RunIntakeWithDelay::ConfigIntake() {
 		Robot::intake->Stop();
 		break;
 	case Eject:
-		Robot::intake->Eject(1.0);
+		Robot::intake->Eject(ejectSpeed);
 		break;
 	}
 }

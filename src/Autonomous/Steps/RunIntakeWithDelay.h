@@ -14,9 +14,11 @@ public:
 	virtual ~RunIntakeWithDelay() {}
 	bool Run(std::shared_ptr<World> world) override;
 
+	void SetEjectSpeed(double _spd) { ejectSpeed = _spd; }
 
 private:
 	void ConfigIntake();
+	double ejectSpeed = 1.0;
 	const IntakeState state;
 	const DelayParam delayParam;
 	const double timeout;

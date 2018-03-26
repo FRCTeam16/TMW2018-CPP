@@ -19,6 +19,8 @@ public:
 	void Init(std::shared_ptr<World> world) override;
 
 private:
+	void DebugRotate();
+
 	void DebugShootScoot();
 	void JoshDebug();
 	void DebugShootScootHang();
