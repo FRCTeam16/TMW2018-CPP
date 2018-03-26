@@ -34,6 +34,7 @@ public:
 	void SetHaltOnIntakePickup(bool _halt) { haltOnIntakePickup = _halt; }
 	void UsePickupDistance(bool _invertDistance = false) { usePickupDistance = true; invertPickupDistance = _invertDistance; }
 	void SetHardStopsContinueFromStep(bool _stay) { hardStopsContinueFromStep = _stay; }
+	void SetRampUpMin(double _min) { rampUpMin = _min; }
 	void SetRampDownMin(double _min) { rampDownMin = _min; }
 
 
@@ -50,6 +51,7 @@ private:
 	const double rampUp;	// ramp up time length, -1 to disable
 	const double rampDown;	// ramp down position threshold, -1 to disable
 
+	double rampUpMin = 0.10;	// ramp up min speed
 	double rampDownMin = 0.10;	// ramp down min speed
 
 	CollisionDetector collisionDetector;

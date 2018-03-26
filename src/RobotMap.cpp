@@ -30,7 +30,7 @@ std::shared_ptr<WPI_TalonSRX> RobotMap::driveBaseFrontLeftSteer;
 std::shared_ptr<WPI_TalonSRX> RobotMap::driveBaseFrontRightSteer;
 std::shared_ptr<WPI_TalonSRX> RobotMap::driveBaseRearLeftSteer;
 std::shared_ptr<WPI_TalonSRX> RobotMap::driveBaseRearRightSteer;
-//std::shared_ptr<PowerDistributionPanel> RobotMap::powerDistributionPanel;
+std::shared_ptr<PowerDistributionPanel> RobotMap::powerDistributionPanel;
 
 std::shared_ptr<WPI_TalonSRX> RobotMap::intakeRotateMotor;
 std::shared_ptr<DigitalInput> RobotMap::intakeRotateEncoder;
@@ -48,7 +48,7 @@ void RobotMap::init() {
     driveBaseRearLeftSteer.reset(new WPI_TalonSRX(6));
     driveBaseRearRightSteer.reset(new WPI_TalonSRX(8));
 
-//    powerDistributionPanel.reset(new PowerDistributionPanel(0));
+    powerDistributionPanel.reset(new PowerDistributionPanel(0));
 
     compressor.reset(new Compressor(0));
     mastShifter.reset(new DoubleSolenoid(2, 3));

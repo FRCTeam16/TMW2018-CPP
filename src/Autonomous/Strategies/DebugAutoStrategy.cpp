@@ -51,8 +51,6 @@ DebugAutoStrategy::DebugAutoStrategy(std::shared_ptr<World> world) {
 }
 
 void DebugAutoStrategy::DebugRotate() {
-	const double firstDriveSpeed = 0.5;
-	const double firstDriveX = 0.0;
 //	const double firstDriveY = 216.0;   36, 186
 
 	const double angle = -180.0;
@@ -65,17 +63,23 @@ void DebugAutoStrategy::DebugRotate() {
 	}, true));
 
 
+	const double firstDriveSpeed = 0.75;
+	const double firstDriveX = 0.0;
+	const double firstDriveY = 72.0;
+
 	steps.push_back(new ConcurrentStep({
-		new ClosedLoopDrive2(angle, firstDriveSpeed, firstDriveX, 36.0, -1, DriveUnit::Units::kInches, 8.0, 0.5, -1),
+		new ClosedLoopDrive2(angle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 8.0, 0.5, -1),
 		new IntakeRotate(false, 0.5),
 		new PositionElevator(Elevator::ElevatorPosition::kSwitch, DelayParam(DelayParam::DelayType::kNone, 0.0)),
 	}));
 
 
-	const double secondDriveSpeed = 0.3;
+	const double diagDriveSpeed = 0.5;
+	const double diagRampSpeedMin = 0.3;
+	const double secondDriveY = 114.0;
 
-	ClosedLoopDrive2 *longDrive = new ClosedLoopDrive2(angle, firstDriveSpeed, firstDriveX, 148.0, -1, DriveUnit::Units::kInches, 8.0, -1, 24);
-	longDrive->SetRampDownMin(secondDriveSpeed);
+	ClosedLoopDrive2 *longDrive = new ClosedLoopDrive2(angle, firstDriveSpeed, firstDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 8.0, -1, 36);
+	longDrive->SetRampDownMin(diagRampSpeedMin);
 	steps.push_back(new ConcurrentStep({
 		longDrive,
 		new PositionElevator(Elevator::ElevatorPosition::kHighScale, DelayParam(DelayParam::DelayType::kTime, 1.5)),
@@ -83,13 +87,14 @@ void DebugAutoStrategy::DebugRotate() {
 
 
 
-	const double secondDriveX = -50.0;
-	const double secondDriveY = 40.0;
+	const double diagDriveX = -58.0;
+	const double diagDriveY = 54.0;
 
 	const double intakeRotateUpTime = 2.75;
-
+	ClosedLoopDrive2 *diagDrive = new ClosedLoopDrive2(angle, diagDriveSpeed, diagDriveX, diagDriveY, -1, DriveUnit::Units::kInches, 8.0, 0.5, 12);
+	diagDrive->SetRampUpMin(diagRampSpeedMin);
 	steps.push_back(new ConcurrentStep({
-		new ClosedLoopDrive2(angle, secondDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 8.0, -1, 6),
+		diagDrive,
 		new IntakeRotate(true, intakeRotateUpTime)
 	}, true));
 
@@ -112,7 +117,7 @@ void DebugAutoStrategy::DebugRotate() {
 	// drive to pickup detection
 	// ideally use distance tracking and drive till pickup
 
-	const double secondY = -48.0;
+	const double secondY = -54.0;
 	steps.push_back(new ConcurrentStep({
 		new ClosedLoopDrive2(angle, 0.3, 0.0, secondY, -1, DriveUnit::Units::kInches, 8.0, 0.25, 12),
 		new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Start, DelayParam(DelayParam::DelayType::kNone, 0.0), 5.0, -1.0)

@@ -96,7 +96,7 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 		RampUtil ru;
 		double profiledSpeed = crabSpeed * thresholdPassInverter;
 		if (rampUp > 0) {
-			profiledSpeed = ru.RampUp(profiledSpeed, elapsedTimeSecs, rampUp);
+			profiledSpeed = ru.RampUp(profiledSpeed, elapsedTimeSecs, rampUp, rampUpMin);
 		}
 		if (rampDown > 0) {
 			profiledSpeed =  ru.RampDown(profiledSpeed, currentEncoderPosition, targetSetpoint, DriveUnit::ToPulses(rampDown, units), rampDownMin);

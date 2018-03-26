@@ -1,9 +1,3 @@
-/*
- * Intake.cpp
- *
- *  Created on: Feb 17, 2018
- *      Author: smithj11
- */
 #include <iostream>
 #include <vector>
 
@@ -46,7 +40,12 @@ void Intake::Init() {
 }
 
 void Intake::Run() {
+	const double currentTime = Timer::GetFPGATimestamp();
 	bool performPickup = false;
+
+	if (pickupTriggered && ((currentTime - pickupStartTime) > pickupTimeout)) {
+		ResetPickupTriggerState();
+	}
 
 	if (IntakeState::kIntake == state && !pickupTriggered) {
 		const double leftAmps = GetLeftIntakeCurrent();
@@ -54,19 +53,21 @@ void Intake::Run() {
 
 		if (leftIntakeAmpThresholdCounter->Check(leftAmps) || leftIntakeAmpThresholdCounter->Check(rightAmps)) {
 			performPickup = true;
+			pickupStartTime = currentTime;
 		}
 	}
 
 	if (performPickup) {
 		std::cout << "*** Intake Pickup Amp Threshold Detected ***\n";
-		const bool onFloor = Elevator::ElevatorPosition::kFloor == Robot::elevator->GetElevatorPosition();
-		if (onFloor) {
-			Robot::elevator->SetElevatorPosition(Elevator::ElevatorPosition::kSwitch);
-		}
 		pickupTriggered = true;
 		leftIntakeAmpThresholdCounter->Reset();
 		rightIntakeAmpThresholdCounter->Reset();
-		SetMotorPercent(0.0);
+
+		/*const bool onFloor = Elevator::ElevatorPosition::kFloor == Robot::elevator->GetElevatorPosition();
+		if (onFloor) {
+			Robot::elevator->SetElevatorPosition(Elevator::ElevatorPosition::kSwitch);
+		}
+		SetMotorPercent(0.0);*/
 	} else {
 		double targetSpeed = 0.0;
 		if (pickupTriggered) {
@@ -150,14 +151,15 @@ void Intake::SetRotateIntakePosition(int position, bool _direction) {
 
 
 double Intake::GetLeftIntakeCurrent() {
-	return 0;  // RobotMap::powerDistributionPanel->GetCurrent(5);
+	return RobotMap::powerDistributionPanel->GetCurrent(5);
 }
 
 double Intake::GetRightIntakeCurrent() {
-	return 0; //RobotMap::powerDistributionPanel->GetCurrent(10);
+	return RobotMap::powerDistributionPanel->GetCurrent(10);
 }
 
 void Intake::ResetPickupTriggerState() {
+	pickupStartTime = 0.0;
 	pickupTriggered = false;
 }
 

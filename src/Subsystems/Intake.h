@@ -90,6 +90,8 @@ private:
 	 double switchEjectSpeed = 1.0;
 	 double scaleEjectSpeed = 0.75;
 	 bool pickupTriggered = false;
+	 double pickupStartTime = 0.0;
+	 const double pickupTimeout = 0.5;
 	 std::shared_ptr<ThresholdCounter> leftIntakeAmpThresholdCounter;
 	 std::shared_ptr<ThresholdCounter> rightIntakeAmpThresholdCounter;
 	 double targetEjectSpeed = 0.0;
