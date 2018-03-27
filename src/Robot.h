@@ -32,6 +32,7 @@
 #include "Autonomous/World.h"
 #include "Util/CollisionDetector.h"
 #include "Util/TelemetryLogger.h"
+#include "DMS/DmsProcessManager.h"
 
 
 #include "OI.h"
@@ -67,5 +68,6 @@ private:
 	std::unique_ptr<CollisionDetector> collisionDetector;
 	std::unique_ptr<TelemetryLogger> telemetryLogger;
 	std::unique_ptr<StatusReporter> statusReporter;
+//	std::unique_ptr<DmsProcessManager> dmsProcessManager;
 };
 #endif

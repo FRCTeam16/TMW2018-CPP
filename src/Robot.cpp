@@ -32,6 +32,8 @@ void Robot::RobotInit() {
 //	statusReporter.reset(new StatusReporter());
 //	statusReporter->Launch();
 
+//	dmsProcessManager.reset(new DmsProcessManager());
+
 
 	std::cout << "Robot::RobotInit() complete - stratofortress is aloft\n";
 }
