@@ -74,7 +74,7 @@ void DebugAutoStrategy::DebugRotate() {
 	}));
 
 
-	const double diagDriveSpeed = 0.5;
+	const double diagDriveSpeed = 0.3;
 	const double diagRampSpeedMin = 0.3;
 	const double secondDriveY = 114.0;
 
@@ -86,9 +86,8 @@ void DebugAutoStrategy::DebugRotate() {
 	}));
 
 
-
-	const double diagDriveX = -58.0;
-	const double diagDriveY = 54.0;
+	const double diagDriveX = -60.0;
+	const double diagDriveY = 66.0;
 
 	const double intakeRotateUpTime = 2.75;
 	ClosedLoopDrive2 *diagDrive = new ClosedLoopDrive2(angle, diagDriveSpeed, diagDriveX, diagDriveY, -1, DriveUnit::Units::kInches, 8.0, 0.5, 12);
@@ -117,9 +116,10 @@ void DebugAutoStrategy::DebugRotate() {
 	// drive to pickup detection
 	// ideally use distance tracking and drive till pickup
 
-	const double secondY = -54.0;
+	const double secondY = -50.0;
 	steps.push_back(new ConcurrentStep({
-		new ClosedLoopDrive2(angle, 0.3, 0.0, secondY, -1, DriveUnit::Units::kInches, 8.0, 0.25, 12),
+		new ClosedLoopDrive2(angle, 0.3, 0.0, secondY, -1, DriveUnit::Units::kInches, 3.0, 0.25, 12),
+		new IntakeRotate(false, 4.0),
 		new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Start, DelayParam(DelayParam::DelayType::kNone, 0.0), 5.0, -1.0)
 	}));
 
@@ -131,7 +131,7 @@ void DebugAutoStrategy::DebugRotate() {
 		new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Stop, DelayParam(DelayParam::DelayType::kNone, 0.0), 5.0, -1.0)
 	}, true));
 
-	steps.push_back(new IntakeRotate(true, 3.0));
+	steps.push_back(new IntakeRotate(true, 1.5));
 	RunIntakeWithDelay *secondEject = new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Eject, DelayParam(DelayParam::DelayType::kNone, 0.0), 0.75, -1.0);
 	secondEject->SetEjectSpeed(0.65);
 	steps.push_back(secondEject);

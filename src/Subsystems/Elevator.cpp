@@ -105,7 +105,7 @@ void Elevator::SetElevatorSetpoint(int _setpoint) {
 
 
 bool Elevator::InPosition() {
-    double error = setpoint - mainElevatorMotor->GetSelectedSensorPosition(0);
+    double error = setpoint - GetElevatorEncoderPosition();
     bool inPosition = (abs(error) < elevatorPositionThreshold);
 //	std::cout << "Elevator in position: " << inPosition << "\n";
 	return inPosition;
@@ -137,14 +137,14 @@ void Elevator::DecreaseElevatorPosition() {
 
 bool Elevator::IsAboveSwitch() {
 	const double threshold = Preferences::GetInstance()->GetDouble("ElevatorPosSwitch", 23900);
-	const double current = mainElevatorMotor->GetSelectedSensorPosition(0);
+	const double current = GetElevatorEncoderPosition();
 	return current > threshold;
 }
 
 
 void Elevator::HoldPosition() {
 	if (RunMode::kManual == runMode) {
-		setpoint = mainElevatorMotor->GetSelectedSensorPosition(0);
+		setpoint = GetElevatorEncoderPosition();
 		runMode = RunMode::kMagic;
 	}
 }
@@ -167,7 +167,7 @@ void Elevator::UnholdClimb() {
 
 
 void Elevator::SetShift(bool state) {
-	int currentPosition = mainElevatorMotor->GetSelectedSensorPosition(0);
+	int currentPosition = GetElevatorEncoderPosition();
 	if (currentPosition < 100) {
 		shifterState = state;
 	} else {
@@ -195,7 +195,7 @@ void Elevator::SetHomePosition() {
 }
 
 void Elevator::Instrument() {
-	SmartDashboard::PutNumber("Elevator Position", mainElevatorMotor->GetSelectedSensorPosition(0));
+	SmartDashboard::PutNumber("Elevator Position", GetElevatorEncoderPosition());
 	SmartDashboard::PutNumber("Elevator Current (Main)", mainElevatorMotor->GetOutputCurrent());
 	SmartDashboard::PutNumber("Elevator Current (Follow)", followerElevatorMotor->GetOutputCurrent());
 	SmartDashboard::PutNumber("Elevator Output (Main)", mainElevatorMotor->Get());
@@ -205,7 +205,7 @@ void Elevator::Instrument() {
 }
 
 int Elevator::GetElevatorEncoderPosition() {
-	return mainElevatorMotor->GetOutputCurrent();
+	return mainElevatorMotor->GetSelectedSensorPosition(0);
 
 }
 
