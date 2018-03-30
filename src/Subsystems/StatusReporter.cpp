@@ -52,52 +52,21 @@ void StatusReporter::Run() {
 }
 
 void StatusReporter::SendData() {
-	stringstream ss;
-	const bool isRed = DriverStation::Alliance::kRed == DriverStation::GetInstance().GetAlliance();
+	char data[13];
+	data[0] =  254;
+	data[1] = 0;
+	data[2] = 0;
+	data[3] = 0;
+	data[4] = 0;
+	data[5] = 0;
+	data[6] = 0;
+	data[7] = 0;
+	data[8] = 0;
+	data [9] = Robot::intake->IsPickupTriggered();
+	//data [10] = Robot::driveBase->();
+	data [11] = DriverStation::Alliance::kRed == DriverStation::GetInstance().GetAlliance();
+	data [12] = DriverStation::GetInstance().IsDSAttached();
 
-	DriveInfo<int> driveEncoders = Robot::driveBase->GetDriveControlEncoderPosition();
-	DriveInfo<double> driveCurrents = Robot::driveBase->GetDriveCurrent();
-	DriveInfo<int> steerEncoders = Robot::driveBase->GetSteerEncoderPositions();
-	DriveInfo<double> steerCurrents = Robot::driveBase->GetSteerCurrent();
-
-
-	// TODO: Evaluate drive currents and send whether it is good or bad 0-4
-	// 10% threshold range | Example - 0 (red) 1 - 9, 11 - ? (orange), 9-11 (green)
-	// Evaluate encoders via averaging dropout
-
-	// 1-4 solid, 5-7 flashing
-
-	// alliance color
-	// have cube?
-	// disabled, auto, teleop
-	// climb sequence #s (ClimbState)
-	// 4 drive motor currents (evalution?)
-
-	ss << ((isRed) ? 0 : 1) << delimiter;
-	ss << StatusReporterUtil::map(DriverStation::GetInstance().GetMatchTime(), 0, 135, 135, 0) << delimiter;
-
-
-	ss << driveEncoders.FL << delimiter;
-	ss << driveEncoders.FR << delimiter;
-	ss << driveEncoders.RR << delimiter;
-	ss << driveEncoders.RL << delimiter;
-
-	ss << driveCurrents.FL << delimiter;
-	ss << driveCurrents.FR << delimiter;
-	ss << driveCurrents.RR << delimiter;
-	ss << driveCurrents.RL << delimiter;
-
-	ss << steerEncoders.FL << delimiter;
-	ss << steerEncoders.FR << delimiter;
-	ss << steerEncoders.RR << delimiter;
-	ss << steerEncoders.RL << delimiter;
-
-	ss << steerCurrents.FL << delimiter;
-	ss << steerCurrents.FR << delimiter;
-	ss << steerCurrents.RR << delimiter;
-	ss << steerCurrents.RL << delimiter;
-
-
-
-	serial->Write(ss.str());
+	serial-> Write(data, 15);
+	serial-> Flush();
 }
