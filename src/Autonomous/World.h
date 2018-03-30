@@ -23,6 +23,7 @@ private:
 
 	double driveDistance = 0;
 	bool teamSideMode = false;
+	bool autoTraverse = false;
 public:
 	World();
 	virtual ~World() {}
@@ -39,6 +40,9 @@ public:
 
 	void SetTeamSideMode(bool _mode) { teamSideMode = _mode; }
 	bool GetTeamSideMode() { return teamSideMode; }
+
+	void SetAutoTraverse(bool _traverse) { autoTraverse = _traverse; }
+	bool GetAutoTraverse() { return autoTraverse; }
 };
 
 #endif /* SRC_AUTONOMOUS_WORLD_H_ */

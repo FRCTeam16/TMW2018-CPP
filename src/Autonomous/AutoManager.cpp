@@ -5,6 +5,7 @@
 #include <Autonomous/Strategies/DebugAutoStrategy.h>
 #include <Autonomous/Strategies/CenterSwitchStrategy.h>
 #include <Autonomous/Strategies/SideStrategy.h>
+#include <Autonomous/Strategies/ChiSideStrategy.h>
 #include <Robot.h>
 
 
@@ -29,6 +30,8 @@ AutoManager::AutoManager() :
 
 	frc::SmartDashboard::PutData("Autonomous Start Pos0", positions.get());
 	frc::SmartDashboard::PutData("Autonomous Strategy1", strategies.get());
+	frc::SmartDashboard::SetDefaultBoolean("Autonomous Traverse", true);
+
 	std::cout << "AutoManager::AutoManager() finished\n";
 }
 
@@ -38,6 +41,7 @@ AutoManager::~AutoManager() {
 std::unique_ptr<Strategy> AutoManager::CreateStrategy(const AutoStrategy &key, std::shared_ptr<World> world) {
 	const frc::DriverStation::Alliance alliance = frc::DriverStation::GetInstance().GetAlliance();
 	const bool isRed =  alliance == frc::DriverStation::Alliance::kRed;
+	world->SetAutoTraverse(frc::SmartDashboard::GetBoolean("Autonomous Traverse", true));
 
 	std::cout << "AutoManager::CreateStrategy -> isRed = " << isRed << "\n";
 
@@ -53,7 +57,7 @@ std::unique_ptr<Strategy> AutoManager::CreateStrategy(const AutoStrategy &key, s
 		break;
 	case kSide:
 		std::cout << "AUTOMAN: Selected Side Strategy\n";
-		strategy = new SideStrategy(world);
+		strategy = new ChiSideStrategy(world);
 		break;
 	case kTeammateSide:
 		std::cout << "AUTOMAN: Selected Teammate Side Strategy\n";

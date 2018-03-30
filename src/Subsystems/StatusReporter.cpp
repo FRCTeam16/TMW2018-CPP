@@ -60,13 +60,13 @@ void StatusReporter::SendData() {
 	data[4] = 0;
 	data[5] = 0;
 	data[6] = 0;
-	data[7] = 0;
-	data[8] = 0;
+	data[7] = 1;
+	data[8] = 1;
 	data [9] = Robot::intake->IsPickupTriggered();
 	//data [10] = Robot::driveBase->();
 	data [11] = DriverStation::Alliance::kRed == DriverStation::GetInstance().GetAlliance();
 	data [12] = DriverStation::GetInstance().IsDSAttached();
 
-	serial-> Write(data, 15);
+	serial-> Write(data, 13);
 	serial-> Flush();
 }
