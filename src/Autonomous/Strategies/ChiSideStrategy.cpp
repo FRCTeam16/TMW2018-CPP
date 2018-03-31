@@ -63,7 +63,6 @@ ChiSideStrategy::ChiSideStrategy(std::shared_ptr<World> world) {
 	} else {
 		if (traverse) {
 			DoTraverse();
-			// TODO: Need to score
 		} else {
 			if (haveSwitch) {
 				DoSwitchPickup();
@@ -113,7 +112,7 @@ void ChiSideStrategy::DoTraverse() {
 	const double secondDriveY = PrefUtil::getSet("AutoSideTraverseY2", 0.0);
 
 	steps.push_back(new PositionElevator(Elevator::ElevatorPosition::kHighScale));
-	steps.push_back(new ClosedLoopDrive2(startAngle, secondDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 8.0, 0.5, 12));
+	steps.push_back(new ClosedLoopDrive2(startAngle, secondDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 8.0, 0.5, 24));
 
 	//
 	// Rotate, drive to scale at an angle, eject
@@ -262,7 +261,7 @@ void ChiSideStrategy::DoSecondScale() {
 	DoSecondCubeScale();
 
 	/************ DOING PICKUP OF THIRD CUBE *****/
-	const double xPickupDistance3 = PrefUtil::getSet("AutoSideScalePickupX.3", -66.5) * inv;
+	const double xPickupDistance3 = PrefUtil::getSet("AutoSideScalePickupX.3", -48.0) * inv;
 	DoSecondCubePickup(turnAngle, xPickupDistance3);
 	DoSecondCubeScale();
 }

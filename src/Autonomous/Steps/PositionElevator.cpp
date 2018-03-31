@@ -11,8 +11,7 @@ bool PositionElevator::Run(std::shared_ptr<World> world) {
 		firstRun = false;
 		if (!useDelay) {
 			std::cout << "Positioning Elevator\n";
-			Robot::elevator->SetElevatorPosition(position);
-			sentPosition = true;
+			DoSetPosition();
 		} else {
 			if (DelayParam::DelayType::kTime == delayParam.delayType) {
 				target = world->GetClock() + delayParam.value;
@@ -38,10 +37,18 @@ bool PositionElevator::Run(std::shared_ptr<World> world) {
 
 	if (targetHit) {
 //		std::cout << "Delay Param target hit, requesting elevator position: " << position << "\n";
-		Robot::elevator->SetElevatorPosition(position);
-		sentPosition = true;
+		DoSetPosition();
 	}
 
 	const bool positioned = (waitForPosition) ? Robot::elevator->InPosition() : true;
 	return sentPosition && positioned;
+}
+
+void PositionElevator::DoSetPosition() {
+	if (overrideElevatorPosition < 0) {
+		Robot::elevator->SetElevatorPosition(position);
+	} else {
+		Robot::elevator->SetElevatorSetpoint(overrideElevatorPosition);
+	}
+	sentPosition = true;
 }

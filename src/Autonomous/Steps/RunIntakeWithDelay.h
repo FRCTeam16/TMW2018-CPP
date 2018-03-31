@@ -15,9 +15,11 @@ public:
 	bool Run(std::shared_ptr<World> world) override;
 
 	void SetEjectSpeed(double _spd) { ejectSpeed = _spd; }
+	void SetIntakeSpeed(double _spd) { intakeSpeed = _spd; }
 
 private:
 	void ConfigIntake();
+	double intakeSpeed = -1.0;
 	double ejectSpeed = 1.0;
 	const IntakeState state;
 	const DelayParam delayParam;

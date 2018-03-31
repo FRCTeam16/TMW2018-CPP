@@ -1,10 +1,3 @@
-/*
- * Intake.h
- *
- *  Created on: Feb 17, 2018
- *      Author: smithj11
- */
-
 #ifndef SRC_SUBSYSTEMS_INTAKE_H_
 #define SRC_SUBSYSTEMS_INTAKE_H_
 #include "Commands/Subsystem.h"
@@ -34,6 +27,7 @@ public:
 	double GetLeftIntakeCurrent();
 	double GetRightIntakeCurrent();
 
+	void Start(double speed);
 	void Start();
 	void Stop();
 	void Eject();

@@ -23,6 +23,8 @@ public:
 	virtual ~PositionElevator() {}
 	bool Run(std::shared_ptr<World> world) override;
 
+	void SetOverrideElevatorPosition(int _pos) { overrideElevatorPosition = _pos; }
+
 private:
 	const Elevator::ElevatorPosition position;
 	DelayParam delayParam;
@@ -31,6 +33,10 @@ private:
 	double target = 0;	// tracks position or time if a delay was requeested
 	bool waitForPosition = false;
 	const double timeout;
+
+	int overrideElevatorPosition = -1;
+
+	void DoSetPosition();
 
 };
 

@@ -1,5 +1,6 @@
 #include <Autonomous/Steps/DriveToBump.h>
 #include <Robot.h>
+#include <Autonomous/Steps/RampUtil.h>
 
 bool DriveToBump::Run(std::shared_ptr<World> world) {
 	const double currentTime = world->GetClock();
@@ -24,10 +25,20 @@ bool DriveToBump::Run(std::shared_ptr<World> world) {
 		return true;
 	} else {
 		std::cout << "DriveToBump -> updating driveBase\n";
+
+		double modY = ySpeed;
+		double modX = xSpeed;
+
+		if (rampTime >= 0) {
+			RampUtil ru;
+			modX = ru.RampUp(xSpeed, (currentTime-startTime), rampTime, 0.0);
+			modY = ru.RampUp(ySpeed, (currentTime-startTime), rampTime, 0.0);
+		}
+
 		crab->Update(
 				(float) Robot::driveBase->GetTwistControlOutput(),
-				(float) ySpeed,
-				(float) xSpeed,
+				(float) modY,
+				(float) modX,
 				true);
 		return false;
 	}

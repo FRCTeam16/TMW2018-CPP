@@ -1,13 +1,7 @@
-/*
- * CenterSwitchStrategy.h
- *
- *  Created on: Feb 18, 2018
- *      Author: jsmith
- */
-
 #ifndef SRC_AUTONOMOUS_STRATEGIES_CENTERSWITCHSTRATEGY_H_
 #define SRC_AUTONOMOUS_STRATEGIES_CENTERSWITCHSTRATEGY_H_
 
+#include "WPILib.h"
 #include <Autonomous/Strategy.h>
 #include <Autonomous/World.h>
 
@@ -16,7 +10,7 @@ public:
 	CenterSwitchStrategy(std::shared_ptr<World> world);
 	virtual ~CenterSwitchStrategy() {}
 private:
-	void DoTimedDrive(World *world);
+	void DoTimedDrive(std::shared_ptr<World> world);
 };
 
 #endif /* SRC_AUTONOMOUS_STRATEGIES_CENTERSWITCHSTRATEGY_H_ */

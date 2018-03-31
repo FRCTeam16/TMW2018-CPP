@@ -29,6 +29,8 @@ public:
 	virtual ~DriveToBump() {}
 	bool Run(std::shared_ptr<World> world) override;
 
+	void SetRampTime(double _time) { rampTime = _time; }
+
 private:
      const double angle;
      const double ySpeed;
@@ -39,6 +41,8 @@ private:
 
      double startTime = -1;
      bool collisionDetected = false;
+
+     double rampTime = -1;
 };
 
 #endif /* SRC_AUTONOMOUS_STEPS_DRIVETOBUMP_H_ */

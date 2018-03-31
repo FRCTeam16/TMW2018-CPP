@@ -96,8 +96,13 @@ void Intake::Run() {
 //	rotateMotor->Set(rotationState.getMotorOutput(rotateCounter));
 }
 
-void Intake::Start() {
+void Intake::Start(double speed) {
 	state = IntakeState::kIntake;
+	intakeSpeed = speed;
+}
+
+void Intake::Start() {
+	Start(PrefUtil::getSet("IntakeIntakeSpeed", -1.0));
 }
 
 void Intake::Stop() {

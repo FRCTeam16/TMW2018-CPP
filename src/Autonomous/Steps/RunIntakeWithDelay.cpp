@@ -6,6 +6,7 @@
 bool RunIntakeWithDelay::Run(std::shared_ptr<World> world) {
 	std::cout << "RunIntakeWithDelay::Run()\n";
 	if (firstRun) {
+		std::cout << "RunIntakeWithDelay -> First Run\n";
 		firstRun = false;
 		if (DelayParam::DelayType::kTime == delayParam.delayType) {
 			target = world->GetClock() + delayParam.value;
@@ -27,7 +28,7 @@ bool RunIntakeWithDelay::Run(std::shared_ptr<World> world) {
 				targetHit = currentTime >= target;
 				break;
 			default:
-				std::cout << "! RunIntakeWithDelay Warning using default\n";
+				std::cout << "! RunIntakeWithDelay Warning using default delay type : " << delayParam.delayType << "\n";
 				targetHit = true;
 		}
 		if (targetHit) {
@@ -51,7 +52,7 @@ bool RunIntakeWithDelay::Run(std::shared_ptr<World> world) {
 void RunIntakeWithDelay::ConfigIntake() {
 	switch (state) {
 	case Start:
-		Robot::intake->Start();
+		Robot::intake->Start(intakeSpeed);
 		break;
 	case Stop:
 		Robot::intake->Stop();

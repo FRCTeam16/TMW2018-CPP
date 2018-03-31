@@ -112,7 +112,8 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 //		std::cout << "XYPIDController yspeed    = " << yspeed << "\n";
 
 
-		const double twistOutput =  (elapsedTimeSecs < rampUp) ? 0.0 : Robot::driveBase->GetTwistControlOutput();
+//		const double twistOutput =  (elapsedTimeSecs < rampUp) ? 0.0 : Robot::driveBase->GetTwistControlOutput();
+		const double twistOutput = Robot::driveBase->GetTwistControlOutput();
 
 		crab->Update(
 				(float) twistOutput,
