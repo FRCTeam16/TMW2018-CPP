@@ -123,4 +123,6 @@ void AutoManager::Instrument() {
 
 	const AutoStartPosition selectedPosition = static_cast<AutoStartPosition>(positions->GetSelected());
 	frc::SmartDashboard::PutNumber("Auto Selected Position", selectedPosition);
+
+	frc::SmartDashboard::PutBoolean("Auto Traverse Check", frc::SmartDashboard::GetBoolean("Autonomous Traverse", true));
 }

@@ -26,7 +26,7 @@
 ChiSideStrategy::ChiSideStrategy(std::shared_ptr<World> world) {
 	const FieldInfo fieldInfo = world->GetFieldInfo();
 	const AutoStartPosition startPosition = world->GetStartPosition();
-	const bool traverse = true;	// FIXME: Look this up from world
+	const bool traverse = world->GetAutoTraverse();
 
 	isLeft = AutoStartPosition::kLeft == startPosition;
 	isRight = AutoStartPosition::kRight == startPosition;
@@ -51,6 +51,10 @@ ChiSideStrategy::ChiSideStrategy(std::shared_ptr<World> world) {
 		haveScale = FieldInfo::Right == fieldInfo.scaleLocation;
 	}
 
+	std::cout << "isLeft? " << isLeft
+			<< " | haveSwitch? " << haveSwitch << " | haveScale? " << haveScale
+			<< " | traverse? " << traverse << "\n";
+
 
 	//------------------------------------------------------------------------
 	// Configure steps
@@ -58,16 +62,19 @@ ChiSideStrategy::ChiSideStrategy(std::shared_ptr<World> world) {
 	StartInitialPose();
 
 	if (haveScale) {
+		std::cout << "[Auto] Doing Scale\n";
 		DoFirstScale();
 		DoSecondScale();
 	} else {
 		if (traverse) {
+			std::cout << "[Auto] Doing Traverse\n";
 			DoTraverse();
 		} else {
 			if (haveSwitch) {
+				std::cout << "[Auto] Doing Switch\n";
 				DoSwitchPickup();
-				// TODO: Need to keep scoring
 			} else {
+				std::cout << "[Auto] Doing Nothing\n";
 				// TODO: Do special move, at least drive past line
 			}
 		}
@@ -184,7 +191,7 @@ void ChiSideStrategy::DoSwitchPickup() {
 	step->SetHardStopsContinueFromStep(false);
 	steps.push_back(new ConcurrentStep({
 		step,
-		new IntakeSolenoidWithDelay(true, DelayParam(DelayParam::DelayType::kNone, 0.0), 1.0),
+		new IntakeSolenoidWithDelay(false, DelayParam(DelayParam::DelayType::kNone, 0.0), 1.0),
 		new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Eject, DelayParam(DelayParam::DelayType::kPosition, firstEjectY), 2.0, -1)
 	}));
 
@@ -199,7 +206,7 @@ void ChiSideStrategy::DoSwitchPickup() {
 	step2->SetHardStopsContinueFromStep(false);
 	steps.push_back(new ConcurrentStep({
 		step2,
-	}));
+	}, true));
 
 
 	// Turn and drop elevator
@@ -210,7 +217,7 @@ void ChiSideStrategy::DoSwitchPickup() {
 
 	steps.push_back(new ConcurrentStep({
 		new Rotate(turnAngle, rotateAngleThreshold, 10.0, rotateAngleThresholdScans),
-		new PositionElevator(Elevator::ElevatorPosition::kFloor, DelayParam(DelayParam::DelayType::kTime, 0.5), true),
+		new PositionElevator(Elevator::ElevatorPosition::kFloor, DelayParam(DelayParam::DelayType::kNone, 0.0), true),
 		new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Stop, DelayParam(DelayParam::DelayType::kNone, 0.0), 0.1, -1),
 	}, true));
 
@@ -218,6 +225,47 @@ void ChiSideStrategy::DoSwitchPickup() {
 	/************ DOING PICKUP OF SECOND CUBE *****/
 	const double xPickupDistance = PrefUtil::getSet("AutoSideSwitchPickupX", -24.0) * inv;
 	DoSecondCubePickup(turnAngle, xPickupDistance);
+
+	/************ Score Second Cube *********/
+	steps.push_back(new PositionElevator(Elevator::ElevatorPosition::kSwitch, DelayParam(DelayParam::DelayType::kNone, 0.0), true));
+
+	const double driveX2 = 0.0;
+	const double driveY2 = -0.3;
+	steps.push_back(new TimedDrive(turnAngle, driveY2, driveX2, 0.75));
+
+	RunIntakeWithDelay *eject2 = new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Eject, DelayParam(DelayParam::DelayType::kNone, 0.0), 0.5, -1);
+	eject2->SetEjectSpeed(0.65);
+	steps.push_back(new ConcurrentStep({
+		eject2,
+		new IntakeSolenoidWithDelay(false, DelayParam(DelayParam::DelayType::kNone, 0.0), 1.0)
+	}));
+
+	/************ Pickup Third Cube **/
+	const double driveX3 = 0.0;
+	const double driveY3 = 10;
+	steps.push_back(new ClosedLoopDrive2(turnAngle, 0.3, driveX3, driveY3, -1, DriveUnit::Units::kInches, 3.0, 0.5, 6));
+
+	steps.push_back(new PositionElevator(Elevator::ElevatorPosition::kFloor, DelayParam(DelayParam::DelayType::kNone, 0.0), true));
+
+	DoSecondCubePickup(turnAngle, 12.0);
+
+	/************ Score Third Cube *********/
+	steps.push_back(new PositionElevator(Elevator::ElevatorPosition::kLowScale, DelayParam(DelayParam::DelayType::kNone, 0.0), true));
+
+//	const double driveY4 = -0.3;
+//	const double driveX4 = 0.5 * inv;
+//	steps.push_back(new TimedDrive(turnAngle, driveY4, driveX4, 0.75));
+	const double finalAngle = -180.0;
+	steps.push_back(new Rotate(finalAngle, rotateAngleThreshold, 10.0, rotateAngleThresholdScans));
+
+	RunIntakeWithDelay *intake4 = new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Start, DelayParam(DelayParam::DelayType::kNone, 0.0), 0.5, 1.0);
+	intake4->SetIntakeSpeed(-0.50);
+	steps.push_back(new ConcurrentStep({
+		intake4,
+		new IntakeSolenoidWithDelay(false, DelayParam(DelayParam::DelayType::kNone, 0.0), 1.0)
+	}));
+
+
 
 }
 
