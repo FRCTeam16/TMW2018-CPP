@@ -25,6 +25,8 @@ private:
 	void DoSwitchPickup();		// runs a switch score - pickup
 	void DoTraverse();			// runs a traverse
 
+	void CrossLine();
+
 	// Helpers
 
 	void DoSecondCubePickup(double robotAngle, double xDriveDistance);

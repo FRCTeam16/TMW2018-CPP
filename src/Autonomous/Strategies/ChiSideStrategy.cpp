@@ -74,8 +74,8 @@ ChiSideStrategy::ChiSideStrategy(std::shared_ptr<World> world) {
 				std::cout << "[Auto] Doing Switch\n";
 				DoSwitchPickup();
 			} else {
-				std::cout << "[Auto] Doing Nothing\n";
-				// TODO: Do special move, at least drive past line
+				std::cout << "[Auto] Crossing Line\n";
+				CrossLine();
 			}
 		}
 	}
@@ -368,4 +368,12 @@ void ChiSideStrategy::DoThirdCubePickup(double robotAngle, double xDriveDistance
 		new IntakeSolenoidWithDelay(false, DelayParam(DelayParam::DelayType::kPosition, intakeDelayPos), 5.0)
 	}, true));
 	steps.push_back(new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Stop, DelayParam(DelayParam::DelayType::kNone, 0.0), 0.1, -1));
+}
+
+void ChiSideStrategy::CrossLine() {
+	const double firstDriveSpeed = PrefUtil::getSet("AutoSideTraverseSpeed1", 0.5);
+		const double firstDriveX = PrefUtil::getSet("AutoSideTraverseX1", 15.0) * inv;
+		const double firstDriveY = PrefUtil::getSet("AutoSideTraverseY1", 228.0);
+
+		steps.push_back(new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 8.0, 1.5, 30));
 }
