@@ -584,6 +584,40 @@ DriveInfo<double> DriveBase::GetDriveCurrent() {
  	 info.RR = rearRightSteer->GetOutputCurrent();
  	 info.RL = rearLeftSteer->GetOutputCurrent();
  	 return info;
- }
+}
+
+void DriveBase::DMSDrive(double speed) {
+	const std::vector<std::shared_ptr<WPI_TalonSRX>> drives {
+			frontLeftDrive, frontRightDrive, rearLeftDrive, rearRightDrive};
+	for(auto const& drive: drives) {
+		drive->Set(ControlMode::PercentOutput, speed);
+	}
+}
+
+void DriveBase::DMSSteer(double speed) {
+    const std::vector<std::shared_ptr<WPI_TalonSRX>> steering {
+    	frontLeftSteer, frontRightSteer, rearLeftSteer, rearRightSteer };
+    for(auto const& steer: steering) {
+    	steer->Set(ControlMode::PercentOutput, speed);
+    }
+}
+
+DriveInfo<int> DriveBase::GetDMSDriveVelocity() {
+	DriveInfo<int> info;
+	info.FL = frontLeftDrive->GetSelectedSensorVelocity(0);
+	info.FR = frontRightDrive->GetSelectedSensorVelocity(0);
+	info.RR = rearRightDrive->GetSelectedSensorVelocity(0);
+	info.RL = rearLeftDrive->GetSelectedSensorVelocity(0);
+	return info;
+}
+
+DriveInfo<int> DriveBase::GetDMSSteerVelocity() {
+	DriveInfo<int> info;
+	info.FL = frontLeftSteer->GetSelectedSensorVelocity(0);
+	info.FR = frontRightSteer->GetSelectedSensorVelocity(0);
+	info.RR = rearRightSteer->GetSelectedSensorVelocity(0);
+	info.RL = rearLeftSteer->GetSelectedSensorVelocity(0);
+	return info;
+}
 
 

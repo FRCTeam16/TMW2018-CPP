@@ -62,17 +62,17 @@ void StatusReporter::SendData() {
 	char data[DATA_SIZE];
 	data[0]  = (char) 254;
 	data[1]  = (char) (dmsMode) ? driveStatus.FL : 0;
-	data[2]  = (char) 0;
+	data[2]  = (char) (dmsMode) ? steerStatus.FL : 0;
 	data[3]  = (char) (dmsMode) ? driveStatus.FR : 0;
-	data[4]  = (char) 0;
-	data[5]  = (char) (dmsMode) ? driveStatus.RL : 0;;
-	data[6]  = (char) 0;
+	data[4]  = (char) (dmsMode) ? steerStatus.FR : 0;
+	data[5]  = (char) (dmsMode) ? driveStatus.RL : 0;
+	data[6]  = (char) (dmsMode) ? steerStatus.RL : 0;
 	data[7]  = (char) (dmsMode) ? driveStatus.RR : 0;
-	data[8]  = (char) 1;
+	data[8]  = (char) (dmsMode) ? steerStatus.RR : 0;
 	data[9]  = (char) Robot::intake->IsPickupTriggered();
 	data[10] = (char) StatusReporterUtil::map(speed, 0.0, 1.0, 0, 250);
 	data[11] = (char) DriverStation::Alliance::kRed == DriverStation::GetInstance().GetAlliance();
-	data[12] = (char) DriverStation::GetInstance().IsDSAttached();
+	data[12] = (char) 1; // DriverStation::GetInstance().IsDSAttached();
 	data[13] = (char) StatusReporterUtil::map(Robot::elevator->GetElevatorEncoderPosition(), 0, 59000, 0, 250);
 
 	serial->Write(data, DATA_SIZE);

@@ -26,16 +26,17 @@ inline void add(DriveInfo<double> &di1, const DriveInfo<double> &di2) {
 	di1.RR += fabs(di2.RR);
 }
 
+
 inline double CalculateAverage(const DriveInfo<double> &data) {
 	double sum = data.FL + data.FR + data.RL + data.RR;
 	return sum / 4.0;
 }
 
+
 inline double CalculateAverage(const DriveInfo<int> &data) {
 	double sum = data.FL + data.FR + data.RL + data.RR;
 	return sum / 4.0;
 }
-
 
 
 void DmsProcessManager::SetRunning(bool _run) {
@@ -47,6 +48,7 @@ void DmsProcessManager::SetRunning(bool _run) {
 	running = _run;
 }
 
+
 void DmsProcessManager::Run() {
 	statusReporter->SetDmsMode(running);
 	if (running) {
@@ -57,11 +59,11 @@ void DmsProcessManager::Run() {
 			DoMotorTest();
 			break;
 		case kTestSteerMotors:
+			DoSteerTest();
 			break;
 		}
 	}
 }
-
 
 
 void DmsProcessManager::DoMotorTest() {
@@ -72,45 +74,99 @@ void DmsProcessManager::DoMotorTest() {
 	const double elapsedTime = (currentTime - startTime);
 
 	if (elapsedTime < motorTestTime) {
-		add(driveCurrent, Robot::driveBase->GetSteerCurrent());
-		add(driveEncoder, Robot::driveBase->GetDriveEncoderPositions());
-		loopCounter++;
-		Robot::driveBase->SetConstantVelocity(0.0, 1.0);
+		if (elapsedTime > 1) {
+			add(driveCurrent, Robot::driveBase->GetSteerCurrent());
+			add(driveVelocity, Robot::driveBase->GetDriveEncoderPositions());
+			loopCounter++;
+			Robot::driveBase->SetConstantVelocity(0.0, 1.0);
 
-		std::cout << "(Enc) FL: " << driveEncoder.FL
-				  << " FR: " << driveEncoder.FR
-				  << " RL: " << driveEncoder.RL
-				  << " RR: " << driveEncoder.RR
-				  << "\n";
+			std::cout << "(DVel) FL: " << driveVelocity.FL / loopCounter
+					  << " FR: " << driveVelocity.FR / loopCounter
+					  << " RL: " << driveVelocity.RL / loopCounter
+					  << " RR: " << driveVelocity.RR / loopCounter
+					  << "\n";
 
-		std::cout << "(Amp) FL: " << driveCurrent.FL
-				  << " FR: " << driveCurrent.FR
-				  << " RL: " << driveCurrent.RL
-				  << " RR: " << driveCurrent.RR
-				  << "\n";
+			std::cout << "(DAmp) FL: " << driveCurrent.FL / loopCounter
+					  << " FR: " << driveCurrent.FR / loopCounter
+					  << " RL: " << driveCurrent.RL / loopCounter
+					  << " RR: " << driveCurrent.RR / loopCounter
+					  << "\n";
 
-		const double encAvg = CalculateAverage(driveEncoder);
-		const double ampAvg = CalculateAverage(driveCurrent);
-		std::cout << "Enc Avg: " << encAvg << " | Amp Avg: " << ampAvg << "\n";
-		DriveInfo<int> status;
-		status.FL = CalculateStatus(driveEncoder.FL, encAvg, driveCurrent.FL, ampAvg);
-		status.FR = CalculateStatus(driveEncoder.FR, encAvg, driveCurrent.FR, ampAvg);
-		status.RL = CalculateStatus(driveEncoder.RL, encAvg, driveCurrent.RL, ampAvg);
-		status.RR = CalculateStatus(driveEncoder.RR, encAvg, driveCurrent.RR, ampAvg);
+			const double velAvg = CalculateAverage(driveVelocity);
+			const double ampAvg = CalculateAverage(driveCurrent);
+			std::cout << "Enc Avg: " << velAvg << " | Amp Avg: " << ampAvg << "\n";
+			DriveInfo<int> status;
+			status.FL = CalculateStatus(driveVelocity.FL, velAvg, driveCurrent.FL, ampAvg);
+			status.FR = CalculateStatus(driveVelocity.FR, velAvg, driveCurrent.FR, ampAvg);
+			status.RL = CalculateStatus(driveVelocity.RL, velAvg, driveCurrent.RL, ampAvg);
+			status.RR = CalculateStatus(driveVelocity.RR, velAvg, driveCurrent.RR, ampAvg);
 
-		statusReporter->SetDriveStatus(status);
+			statusReporter->SetDriveStatus(status);
 
-		std::cout << "FL: " << status.FL
-				  << " FR: " << status.FR
-				  << " RL: " << status.RL
-				  << " RR: " << status.RR
-				  << "\n";
-
-		Robot::driveBase->SetConstantVelocity(0.0, 1.0);
+			std::cout << "Drive FL: " << status.FL
+					  << " FR: " << status.FR
+					  << " RL: " << status.RL
+					  << " RR: " << status.RR
+					  << "\n";
+		}
+		Robot::driveBase->DMSDrive(1.0);
 	} else {
-		Robot::driveBase->SetConstantVelocity(0.0, 0.0);
+		startTime = -1;
+		currentPhase = kTestSteerMotors;
+		std::cout << "******************** STARTING STEER PHASE ********************\n";
 	}
 }
+
+
+void DmsProcessManager::DoSteerTest() {
+	const double currentTime = Timer::GetFPGATimestamp();
+	if (startTime < 0) {
+		startTime = currentTime;
+	}
+	const double elapsedTime = (currentTime - startTime);
+
+	if (elapsedTime < motorTestTime) {
+		if (elapsedTime > 1) {
+			add(steerCurrent, Robot::driveBase->GetSteerCurrent());
+			add(steerVelocity, Robot::driveBase->GetDMSSteerVelocity());
+			loopCounter++;
+
+			std::cout << "(SVel) FL: " << steerVelocity.FL / loopCounter
+					  << " FR: " << steerVelocity.FR / loopCounter
+					  << " RL: " << steerVelocity.RL / loopCounter
+					  << " RR: " << steerVelocity.RR / loopCounter
+					  << "\n";
+
+			std::cout << "(SAmp) FL: " << steerCurrent.FL / loopCounter
+					  << " FR: " << steerCurrent.FR / loopCounter
+					  << " RL: " << steerCurrent.RL / loopCounter
+					  << " RR: " << steerCurrent.RR / loopCounter
+					  << "\n";
+
+			const double velAvg = CalculateAverage(steerVelocity);
+			const double ampAvg = CalculateAverage(steerCurrent);
+			std::cout << "Vel Avg: " << velAvg << " | Amp Avg: " << ampAvg << "\n";
+			DriveInfo<int> status;
+			status.FL = CalculateStatus(steerVelocity.FL, velAvg, steerCurrent.FL, ampAvg);
+			status.FR = CalculateStatus(steerVelocity.FR, velAvg, steerCurrent.FR, ampAvg);
+			status.RL = CalculateStatus(steerVelocity.RL, velAvg, steerCurrent.RL, ampAvg);
+			status.RR = CalculateStatus(steerVelocity.RR, velAvg, steerCurrent.RR, ampAvg);
+
+			statusReporter->SetSteerStatus(status);
+
+			std::cout << "Steer FL: " << status.FL
+					  << " FR: " << status.FR
+					  << " RL: " << status.RL
+					  << " RR: " << status.RR
+					  << "\n";
+		}
+		Robot::driveBase->DMSSteer(1.0);
+	} else {
+		currentPhase = kStopped;
+	}
+}
+
+
 
 int DmsProcessManager::CalculateStatus(const double enc, const double encAvg, const double amp, const double ampAvg) {
 	if (amp == 0) {
@@ -133,10 +189,13 @@ int DmsProcessManager::CalculateStatus(const double enc, const double encAvg, co
 	}
 }
 
+
 void DmsProcessManager::Reset() {
 	currentPhase = kStopped;
 	startTime = -1;
 	loopCounter = 0;
 	driveCurrent = DriveInfo<double>(0.0);
-	driveEncoder = DriveInfo<double>(0.0);
+	driveVelocity = DriveInfo<double>(0.0);
+	steerCurrent = DriveInfo<double>(0.0);
+	steerVelocity = DriveInfo<double>(0.0);
 }

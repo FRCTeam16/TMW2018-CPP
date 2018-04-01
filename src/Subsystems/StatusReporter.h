@@ -14,6 +14,7 @@ public:
 
 	void SetDmsMode(bool _mode) { dmsMode = _mode; }
 	void SetDriveStatus(DriveInfo<int> _status) { driveStatus = _status; }
+	void SetSteerStatus(DriveInfo<int> _status) { steerStatus = _status; }
 private:
 	bool running = false;
 	std::thread reporterThread;
@@ -24,6 +25,7 @@ private:
 	void SendData();
 
 	DriveInfo<int> driveStatus;
+	DriveInfo<int> steerStatus;
 };
 
 #endif /* SRC_SUBSYSTEMS_STATUSREPORTER_H_ */

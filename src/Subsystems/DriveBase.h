@@ -132,9 +132,12 @@ public:
 
 	DriveInfo<int> GetDriveEncoderPositions();
 	DriveInfo<double> GetDriveCurrent();
+	DriveInfo<int> GetDMSDriveVelocity();
 	DriveInfo<int> GetSteerEncoderPositions();
 	DriveInfo<double> GetSteerCurrent();
+	DriveInfo<int> GetDMSSteerVelocity();
 
-
+	void DMSDrive(double speed);
+	void DMSSteer(double speed);
 };
 #endif

@@ -22,15 +22,24 @@ private:
 	bool running = false;
 	TestPhase currentPhase = kStopped;
 
+	DriveInfo<int> startDriveEncoder;
 	DriveInfo<double> driveCurrent;
-	DriveInfo<double> driveEncoder;
+	DriveInfo<double> driveVelocity;
+
+	DriveInfo<int> startSteerVelocity;
+	DriveInfo<double> steerCurrent;
+	DriveInfo<double> steerVelocity;
+
+	const DriveInfo<int> ZERO_DI;
 
 	const double encAvgThreshold = 0.8;
 	const double ampAvgThreshold = 0.8;
-	const double motorTestTime = 3.0;
+	const double motorTestTime = 4.0;
 
 
 	void DoMotorTest();
+	void DoSteerTest();
+
 	void Reset();
 	int CalculateStatus(const double enc, const double encAvg, const double amp, const double ampAvg);
 };
