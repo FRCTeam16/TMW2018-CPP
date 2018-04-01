@@ -83,6 +83,9 @@ private:
 	double CorrectSteerSetpoint(double setpoint);
 	void SetDriveSpeed(DriveInfo<double> speed);
 
+	bool lastSpeedX = 0.0;	// last speed used for DMS
+	bool lastSpeedY = 0.0;
+
 public:
 	DriveBase();
 	void InitDefaultCommand();
@@ -122,6 +125,8 @@ public:
 
 	void SetConstantVelocity(double twistInput, double velocity);
 
+	const double GetLastSpeedX() { return lastSpeedX; }
+	const double GetLastSpeedY() { return lastSpeedY; }
 	void Instrument();
 	void Diagnostics();	// used for more detailed diagnostics displayed on smart dashboard
 

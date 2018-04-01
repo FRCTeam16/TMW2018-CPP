@@ -2,31 +2,37 @@
 #define SRC_DMS_DMSPROCESSMANAGER_H_
 
 #include "WPILib.h"
-#include <Robot.h>
+#include <Subsystems/StatusReporter.h>
+#include <Util/DriveInfo.h>
 
 
 class DmsProcessManager {
 public:
-	DmsProcessManager() {}
+	DmsProcessManager(std::shared_ptr<StatusReporter> _statusReporter) : statusReporter(_statusReporter) {}
 	virtual ~DmsProcessManager() {}
 	void Run();
 
-	void SetRunning(bool _run) { running = _run; }
+	void SetRunning(bool _run);
 	bool IsRunning() { return running; }
 private:
 	enum TestPhase { kStopped, kTestDriveMotors, kTestSteerMotors };
+	const std::shared_ptr<StatusReporter> statusReporter;
 	double startTime = -1;
 	double loopCounter = 0;
 	bool running = false;
-	TestPhase currentPhase;
+	TestPhase currentPhase = kStopped;
 
 	DriveInfo<double> driveCurrent;
-	DriveInfo<int> driveEncoder;
+	DriveInfo<double> driveEncoder;
 
+	const double encAvgThreshold = 0.8;
+	const double ampAvgThreshold = 0.8;
 	const double motorTestTime = 3.0;
+
 
 	void DoMotorTest();
 	void Reset();
+	int CalculateStatus(const double enc, const double encAvg, const double amp, const double ampAvg);
 };
 
 #endif /* SRC_DMS_DMSPROCESSMANAGER_H_ */

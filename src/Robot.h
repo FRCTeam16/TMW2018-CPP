@@ -34,7 +34,6 @@
 #include "Util/TelemetryLogger.h"
 #include "DMS/DmsProcessManager.h"
 
-
 #include "OI.h"
 
 class Robot : public frc::TimedRobot {
@@ -67,7 +66,7 @@ private:
 	double lastTime = 0.0;
 	std::unique_ptr<CollisionDetector> collisionDetector;
 	std::unique_ptr<TelemetryLogger> telemetryLogger;
-	std::unique_ptr<StatusReporter> statusReporter;
-//	std::unique_ptr<DmsProcessManager> dmsProcessManager;
+	std::shared_ptr<StatusReporter> statusReporter;
+	std::unique_ptr<DmsProcessManager> dmsProcessManager;
 };
 #endif

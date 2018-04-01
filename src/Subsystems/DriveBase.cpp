@@ -251,6 +251,8 @@ void DriveBase::HaltUsingClosedLoop() {
 }
 
 void DriveBase::Crab(double twist, double y, double x, bool useGyro) {
+	lastSpeedX = x;
+	lastSpeedY = y;
 	float FWD = y;
 	float STR = x;
 

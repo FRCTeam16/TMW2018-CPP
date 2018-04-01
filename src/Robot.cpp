@@ -31,8 +31,7 @@ void Robot::RobotInit() {
 //
 	statusReporter.reset(new StatusReporter());
 	statusReporter->Launch();
-
-//	dmsProcessManager.reset(new DmsProcessManager());
+	dmsProcessManager.reset(new DmsProcessManager(statusReporter));
 
 
 	std::cout << "Robot::RobotInit() complete - stratofortress is aloft\n";
@@ -204,13 +203,12 @@ void Robot::TeleopPeriodic() {
 	}
 
 
+	/**
+	 * Testing and Diagnostics
+	 */
 	const bool speedModeTest = oi->DL7->Pressed();
-	/*if (oi->DL7->RisingEdge()) {
-		driveBase->UseClosedLoopDrive();
-	}
-	if (oi->DL7->FallingEdge()) {
-		driveBase->UseOpenLoopDrive();
-	}*/
+	const bool dmsMode = oi->DL11->Pressed();
+	dmsProcessManager->SetRunning(dmsMode);
 
 	/*
 		Drive Control
@@ -246,6 +244,9 @@ void Robot::TeleopPeriodic() {
 
 	climbProcess->Run();
 	climbProcess->Instrument();
+
+	dmsProcessManager->Run();
+
 	RunSubsystems();
 	InstrumentSubsystems();
 
