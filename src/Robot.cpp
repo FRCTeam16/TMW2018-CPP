@@ -60,6 +60,24 @@ void Robot::AutonomousInit() {
 
 	intake->SetExtendSolenoidState(true);
 	world.reset(new World());
+
+	//
+	// BEGIN PRACTICE DATA AUTO OVERRIDE
+	//
+	if (!Preferences::GetInstance()->ContainsKey("AutoOverride")) {
+		Preferences::GetInstance()->PutString("AutoOverride", "");
+	}
+	FieldInfo overrideField = FieldInfo(Preferences::GetInstance()->GetString("AutoOverride", ""));
+	if (FieldInfo::Location::Unknown != overrideField.switchLocation &&
+		FieldInfo::Location::Unknown != overrideField.scaleLocation &&
+		FieldInfo::Location::Unknown != overrideField.farSwitchLocation) {
+		world->SetFieldInfo(overrideField);
+	}
+
+	//
+	// END PRACTICE DATA AUTO OVERRIDE
+	//
+
 	autoManager->Init(world);
 }
 

@@ -32,6 +32,7 @@ public:
 	double GetClock() const;				// time elapsed since Init() in seconds
 	bool IsRed();
 	FieldInfo GetFieldInfo();
+	void SetFieldInfo(FieldInfo fieldInfo);
 	AutoStartPosition GetStartPosition() { return startPosition; }
 	void SetStartPosition(AutoStartPosition pos) { startPosition = pos; }
 

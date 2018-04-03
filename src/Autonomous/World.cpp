@@ -1,9 +1,3 @@
-/*
- * World.cpp
- *
- *  Created on: Feb 6, 2017
- *      Author: User
- */
 #include "WPILib.h"
 #include <Autonomous/World.h>
 #include "DriverStation.h"
@@ -27,6 +21,10 @@ double World::GetClock() const {
 
 FieldInfo World::GetFieldInfo() {
 	return fieldInfo;
+}
+
+void World::SetFieldInfo(FieldInfo _fieldInfo) {
+	fieldInfo = _fieldInfo;
 }
 
 bool World::IsRed() {

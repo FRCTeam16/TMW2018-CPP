@@ -1,17 +1,22 @@
-/*
- * FieldInfo.cpp
- *
- *  Created on: Feb 18, 2018
- *      Author: jsmith
- */
-
 #include <Autonomous/FieldInfo.h>
 #include "DriverStation.h"
 #include <iostream>
 #include <string>
 
+FieldInfo::FieldInfo(std::string gameData) {
+	ParseGameData(gameData);
+}
+
 FieldInfo::FieldInfo() {
 	std::string gameData = DriverStation::GetInstance().GetGameSpecificMessage();
+	ParseGameData(gameData);
+}
+
+FieldInfo::~FieldInfo() {
+	// TODO Auto-generated destructor stub
+}
+
+void FieldInfo::ParseGameData(std::string gameData) {
 	if(gameData.length() == 3)
 	{
 		switchLocation = gameData[0] == 'L' ? Location::Left : Location::Right;
@@ -21,10 +26,5 @@ FieldInfo::FieldInfo() {
 		std::cerr << "Did not receive correct game specific message to parse [" << gameData << "]";
 		switchLocation = scaleLocation = farSwitchLocation = Location::Unknown;
 	}
-
-}
-
-FieldInfo::~FieldInfo() {
-	// TODO Auto-generated destructor stub
 }
 
