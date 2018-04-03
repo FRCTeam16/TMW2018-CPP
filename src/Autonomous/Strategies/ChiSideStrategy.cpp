@@ -131,7 +131,7 @@ void ChiSideStrategy::DoTraverse() {
 	const double driveInY = PrefUtil::getSet("AutoSideTraverseDriveInY", 36.0);
 //	const double driveInTime = PrefUtil::getSet("AutoSideTraverseDriveInTime", 1.0);
 
-	steps.push_back(new Rotate(rotateAngle, 5, 10.0, 1));
+	steps.push_back(new Rotate(rotateAngle, 5, 5.0, 1));
 	steps.push_back(new ConcurrentStep({
 		new ClosedLoopDrive2(rotateAngle, driveInSpeed, driveInX, driveInY, -1, DriveUnit::Units::kInches, 3.0, 0.25, 5)
 //		new IntakeSolenoidWithDelay(true, DelayParam(DelayParam::DelayType::kNone, 0.0), 1.0)
@@ -152,10 +152,12 @@ void ChiSideStrategy::DoTraverse() {
 	const double pickupX = PrefUtil::getSet("AutoSideTraversePickupX", 22) * inv;
 	const double pickupY = PrefUtil::getSet("AutoSideTraversePickupY", 36);
 
+	steps.push_back(new ClosedLoopDrive2(rotateAngle, 0.3, 0, -12, -1, DriveUnit::Units::kInches, 1.0, 0.25, 4));
 	steps.push_back(new ConcurrentStep({
 		new Rotate(pickupAngle, pickupAngleThreshold, 10.0, pickupAngleScans),
 		new PositionElevator(Elevator::ElevatorPosition::kFloor, DelayParam(DelayParam::DelayType::kTime, 0.75), true),
 	}));
+
 
 	ClosedLoopDrive2 *drive = new ClosedLoopDrive2(pickupAngle, pickupSpeed, pickupX, pickupY, -1, DriveUnit::Units::kInches, 4.0, 0.25, 5);
 	drive->SetHaltOnIntakePickup(true);

@@ -32,6 +32,7 @@ private:
 
 	const DriveInfo<int> ZERO_DI;
 
+	const double initialIgnoreTime = 1.0;
 	const double encAvgThreshold = 0.8;
 	const double ampAvgThreshold = 0.8;
 	const double motorTestTime = 4.0;

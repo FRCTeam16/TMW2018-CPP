@@ -56,6 +56,23 @@ void StatusReporter::SendData() {
 	const double y = Robot::driveBase->GetLastSpeedY();
 	const double speed = sqrt(fabs(x*x) + fabs(y*y));
 
+	const DriverStation::Alliance alliance =  DriverStation::GetInstance().GetAlliance();
+	int allianceColor = 0;
+	if (DriverStation::Alliance::kRed == alliance) {
+		allianceColor = 1;
+	} else if (DriverStation::Alliance::kRed == alliance) {
+		allianceColor = 2;
+	}
+
+	int robotState = 0;
+	if (RobotState::IsDisabled()) {
+		robotState = 1;
+	} else if (RobotState::IsAutonomous()) {
+		robotState = 2;
+	} else if (RobotState::IsOperatorControl()) {
+		robotState = 3;
+	}
+
 //	std::cout << "Sending DMS ? " << dmsMode << "\n";
 
 	const int DATA_SIZE = 14;
@@ -71,8 +88,8 @@ void StatusReporter::SendData() {
 	data[8]  = (char) (dmsMode) ? steerStatus.RR : 0;
 	data[9]  = (char) Robot::intake->IsPickupTriggered();
 	data[10] = (char) StatusReporterUtil::map(speed, 0.0, 1.0, 0, 250);
-	data[11] = (char) DriverStation::Alliance::kRed == DriverStation::GetInstance().GetAlliance();
-	data[12] = (char) 1; // DriverStation::GetInstance().IsDSAttached();
+	data[11] = (char) allianceColor;	// 1 red, 2 blue, 0 unknown
+	data[12] = (char) robotState;		// 0 - none, 1 - disabled, 2- auto, 3- tele
 	data[13] = (char) StatusReporterUtil::map(Robot::elevator->GetElevatorEncoderPosition(), 0, 59000, 0, 250);
 
 	serial->Write(data, DATA_SIZE);

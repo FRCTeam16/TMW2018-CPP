@@ -74,9 +74,9 @@ void DmsProcessManager::DoMotorTest() {
 	const double elapsedTime = (currentTime - startTime);
 
 	if (elapsedTime < motorTestTime) {
-		if (elapsedTime > 1) {
+		if (elapsedTime > initialIgnoreTime) {
 			add(driveCurrent, Robot::driveBase->GetSteerCurrent());
-			add(driveVelocity, Robot::driveBase->GetDriveEncoderPositions());
+			add(driveVelocity, Robot::driveBase->GetDMSDriveVelocity());
 			loopCounter++;
 			Robot::driveBase->SetConstantVelocity(0.0, 1.0);
 
@@ -126,7 +126,7 @@ void DmsProcessManager::DoSteerTest() {
 	const double elapsedTime = (currentTime - startTime);
 
 	if (elapsedTime < motorTestTime) {
-		if (elapsedTime > 1) {
+		if (elapsedTime > initialIgnoreTime) {
 			add(steerCurrent, Robot::driveBase->GetSteerCurrent());
 			add(steerVelocity, Robot::driveBase->GetDMSSteerVelocity());
 			loopCounter++;

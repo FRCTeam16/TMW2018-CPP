@@ -118,7 +118,7 @@ void Intake::Eject() {
 }
 
 void Intake::Eject(double speed) {
-	std::cout << "Intake::Eject " << speed << "\n";
+//	std::cout << "Intake::Eject " << speed << "\n";
 	state = IntakeState::kEject;
 	targetEjectSpeed = speed;
 	ResetPickupTriggerState();
