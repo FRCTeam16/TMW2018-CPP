@@ -13,28 +13,34 @@
 
 
 inline void add(DriveInfo<double> &di1, const DriveInfo<int> &di2) {
-	di1.FL += abs(di2.FL);
-	di1.FR += abs(di2.FR);
-	di1.RL += abs(di2.RL);
-	di1.RR += abs(di2.RR);
+	di1.FL = (di1.FL + abs(di2.FL)) / 2.0;
+	di1.FR = (di1.FR + abs(di2.FR)) / 2.0;
+	di1.RL = (di1.RL + abs(di2.RL)) / 2.0;
+	di1.RR = (di1.RR + abs(di2.RR)) / 2.0;
 }
 
 inline void add(DriveInfo<double> &di1, const DriveInfo<double> &di2) {
-	di1.FL += fabs(di2.FL);
-	di1.FR += fabs(di2.FR);
-	di1.RL += fabs(di2.RL);
-	di1.RR += fabs(di2.RR);
+	di1.FL = (di1.FL + fabs(di2.FL)) / 2.0;
+	di1.FR = (di1.FR + fabs(di2.FR)) / 2.0;
+	di1.RL = (di1.RL + fabs(di2.RL)) / 2.0;
+	di1.RR = (di1.RR + fabs(di2.RR)) / 2.0;
 }
 
 
 inline double CalculateAverage(const DriveInfo<double> &data) {
-	double sum = data.FL + data.FR + data.RL + data.RR;
+	double sum = data.FL
+			+ data.FR
+			+ data.RL
+			+ data.RR ;
 	return sum / 4.0;
 }
 
 
 inline double CalculateAverage(const DriveInfo<int> &data) {
-	double sum = data.FL + data.FR + data.RL + data.RR;
+	double sum = data.FL
+			+ data.FR
+			+ data.RL
+			+ data.RR ;
 	return sum / 4.0;
 }
 
@@ -54,6 +60,8 @@ void DmsProcessManager::Run() {
 	if (running) {
 		switch(currentPhase) {
 		case TestPhase::kStopped:
+			Robot::driveBase->DMSDrive(0.0);
+			Robot::driveBase->DMSSteer(0.0);
 			break;
 		case kTestDriveMotors:
 			DoMotorTest();
@@ -69,32 +77,34 @@ void DmsProcessManager::Run() {
 void DmsProcessManager::DoMotorTest() {
 	const double currentTime = Timer::GetFPGATimestamp();
 	if (startTime < 0) {
+		std::cout << "Starting motor test\n";
 		startTime = currentTime;
 	}
 	const double elapsedTime = (currentTime - startTime);
 
 	if (elapsedTime < motorTestTime) {
+		Robot::driveBase->DMSDrive(1.0);
+		Robot::driveBase->DMSSteer(0.0);
 		if (elapsedTime > initialIgnoreTime) {
-			add(driveCurrent, Robot::driveBase->GetSteerCurrent());
+			add(driveCurrent, Robot::driveBase->GetDriveCurrent());
 			add(driveVelocity, Robot::driveBase->GetDMSDriveVelocity());
 			loopCounter++;
-			Robot::driveBase->SetConstantVelocity(0.0, 1.0);
 
-			std::cout << "(DVel) FL: " << driveVelocity.FL / loopCounter
-					  << " FR: " << driveVelocity.FR / loopCounter
-					  << " RL: " << driveVelocity.RL / loopCounter
-					  << " RR: " << driveVelocity.RR / loopCounter
+			std::cout << "(DVel) FL: " << driveVelocity.FL
+					  << " FR: " << driveVelocity.FR
+					  << " RL: " << driveVelocity.RL
+					  << " RR: " << driveVelocity.RR
 					  << "\n";
 
-			std::cout << "(DAmp) FL: " << driveCurrent.FL / loopCounter
-					  << " FR: " << driveCurrent.FR / loopCounter
-					  << " RL: " << driveCurrent.RL / loopCounter
-					  << " RR: " << driveCurrent.RR / loopCounter
+			std::cout << "(DAmp) FL: " << driveCurrent.FL
+					  << " FR: " << driveCurrent.FR
+					  << " RL: " << driveCurrent.RL
+					  << " RR: " << driveCurrent.RR
 					  << "\n";
 
 			const double velAvg = CalculateAverage(driveVelocity);
 			const double ampAvg = CalculateAverage(driveCurrent);
-			std::cout << "Enc Avg: " << velAvg << " | Amp Avg: " << ampAvg << "\n";
+			std::cout << "Vel Avg: " << velAvg << " | Amp Avg: " << ampAvg << "\n";
 			DriveInfo<int> status;
 			status.FL = CalculateStatus(driveVelocity.FL, velAvg, driveCurrent.FL, ampAvg);
 			status.FR = CalculateStatus(driveVelocity.FR, velAvg, driveCurrent.FR, ampAvg);
@@ -109,7 +119,6 @@ void DmsProcessManager::DoMotorTest() {
 					  << " RR: " << status.RR
 					  << "\n";
 		}
-		Robot::driveBase->DMSDrive(1.0);
 	} else {
 		startTime = -1;
 		currentPhase = kTestSteerMotors;
@@ -126,21 +135,23 @@ void DmsProcessManager::DoSteerTest() {
 	const double elapsedTime = (currentTime - startTime);
 
 	if (elapsedTime < motorTestTime) {
+		Robot::driveBase->DMSSteer(1.0);
+		Robot::driveBase->DMSDrive(0.0);
 		if (elapsedTime > initialIgnoreTime) {
 			add(steerCurrent, Robot::driveBase->GetSteerCurrent());
 			add(steerVelocity, Robot::driveBase->GetDMSSteerVelocity());
 			loopCounter++;
 
-			std::cout << "(SVel) FL: " << steerVelocity.FL / loopCounter
-					  << " FR: " << steerVelocity.FR / loopCounter
-					  << " RL: " << steerVelocity.RL / loopCounter
-					  << " RR: " << steerVelocity.RR / loopCounter
+			std::cout << "(SVel) FL: " << steerVelocity.FL
+					  << " FR: " << steerVelocity.FR
+					  << " RL: " << steerVelocity.RL
+					  << " RR: " << steerVelocity.RR
 					  << "\n";
 
-			std::cout << "(SAmp) FL: " << steerCurrent.FL / loopCounter
-					  << " FR: " << steerCurrent.FR / loopCounter
-					  << " RL: " << steerCurrent.RL / loopCounter
-					  << " RR: " << steerCurrent.RR / loopCounter
+			std::cout << "(SAmp) FL: " << steerCurrent.FL
+					  << " FR: " << steerCurrent.FR
+					  << " RL: " << steerCurrent.RL
+					  << " RR: " << steerCurrent.RR
 					  << "\n";
 
 			const double velAvg = CalculateAverage(steerVelocity);
@@ -160,9 +171,31 @@ void DmsProcessManager::DoSteerTest() {
 					  << " RR: " << status.RR
 					  << "\n";
 		}
-		Robot::driveBase->DMSSteer(1.0);
 	} else {
+		std::cout << "******************** FINISHED STEER PHASE ********************\n";
 		currentPhase = kStopped;
+
+		frc::SmartDashboard::PutNumber("FL V", driveVelocity.FL);
+		frc::SmartDashboard::PutNumber("FR V", driveVelocity.FR);
+		frc::SmartDashboard::PutNumber("RL V", driveVelocity.RL);
+		frc::SmartDashboard::PutNumber("RR V", driveVelocity.RR);
+
+		frc::SmartDashboard::PutNumber("FL A", driveCurrent.FL);
+		frc::SmartDashboard::PutNumber("FR A", driveCurrent.FR);
+		frc::SmartDashboard::PutNumber("RL A", driveCurrent.RL);
+		frc::SmartDashboard::PutNumber("RR A", driveCurrent.RR);
+
+
+		frc::SmartDashboard::PutNumber("St FL V", steerVelocity.FL);
+		frc::SmartDashboard::PutNumber("St FR V", steerVelocity.FR);
+		frc::SmartDashboard::PutNumber("St RL V", steerVelocity.RL);
+		frc::SmartDashboard::PutNumber("St RR V", steerVelocity.RR);
+
+		frc::SmartDashboard::PutNumber("St FL A", steerCurrent.FL);
+		frc::SmartDashboard::PutNumber("St FR A", steerCurrent.FR);
+		frc::SmartDashboard::PutNumber("St RL A", steerCurrent.RL);
+		frc::SmartDashboard::PutNumber("St RR A", steerCurrent.RR);
+
 	}
 }
 

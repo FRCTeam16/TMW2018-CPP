@@ -60,7 +60,7 @@ void StatusReporter::SendData() {
 	int allianceColor = 0;
 	if (DriverStation::Alliance::kRed == alliance) {
 		allianceColor = 1;
-	} else if (DriverStation::Alliance::kRed == alliance) {
+	} else if (DriverStation::Alliance::kBlue == alliance) {
 		allianceColor = 2;
 	}
 

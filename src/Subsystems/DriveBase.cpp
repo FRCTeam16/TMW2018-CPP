@@ -590,7 +590,7 @@ void DriveBase::DMSDrive(double speed) {
 	const std::vector<std::shared_ptr<WPI_TalonSRX>> drives {
 			frontLeftDrive, frontRightDrive, rearLeftDrive, rearRightDrive};
 	for(auto const& drive: drives) {
-		drive->Set(ControlMode::PercentOutput, speed);
+		drive->Set(ControlMode::PercentOutput, speed);;
 	}
 }
 

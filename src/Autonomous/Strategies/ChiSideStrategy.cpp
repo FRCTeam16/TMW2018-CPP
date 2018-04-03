@@ -59,13 +59,15 @@ ChiSideStrategy::ChiSideStrategy(std::shared_ptr<World> world) {
 	//------------------------------------------------------------------------
 	// Configure steps
 	//------------------------------------------------------------------------
-	StartInitialPose();
+
 
 	if (haveScale) {
 		std::cout << "[Auto] Doing Scale\n";
+		StartInitialPose(Mast::MastPosition::kDrive);
 		DoFirstScale();
 		DoSecondScale();
 	} else {
+		StartInitialPose();
 		if (traverse) {
 			std::cout << "[Auto] Doing Traverse\n";
 			DoTraverse();
@@ -87,14 +89,14 @@ ChiSideStrategy::ChiSideStrategy(std::shared_ptr<World> world) {
  * Starts moving the robot from its initial starting to position to an operational configuration.
  * Allows minimization of structural forces which affect drive accuracy.
  */
-void ChiSideStrategy::StartInitialPose() {
+void ChiSideStrategy::StartInitialPose(Mast::MastPosition initialPosition) {
 	const double poseDelay = PrefUtil::getSet("AutoSideInitialPoseDelay", 1.0);
 
 	steps.push_back(new ConcurrentStep({
 		new TimedDrive(startAngle, 0.0001, 0.0, poseDelay, false),
 		new Delay(poseDelay),
 		new PositionElevator(Elevator::ElevatorPosition::kSwitch),
-		new PositionMast(Mast::MastPosition::kVertical),
+		new PositionMast(initialPosition),
 		new IntakeSolenoidWithDelay(false, DelayParam(DelayParam::DelayType::kNone, 0.0), 5.0)
 	}));
 }
@@ -277,8 +279,11 @@ void ChiSideStrategy::DoFirstScale() {
 	const double firstDriveX = PrefUtil::getSet("AutoSideScaleX1", 15.0) * inv;
 	const double firstDriveY = PrefUtil::getSet("AutoSideScaleY1", 313);
 
-	steps.push_back(new PositionElevator(Elevator::ElevatorPosition::kHighScale));
-	steps.push_back(new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 30.0, 1.5, 30));
+	steps.push_back(new PositionElevator(Elevator::ElevatorPosition::kSwitch));
+	steps.push_back(new ConcurrentStep({
+		new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 30.0, 1.5, 30),
+		new PositionElevator(Elevator::ElevatorPosition::kHighScale, DelayParam(DelayParam::DelayType::kPosition, 150))
+	}, true));
 	steps.push_back(new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Eject, DelayParam(DelayParam::DelayType::kNone, 0.0), 2.0, -1.0));
 }
 
@@ -293,6 +298,7 @@ void ChiSideStrategy::DoSecondScale() {
 
 	steps.push_back(new ConcurrentStep({
 		new ClosedLoopDrive2(startAngle, secondDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 8.0, secondDriveRampUp, secondDriveRampDown),
+		new PositionMast(Mast::MastPosition::kVertical),
 		new PositionElevator(Elevator::ElevatorPosition::kFloor, DelayParam(DelayParam::DelayType::kTime, secondDriveElevatorDelay), false),
 		new IntakeSolenoidWithDelay(true, DelayParam(DelayParam::DelayType::kNone, 0.0), 1.0)
 	}));

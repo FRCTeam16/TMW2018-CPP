@@ -4,6 +4,7 @@
 #include <WPILib.h>
 #include <Autonomous/Strategy.h>
 #include <Autonomous/World.h>
+#include <Subsystems/Mast.h>
 
 class ChiSideStrategy: public StepStrategy {
 public:
@@ -16,7 +17,7 @@ private:
 	int inv = 1;			// invert angle multiplier (should be for left starts)
 	double startAngle;		// initial orientation of robot
 
-	void StartInitialPose();	// run before other code paths to begin configuring robot pose
+	void StartInitialPose(Mast::MastPosition position = Mast::MastPosition::kVertical);	// run before other code paths to begin configuring robot pose
 	void DoSwitchScale();		// runs a switch score - pickup - scale score
 
 	void DoFirstScale();		// first cube scale

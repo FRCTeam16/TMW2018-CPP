@@ -226,6 +226,8 @@ void Robot::TeleopPeriodic() {
 	if (speedModeTest) {
 		driveBase->SetConstantVelocity(twistInput, 0.60);
 		driveBase->Diagnostics();
+	} else if (dmsMode) {
+		// DriveBase input handled elsewhere
 	} else if (!lockWheels) {
 		driveBase->Crab(
 				twistInput,

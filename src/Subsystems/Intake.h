@@ -80,6 +80,7 @@ private:
 
 	 IntakeState state = IntakeState::kStop;
 	 bool extendSolenoidState = true;
+	 const double autoMinIntakeSpeed = -0.25;
 	 double intakeSpeed = 1.0;
 	 double switchEjectSpeed = 1.0;
 	 double scaleEjectSpeed = 0.75;

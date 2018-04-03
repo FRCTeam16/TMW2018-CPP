@@ -85,6 +85,11 @@ void Intake::Run() {
 					break;
 			}
 		}
+
+		if (RobotState::IsAutonomous() && (state == kStop)) {
+			targetSpeed = autoMinIntakeSpeed;
+		}
+
 		SetMotorPercent(targetSpeed);
 	}
 
