@@ -90,7 +90,7 @@ void StatusReporter::SendData() {
 	data[10] = (char) StatusReporterUtil::map(speed, 0.0, 1.0, 0, 250);
 	data[11] = (char) allianceColor;	// 1 red, 2 blue, 0 unknown
 	data[12] = (char) robotState;		// 0 - none, 1 - disabled, 2- auto, 3- tele
-	data[13] = (char) StatusReporterUtil::map(Robot::elevator->GetElevatorEncoderPosition(), 0, 59000, 0, 250);
+	data[13] = (char) StatusReporterUtil::map(Robot::elevator->GetElevatorEncoderPosition(), 0, 72500, 0, 250);
 
 	serial->Write(data, DATA_SIZE);
 	serial->Flush();

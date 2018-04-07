@@ -110,7 +110,7 @@ void ChiSideStrategy::DoTraverse() {
 	const double firstDriveX = PrefUtil::getSet("AutoSideTraverseX1", 15.0) * inv;
 	const double firstDriveY = PrefUtil::getSet("AutoSideTraverseY1", 228.0);
 
-	steps.push_back(new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 8.0, 1.5, 30));
+	steps.push_back(new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 4.5, 1.5, 30));
 
 	//
 	// Traverse the field horizontally
