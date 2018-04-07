@@ -44,8 +44,8 @@ public:
 	static std::shared_ptr<WPI_TalonSRX> driveBaseRearLeftSteer;
 	static std::shared_ptr<WPI_TalonSRX> driveBaseRearRightSteer;
 	static std::shared_ptr<PowerDistributionPanel> powerDistributionPanel;
-	static std::shared_ptr<WPI_TalonSRX> intakeRotateMotor;
-	static std::shared_ptr<DigitalInput> intakeRotateEncoder;
+//	static std::shared_ptr<WPI_TalonSRX> intakeRotateMotor;
+//	static std::shared_ptr<DigitalInput> intakeRotateEncoder;
 
 	static void init();
 };
