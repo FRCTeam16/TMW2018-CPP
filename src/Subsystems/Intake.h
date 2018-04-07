@@ -76,7 +76,7 @@ private:
 	 std::shared_ptr<WPI_VictorSPX> rightIntakeMotor = RobotMap::intakeRightIntakeMotor;
 	 std::shared_ptr<Solenoid> extendSolenoid = RobotMap::intakeExtendActuator;
 //	 std::shared_ptr<WPI_TalonSRX> rotateMotor = RobotMap::intakeRotateMotor;
-	 std::shared_ptr<Counter> rotateCounter;
+//	 std::shared_ptr<Counter> rotateCounter;
 
 	 IntakeState state = IntakeState::kStop;
 	 bool extendSolenoidState = true;
@@ -92,7 +92,7 @@ private:
 	 double targetEjectSpeed = 0.0;
 
 	 double rotateSpeed = 0.0;
-	 RotationState rotationState;
+//	 RotationState rotationState;
 	 int minRotatePosition = 0;
 	 int maxRotatePosition = 5000;
 
