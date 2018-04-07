@@ -6,7 +6,8 @@
 #include <Util/PrefUtil.h>
 #include <Subsystems/Elevator.h>
 
-Intake::Intake() : frc::Subsystem("Intake") {
+Intake::Intake() : frc::Subsystem("Intake"),
+				   rotateCounter(new Counter(RobotMap::intakeRotateEncoder)) {
 	std::cout << "Starting Intake\n";
 	const std::vector<std::shared_ptr<WPI_VictorSPX>> motors { leftIntakeMotor, rightIntakeMotor };
 	for (auto &motor : motors) {
@@ -96,7 +97,7 @@ void Intake::Run() {
 		extendSolenoid->Set(extendSolenoidState);
 	}
 
-//	rotateMotor->Set(rotateSpeed);
+	rotateMotor->Set(rotateSpeed);
 //	rotateMotor->Set(rotationState.getMotorOutput(rotateCounter));
 }
 
