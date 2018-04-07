@@ -75,7 +75,7 @@ private:
 	 std::shared_ptr<WPI_VictorSPX> leftIntakeMotor = RobotMap::intakeLeftIntakeMotor;
 	 std::shared_ptr<WPI_VictorSPX> rightIntakeMotor = RobotMap::intakeRightIntakeMotor;
 	 std::shared_ptr<Solenoid> extendSolenoid = RobotMap::intakeExtendActuator;
-	 std::shared_ptr<WPI_TalonSRX> rotateMotor = RobotMap::intakeRotateMotor;
+//	 std::shared_ptr<WPI_TalonSRX> rotateMotor = RobotMap::intakeRotateMotor;
 	 std::shared_ptr<Counter> rotateCounter;
 
 	 IntakeState state = IntakeState::kStop;
