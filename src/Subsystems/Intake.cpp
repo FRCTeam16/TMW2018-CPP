@@ -146,15 +146,15 @@ void Intake::SetRotateIntakeSpeed(double _speed) {
 }
 
 void Intake::RotateIntakeUp() {
-	rotationState.setPosition(maxRotatePosition, true);
+//	rotationState.setPosition(maxRotatePosition, true);
 }
 
 void Intake::RotateIntakeDown() {
-	rotationState.setPosition(minRotatePosition, false);
+//	rotationState.setPosition(minRotatePosition, false);
 }
 
 void Intake::SetRotateIntakePosition(int position, bool _direction) {
-	rotationState.setPosition(position, _direction);
+//	rotationState.setPosition(position, _direction);
 }
 
 
@@ -183,7 +183,7 @@ bool Intake::IsPickupTriggered() {
 void Intake::Instrument() {
 	SmartDashboard::PutNumber("Intake Motor", leftIntakeMotor->Get());
 	SmartDashboard::PutBoolean("Intake Solenoid", extendSolenoid->Get());
-	SmartDashboard::PutNumber("Rotate Counter", rotateCounter->Get());
+//	SmartDashboard::PutNumber("Rotate Counter", rotateCounter->Get());
 
 	if ((loopCounter++ % 10) == 0) {
 		SmartDashboard::PutNumber("Left Intake Current", GetLeftIntakeCurrent());
