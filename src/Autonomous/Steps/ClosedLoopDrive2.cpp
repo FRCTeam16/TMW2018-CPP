@@ -16,6 +16,10 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 	if (startTime < 0) {
 		startTime = world->GetClock();
 
+		/**
+		 * If we are using pickup distance, we will use the X drive distance stored on the World object by
+		 * a previous drive step as the additoinal amount to add to our configured X drive distance
+		 */
 		if (usePickupDistance) {
 			if (debug) std::cout << "ClosedLoopDrive2 using pickup distance: original = " << XtargetDistance;
 			 double driveDistance = DriveUnit::ToInches(world->GetDriveDistance(), DriveUnit::kPulses);
@@ -60,6 +64,10 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 
 	SmartDashboard::PutNumber("DriveControl P", Robot::driveBase->GetDriveControlP());
 
+
+	/**
+	 * Distance threshold checks for halting
+	 */
 	if (distanceThreshold == -1) {
 		if (currentEncoderPosition > targetSetpoint) {
 			std::cout << "!!!Current encoder passed target\n";
@@ -79,6 +87,8 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 
 
 	StoreDistance(world.get());
+
+
 	if (elapsedTimeSecs > timeoutCommand) {
 		std::cerr << "**** EMERGENCY EXIT OF STEP DUE TO TIMEOUT ***\n";
 		crab->Stop();
@@ -93,6 +103,9 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 	} else {
 		const double crabSpeed = speed * ((reverse) ? -1.0 : 1.0);
 
+		/**
+		 * Ramp Control
+		 */
 		RampUtil ru;
 		double profiledSpeed = crabSpeed * thresholdPassInverter;
 		if (rampUp > 0) {
@@ -103,14 +116,12 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 		}
 
 		const double angleRadians = atan2(XtargetDistance, YtargetDistance);
-		const double xspeed = profiledSpeed * sin(angleRadians);
 		const double yspeed = profiledSpeed * cos(angleRadians);
+		double xspeed = profiledSpeed * sin(angleRadians);
 
-//		std::cout << "XYPIDController crabSpeed = " << crabSpeed << "\n";
-//		std::cout << "XYPIDController angleRads = " << angleRadians << "\n";
-//		std::cout << "XYPIDController xspeed    = " << xspeed << "\n";
-//		std::cout << "XYPIDController yspeed    = " << yspeed << "\n";
-
+		if (distanceControl && (elapsedTimeSecs > distanceControlIgnoreTime)) {
+			xspeed += distanceControl->Get();
+		}
 
 //		const double twistOutput =  (elapsedTimeSecs < rampUp) ? 0.0 : Robot::driveBase->GetTwistControlOutput();
 		const double twistOutput = Robot::driveBase->GetTwistControlOutput();
@@ -129,4 +140,13 @@ void ClosedLoopDrive2::StoreDistance(World* world) {
 	world->SetDriveDistance(endDecoderPosition - startEncoderPosition);
 }
 
+void ClosedLoopDrive2::EnableDistanceControl(double _target, bool _invert, double _ignoreTime) {
+	distanceControl.reset(new DistanceControl(_target));
+	distanceControl->SetInvert(_invert);
+	distanceControlIgnoreTime = _ignoreTime;
+}
+
+DistanceControl* ClosedLoopDrive2::GetDistanceControl() const {
+	return distanceControl.get();
+}
 

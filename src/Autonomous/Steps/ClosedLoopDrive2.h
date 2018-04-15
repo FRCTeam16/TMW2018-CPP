@@ -5,6 +5,7 @@
 #include <Autonomous/Step.h>
 #include <Autonomous/DriveUnit.h>
 #include <Util/CollisionDetector.h>
+#include <Util/DistanceControl.h>
 #include <RobotMap.h>
 
 class ClosedLoopDrive2: public Step {
@@ -36,6 +37,9 @@ public:
 	void SetHardStopsContinueFromStep(bool _stay) { hardStopsContinueFromStep = _stay; }
 	void SetRampUpMin(double _min) { rampUpMin = _min; }
 	void SetRampDownMin(double _min) { rampDownMin = _min; }
+
+	void EnableDistanceControl(double _target, bool _invert, double _ignoreTime = 1.5);
+	DistanceControl* GetDistanceControl() const;
 
 
 private:
@@ -72,6 +76,9 @@ private:
 	bool hardStopsContinueFromStep = true;	// when collisions or timeouts occur, whether to stay on step or continue
 
 	const bool debug = false;
+
+	std::unique_ptr<DistanceControl> distanceControl;	// optional distance control
+	double distanceControlIgnoreTime;
 
 };
 

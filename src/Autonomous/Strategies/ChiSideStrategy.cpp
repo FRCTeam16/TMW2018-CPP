@@ -21,6 +21,7 @@
 #include <Autonomous/Steps/TimedDrive.h>
 #include <Autonomous/World.h>
 #include <Subsystems/Elevator.h>
+#include <Util/DistanceControl.h>
 
 
 ChiSideStrategy::ChiSideStrategy(std::shared_ptr<World> world) {
@@ -109,8 +110,11 @@ void ChiSideStrategy::DoTraverse() {
 	const double firstDriveSpeed = PrefUtil::getSet("AutoSideTraverseSpeed1", 0.5);
 	const double firstDriveX = PrefUtil::getSet("AutoSideTraverseX1", 15.0) * inv;
 	const double firstDriveY = PrefUtil::getSet("AutoSideTraverseY1", 228.0);
+	const double distCtrlX = PrefUtil::getSet("AutoSideLongDistCtrlX", 0.25);
 
-	steps.push_back(new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 4.5, 1.5, 30));
+	ClosedLoopDrive2 *firstDrive = new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 4.5, 1.5, 30);
+	firstDrive->EnableDistanceControl(distCtrlX, isRight);
+	steps.push_back(firstDrive);
 
 	//
 	// Traverse the field horizontally
@@ -133,7 +137,9 @@ void ChiSideStrategy::DoTraverse() {
 	const double driveInY = PrefUtil::getSet("AutoSideTraverseDriveInY", 36.0);
 //	const double driveInTime = PrefUtil::getSet("AutoSideTraverseDriveInTime", 1.0);
 
-	steps.push_back(new Rotate(rotateAngle, 5, 5.0, 1));
+	Rotate *rotateToScale = new Rotate(rotateAngle, 5, 2.0, 1);
+	rotateToScale->SetContinueOnTimeout(true);
+	steps.push_back(rotateToScale);
 	steps.push_back(new ConcurrentStep({
 		new ClosedLoopDrive2(rotateAngle, driveInSpeed, driveInX, driveInY, -1, DriveUnit::Units::kInches, 3.0, 0.25, 5)
 //		new IntakeSolenoidWithDelay(true, DelayParam(DelayParam::DelayType::kNone, 0.0), 1.0)
@@ -155,8 +161,10 @@ void ChiSideStrategy::DoTraverse() {
 	const double pickupY = PrefUtil::getSet("AutoSideTraversePickupY", 36);
 
 	steps.push_back(new ClosedLoopDrive2(rotateAngle, 0.3, 0, -12, -1, DriveUnit::Units::kInches, 1.0, 0.25, 4));
+	Rotate *transversePickupRotate = new Rotate(pickupAngle, pickupAngleThreshold, 3.0, pickupAngleScans);
+	transversePickupRotate->SetContinueOnTimeout(true);
 	steps.push_back(new ConcurrentStep({
-		new Rotate(pickupAngle, pickupAngleThreshold, 10.0, pickupAngleScans),
+		transversePickupRotate,
 		new PositionElevator(Elevator::ElevatorPosition::kFloor, DelayParam(DelayParam::DelayType::kTime, 0.75), true),
 	}));
 
@@ -190,9 +198,11 @@ void ChiSideStrategy::DoSwitchPickup() {
 	const double firstDriveY = PrefUtil::getSet("AutoSideSwitchY1", 146);
 	const double firstEjectY = PrefUtil::getSet("AutoSideSwitchEjectY1", 142);
 	const double firstRampUp = PrefUtil::getSet("AutoSideSwitchRampUp1", 0.5);
+	const double firstXDist = PrefUtil::getSet("AutoSideSwitchDistCtrlX", 0.42);
 
 	ClosedLoopDrive2 *step = new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 5.0, firstRampUp, -1);
 	step->SetHardStopsContinueFromStep(false);
+	step->EnableDistanceControl(firstXDist, isRight);
 	steps.push_back(new ConcurrentStep({
 		step,
 		new IntakeSolenoidWithDelay(false, DelayParam(DelayParam::DelayType::kNone, 0.0), 1.0),
@@ -251,7 +261,7 @@ void ChiSideStrategy::DoSwitchPickup() {
 
 	steps.push_back(new PositionElevator(Elevator::ElevatorPosition::kFloor, DelayParam(DelayParam::DelayType::kNone, 0.0), true));
 
-	DoSecondCubePickup(turnAngle, 12.0);
+	DoSecondCubePickup(turnAngle, -24.0 * inv);
 
 	/************ Score Third Cube *********/
 	steps.push_back(new PositionElevator(Elevator::ElevatorPosition::kLowScale, DelayParam(DelayParam::DelayType::kNone, 0.0), true));
@@ -278,10 +288,17 @@ void ChiSideStrategy::DoFirstScale() {
 	const double firstDriveSpeed = PrefUtil::getSet("AutoSideScaleSpeed1", 0.5);
 	const double firstDriveX = PrefUtil::getSet("AutoSideScaleX1", 15.0) * inv;
 	const double firstDriveY = PrefUtil::getSet("AutoSideScaleY1", 313);
+	const double distCtrlX = PrefUtil::getSet("AutoSideLongDistCtrlX", 0.25);
 
 	steps.push_back(new PositionElevator(Elevator::ElevatorPosition::kSwitch));
+
+	ClosedLoopDrive2 *drive = new ClosedLoopDrive2(
+			startAngle, firstDriveSpeed, 0, firstDriveY, -1,
+			DriveUnit::Units::kInches, 5.5, 1.5, 30);
+	drive->EnableDistanceControl(distCtrlX, isRight);
+
 	steps.push_back(new ConcurrentStep({
-		new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 5.5, 1.5, 30),
+		drive,
 		new PositionElevator(Elevator::ElevatorPosition::kHighScale, DelayParam(DelayParam::DelayType::kPosition, 150))
 	}, true));
 	steps.push_back(new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Eject, DelayParam(DelayParam::DelayType::kNone, 0.0), 2.0, -1.0));
@@ -382,6 +399,11 @@ void ChiSideStrategy::CrossLine() {
 	const double firstDriveSpeed = PrefUtil::getSet("AutoSideTraverseSpeed1", 0.5);
 	const double firstDriveX = PrefUtil::getSet("AutoSideTraverseX1", 15.0) * inv;
 	const double firstDriveY = PrefUtil::getSet("AutoSideTraverseY1", 228.0);
+	const double distCtrlX = PrefUtil::getSet("AutoSideLongDistCtrlX", 0.25);
 
-	steps.push_back(new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 4.5, 1.5, 30));
+	ClosedLoopDrive2 *drive = new ClosedLoopDrive2(
+			startAngle, firstDriveSpeed, 0, firstDriveY,
+			-1, DriveUnit::Units::kInches, 4.5, 1.5, 30);
+	drive->EnableDistanceControl(distCtrlX, isRight);
+	steps.push_back(drive);
 }

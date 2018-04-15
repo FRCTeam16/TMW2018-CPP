@@ -20,7 +20,7 @@ bool Rotate::Run(std::shared_ptr<World> world) {
 	if ((currentTime - startTime) > TIMEOUT) {
 		std::cerr << "*** Rotate -> Timed out turning *** \n";
 		crab->Stop();
-		return false;
+		return continueOnTimeout;
 	}
 
 	if (fabs(yawError) <= THRESHOLD || (fabs(yawError) >= (360 - THRESHOLD))) {
