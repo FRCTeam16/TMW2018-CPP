@@ -281,7 +281,7 @@ void ChiSideStrategy::DoFirstScale() {
 
 	steps.push_back(new PositionElevator(Elevator::ElevatorPosition::kSwitch));
 	steps.push_back(new ConcurrentStep({
-		new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 30.0, 1.5, 30),
+		new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 5.5, 1.5, 30),
 		new PositionElevator(Elevator::ElevatorPosition::kHighScale, DelayParam(DelayParam::DelayType::kPosition, 150))
 	}, true));
 	steps.push_back(new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Eject, DelayParam(DelayParam::DelayType::kNone, 0.0), 2.0, -1.0));
@@ -297,7 +297,7 @@ void ChiSideStrategy::DoSecondScale() {
 	const double secondDriveElevatorDelay = PrefUtil::getSet("AutoSideScaleElevatorDelay2", 1.0);
 
 	steps.push_back(new ConcurrentStep({
-		new ClosedLoopDrive2(startAngle, secondDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 8.0, secondDriveRampUp, secondDriveRampDown),
+		new ClosedLoopDrive2(startAngle, secondDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 2.75, secondDriveRampUp, secondDriveRampDown),
 		new PositionMast(Mast::MastPosition::kVertical),
 		new PositionElevator(Elevator::ElevatorPosition::kFloor, DelayParam(DelayParam::DelayType::kTime, secondDriveElevatorDelay), false),
 		new IntakeSolenoidWithDelay(true, DelayParam(DelayParam::DelayType::kNone, 0.0), 1.0)
@@ -380,8 +380,8 @@ void ChiSideStrategy::DoThirdCubePickup(double robotAngle, double xDriveDistance
 
 void ChiSideStrategy::CrossLine() {
 	const double firstDriveSpeed = PrefUtil::getSet("AutoSideTraverseSpeed1", 0.5);
-		const double firstDriveX = PrefUtil::getSet("AutoSideTraverseX1", 15.0) * inv;
-		const double firstDriveY = PrefUtil::getSet("AutoSideTraverseY1", 228.0);
+	const double firstDriveX = PrefUtil::getSet("AutoSideTraverseX1", 15.0) * inv;
+	const double firstDriveY = PrefUtil::getSet("AutoSideTraverseY1", 228.0);
 
-		steps.push_back(new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 8.0, 1.5, 30));
+	steps.push_back(new ClosedLoopDrive2(startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1, DriveUnit::Units::kInches, 4.5, 1.5, 30));
 }
