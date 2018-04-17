@@ -96,6 +96,8 @@ void Elevator::SetElevatorPosition(ElevatorPosition _elevatorPosition) {
 		case kHighScale:
 			setpoint = PrefUtil::getSet("ElevatorPosHighScale", 77226);
 			break;
+		case kflipCube:
+			setpoint = PrefUtil::getSet("ElevatorCubeFlip",3387);
 	}
 }
 

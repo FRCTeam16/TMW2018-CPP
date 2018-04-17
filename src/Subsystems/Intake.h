@@ -36,7 +36,9 @@ public:
 	bool IsPickupTriggered();
 	void ResetPickupTriggerState();
 	void SetExtendSolenoidState(bool extend);
+	void SetExtendSolenoidState2(bool extend);
 	void ToggleExtendSolenoidState();
+	void ToggleExtendSolenoidState2();
 	void SetPickupTriggered(bool triggered);
 
 	void RotateIntakeUp();
@@ -75,11 +77,13 @@ private:
 	 std::shared_ptr<WPI_VictorSPX> leftIntakeMotor = RobotMap::intakeLeftIntakeMotor;
 	 std::shared_ptr<WPI_VictorSPX> rightIntakeMotor = RobotMap::intakeRightIntakeMotor;
 	 std::shared_ptr<Solenoid> extendSolenoid = RobotMap::intakeExtendActuator;
+	 std::shared_ptr<Solenoid>extendSolenoid2 = RobotMap::intakeExtendActuator2;
 //	 std::shared_ptr<WPI_TalonSRX> rotateMotor = RobotMap::intakeRotateMotor;
 //	 std::shared_ptr<Counter> rotateCounter;
 
 	 IntakeState state = IntakeState::kStop;
 	 bool extendSolenoidState = true;
+	 bool extendSolenoidState2 = true;
 	 const double autoMinIntakeSpeed = -0.25;
 	 double intakeSpeed = 1.0;
 	 double switchEjectSpeed = 1.0;

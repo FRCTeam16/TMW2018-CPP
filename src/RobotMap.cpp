@@ -19,6 +19,7 @@ std::shared_ptr<Compressor> RobotMap::compressor;
 std::shared_ptr<WPI_VictorSPX> RobotMap::intakeLeftIntakeMotor;
 std::shared_ptr<WPI_VictorSPX> RobotMap::intakeRightIntakeMotor;
 std::shared_ptr<Solenoid> RobotMap::intakeExtendActuator;
+std::shared_ptr<Solenoid> RobotMap::intakeExtendActuator2;
 std::shared_ptr<WPI_TalonSRX> RobotMap::elevatorElevatorMotor1;
 std::shared_ptr<WPI_TalonSRX> RobotMap::elevatorElevatorMotor2;
 std::shared_ptr<BSGyro> RobotMap::gyro;
@@ -59,6 +60,7 @@ void RobotMap::init() {
     intakeLeftIntakeMotor.reset(new WPI_VictorSPX(11));
     intakeRightIntakeMotor.reset(new WPI_VictorSPX(12));
     intakeExtendActuator.reset(new Solenoid(0));
+    intakeExtendActuator2.reset(new Solenoid(1));
 
 //    intakeRotateMotor.reset(new WPI_TalonSRX(15));
 //    intakeRotateEncoder.reset(new DigitalInput(0));

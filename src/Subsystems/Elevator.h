@@ -22,7 +22,7 @@ public:
 	virtual ~Elevator();
 
 	enum ElevatorPosition {
-		kFloor, kSwitch, kLowScale, kClimb, kDoClimb, kHighScale
+		kFloor, kSwitch, kLowScale, kClimb, kDoClimb, kHighScale,kflipCube
 	};
 	const int ELEVATOR_POSITION_COUNT = 6;
 

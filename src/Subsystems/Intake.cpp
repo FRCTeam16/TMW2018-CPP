@@ -95,6 +95,9 @@ void Intake::Run() {
 	if (extendSolenoid->Get() != extendSolenoidState) {
 		extendSolenoid->Set(extendSolenoidState);
 	}
+	if (extendSolenoid2->Get() != extendSolenoidState2){
+		extendSolenoid2->Set(extendSolenoidState2);
+	}
 
 //	rotateMotor->Set(rotateSpeed);
 //	rotateMotor->Set(rotationState.getMotorOutput(rotateCounter));
@@ -140,7 +143,12 @@ void Intake::SetExtendSolenoidState(bool extend) {
 void Intake::ToggleExtendSolenoidState() {
 	SetExtendSolenoidState(!extendSolenoidState);
 }
-
+void Intake::SetExtendSolenoidState2(bool extend) {
+	extendSolenoidState2 = extend;
+}
+void Intake::ToggleExtendSolenoidState2(){
+	SetExtendSolenoidState2(!extendSolenoidState2);
+}
 void Intake::SetRotateIntakeSpeed(double _speed) {
 	rotateSpeed = _speed;
 }

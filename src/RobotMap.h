@@ -32,6 +32,7 @@ public:
 	static std::shared_ptr<WPI_VictorSPX> intakeLeftIntakeMotor;
 	static std::shared_ptr<WPI_VictorSPX> intakeRightIntakeMotor;
 	static std::shared_ptr<Solenoid> intakeExtendActuator;
+	static std::shared_ptr<Solenoid>intakeExtendActuator2;
 	static std::shared_ptr<WPI_TalonSRX> elevatorElevatorMotor1;
 	static std::shared_ptr<WPI_TalonSRX> elevatorElevatorMotor2;
 	static std::shared_ptr<BSGyro> gyro;

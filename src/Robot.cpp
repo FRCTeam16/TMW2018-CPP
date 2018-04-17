@@ -126,7 +126,10 @@ void Robot::TeleopPeriodic() {
 	if (oi->DL6->Pressed()) {
 		lockWheels = true;
 	}
+	if (oi->DR9->Pressed()){
+		intake->SetExtendSolenoidState2(false);
 
+	}
 
 	/*
 	 * Mast Dart Control
@@ -167,9 +170,9 @@ void Robot::TeleopPeriodic() {
 
 
 	if (oi->DL3->RisingEdge()) {
-		elevator->IncreaseElevatorPosition();
+		elevator->SetElevatorPosition(Elevator::kflipCube);
 	} else if (oi->DL2->RisingEdge()) {
-		elevator->DecreaseElevatorPosition();
+		elevator->SetElevatorPosition(Elevator::kFloor);
 	} else if (elevatorDown > threshold) {
 		elevator->SetOpenLoopPercent(-elevatorDown);
 	} else if (elevatorUp > threshold) {
@@ -195,7 +198,9 @@ void Robot::TeleopPeriodic() {
 		intake->Eject();
 	} else {
 		intake->Stop();
-	}
+
+			}
+
 
 	if (oi->DL1->RisingEdge()) {
 		intake->SetExtendSolenoidState(true);
@@ -211,6 +216,7 @@ void Robot::TeleopPeriodic() {
 		intakeRotateSpeed = -1.0;
 	}
 	intake->SetRotateIntakeSpeed(intakeRotateSpeed);
+
 
 	// 5 - open/close
 	// 6 - shift
