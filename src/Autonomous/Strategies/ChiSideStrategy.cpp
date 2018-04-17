@@ -44,6 +44,7 @@ ChiSideStrategy::ChiSideStrategy(std::shared_ptr<World> world) {
 	if (AutoStartPosition::kCenter == startPosition) {
 		std::cerr << "Specified a center start but selected a side strategy\n";
 		// FIXME: Add default drive line strategy
+		std::cout << "!!! WARNING - Selected a center start position with a side-based strategy !!!\n";
 	} else if (AutoStartPosition::kLeft == startPosition) {
 		haveSwitch = FieldInfo::Left == fieldInfo.switchLocation;
 		haveScale = FieldInfo::Left == fieldInfo.scaleLocation;
@@ -79,6 +80,7 @@ ChiSideStrategy::ChiSideStrategy(std::shared_ptr<World> world) {
 			} else {
 				std::cout << "[Auto] Crossing Line\n";
 				CrossLine();
+//				CrossLineNearTraverse();
 			}
 		}
 	}
@@ -279,21 +281,19 @@ void ChiSideStrategy::DoSwitchPickup() {
 		new IntakeSolenoidWithDelay(false, DelayParam(DelayParam::DelayType::kNone, 0.0), 1.0)
 	}));
 
-
-
 }
 
 
 void ChiSideStrategy::DoFirstScale() {
 	const double firstDriveSpeed = PrefUtil::getSet("AutoSideScaleSpeed1", 0.5);
-	const double firstDriveX = PrefUtil::getSet("AutoSideScaleX1", 15.0) * inv;
+	const double firstDriveX = 0.0; // PrefUtil::getSet("AutoSideScaleX1", 15.0) * inv;
 	const double firstDriveY = PrefUtil::getSet("AutoSideScaleY1", 313);
 	const double distCtrlX = PrefUtil::getSet("AutoSideLongDistCtrlX", 0.25);
 
 	steps.push_back(new PositionElevator(Elevator::ElevatorPosition::kSwitch));
 
 	ClosedLoopDrive2 *drive = new ClosedLoopDrive2(
-			startAngle, firstDriveSpeed, 0, firstDriveY, -1,
+			startAngle, firstDriveSpeed, firstDriveX, firstDriveY, -1,
 			DriveUnit::Units::kInches, 5.5, 1.5, 30);
 	drive->EnableDistanceControl(distCtrlX, isRight);
 
@@ -395,9 +395,9 @@ void ChiSideStrategy::DoThirdCubePickup(double robotAngle, double xDriveDistance
 	steps.push_back(new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Stop, DelayParam(DelayParam::DelayType::kNone, 0.0), 0.1, -1));
 }
 
+
 void ChiSideStrategy::CrossLine() {
 	const double firstDriveSpeed = PrefUtil::getSet("AutoSideTraverseSpeed1", 0.5);
-	const double firstDriveX = PrefUtil::getSet("AutoSideTraverseX1", 15.0) * inv;
 	const double firstDriveY = PrefUtil::getSet("AutoSideTraverseY1", 228.0);
 	const double distCtrlX = PrefUtil::getSet("AutoSideLongDistCtrlX", 0.25);
 
@@ -406,4 +406,99 @@ void ChiSideStrategy::CrossLine() {
 			-1, DriveUnit::Units::kInches, 4.5, 1.5, 30);
 	drive->EnableDistanceControl(distCtrlX, isRight);
 	steps.push_back(drive);
+
+	const double speed2 = 0.3;
+	const double driveX2 = -77 * inv;
+	ClosedLoopDrive2 *drive2 = new ClosedLoopDrive2(
+			startAngle, speed2, driveX2, 0.0,
+			-1, DriveUnit::Units::kInches, 4.5, 1.0, 13);
+	steps.push_back(drive2);
+}
+
+void ChiSideStrategy::CrossLineHideCubes() {
+
+	const double ejectHeight = 3000;	// this needs measuring for comp-bot
+
+	const double rotate1Angle = -45 * inv;
+	Rotate *rotate = new Rotate(rotate1Angle, 5.0, 2.0);
+	rotate->SetContinueOnTimeout(true);
+	PositionElevator *floor1 = new PositionElevator(Elevator::ElevatorPosition::kFloor, DelayParam(DelayParam::DelayType::kNone, 0.0));
+	floor1->SetOverrideElevatorPosition(ejectHeight);
+	steps.push_back(new ConcurrentStep({
+		rotate,
+		floor1,
+	}));
+	RunIntakeWithDelay *eject1 = new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Eject,
+					DelayParam(DelayParam::DelayType::kTime, 0.0), 2.0, 1.0);
+	eject1->SetEjectSpeed(0.5);
+	steps.push_back(eject1);
+
+	///////////////////////////////////////////////////////////////////////////////////
+	// Second Cube
+	///////////////////////////////////////////////////////////////////////////////////
+	const double rotate2Angle = -180 * inv;
+	Rotate *rotate2 = new Rotate(rotate2Angle, 5.0, 2.0);
+	rotate2->SetContinueOnTimeout(true);
+	steps.push_back(rotate2);
+
+	const double pickupSpeed = 0.3;
+	ClosedLoopDrive2 *pickupCube2Drive = new ClosedLoopDrive2(rotate2Angle, pickupSpeed, 0.0, -12, -1,
+			DriveUnit::Units::kInches, 2.0, -1, -1);
+	pickupCube2Drive->SetHaltOnIntakePickup(true);
+	steps.push_back(new ConcurrentStep({
+		pickupCube2Drive,
+		new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Start, DelayParam(DelayParam::DelayType::kNone, 0.0), 0.1, 0.0),
+		new PositionElevator(Elevator::ElevatorPosition::kFloor, DelayParam(DelayParam::DelayType::kNone, 0.0)),
+		new IntakeSolenoidWithDelay(true, DelayParam(DelayParam::DelayType::kNone, 0.0), 1.0)
+	}));
+
+
+	// Rotate back to score
+	const double rotate3Angle = -45 * inv;
+	PositionElevator *elev2 = new PositionElevator(Elevator::ElevatorPosition::kFloor, DelayParam(DelayParam::DelayType::kNone, 0.0));
+	elev2->SetOverrideElevatorPosition(ejectHeight);
+	steps.push_back(new ConcurrentStep({
+		new ClosedLoopDrive2(rotate3Angle, pickupSpeed, 0.0, 8, -1, DriveUnit::Units::kInches, 5.0, -1, -1),
+		elev2,
+	}));
+	Rotate *rotate3 = new Rotate(rotate3Angle, 5.0, 3.0);
+	rotate3->SetContinueOnTimeout(true);
+	steps.push_back(rotate3);
+
+	RunIntakeWithDelay *eject2 = new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Eject,
+						DelayParam(DelayParam::DelayType::kTime, 0.0), 2.0, 1.0);
+	eject2->SetEjectSpeed(0.5);
+	steps.push_back(new ConcurrentStep({
+		new IntakeSolenoidWithDelay(false, DelayParam(DelayParam::DelayType::kNone, 0.0), 1.0),
+		eject2
+	}));
+}
+
+
+void ChiSideStrategy::CrossLineNearTraverse() {
+
+	const double delay = 1.0;
+	steps.push_back(new Delay(delay));
+
+	const double speed1 = 0.5;
+	const double driveY1 = 24;
+	const double driveX1 = -224 * inv;
+	const double drive1Timeout = 15;
+
+	ClosedLoopDrive2 *drive = new ClosedLoopDrive2(
+			startAngle, speed1, driveX1, driveY1, -1, DriveUnit::Units::kInches,
+			drive1Timeout, 0.75, 24);
+	steps.push_back(drive);
+
+	const double angle2 = 90 * inv;
+	const double speed2 = 0.4;
+	const double driveY2 = 150;
+	const double driveX2 = -24 * inv;
+	const double drive2Timeout = 15;
+
+	ClosedLoopDrive2 *drive2 = new ClosedLoopDrive2(
+			angle2, speed2, driveX2, driveY2, -1, DriveUnit::Units::kInches,
+			drive2Timeout, 0.5, 24);
+	steps.push_back(drive2);
+
 }

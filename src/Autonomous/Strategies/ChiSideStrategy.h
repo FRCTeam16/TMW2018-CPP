@@ -27,6 +27,8 @@ private:
 	void DoTraverse();			// runs a traverse
 
 	void CrossLine();
+	void CrossLineHideCubes();		// prototyping a hide cubes approach for closing the line
+	void CrossLineNearTraverse();	// Near-side traverse with delay for cross line ops
 
 	// Helpers
 
