@@ -37,6 +37,9 @@ std::shared_ptr<PowerDistributionPanel> RobotMap::powerDistributionPanel;
 //std::shared_ptr<DigitalInput> RobotMap::intakeRotateEncoder;
 
 
+std::shared_ptr<AnalogInput> RobotMap::ultrasonic;
+
+
 void RobotMap::init() {
 
     driveBaseFrontLeftDrive.reset(new WPI_TalonSRX(1));
@@ -70,4 +73,6 @@ void RobotMap::init() {
     elevatorElevatorMotor2.reset(new WPI_TalonSRX(14));
 
     gyro.reset(new BSGyro(elevatorElevatorMotor2.get()));
+
+    ultrasonic.reset(new AnalogInput(0));
 }

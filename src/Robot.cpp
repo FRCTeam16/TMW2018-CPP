@@ -33,6 +33,9 @@ void Robot::RobotInit() {
 	statusReporter->Launch();
 	dmsProcessManager.reset(new DmsProcessManager(statusReporter));
 
+	distanceControl.reset(new DistanceControl());
+	distanceControl->Disable();
+
 
 	std::cout << "Robot::RobotInit() complete - stratofortress is aloft\n";
 }
@@ -234,10 +237,12 @@ void Robot::TeleopPeriodic() {
 	const bool dmsMode = oi->DL11->Pressed();
 	dmsProcessManager->SetRunning(dmsMode);
 
-	/*
+	const bool distanceMode = oi->DL8->Pressed();
+
+	/* -----------------------------------------------------------------------
 		Drive Control
-	 */
-	 double twistInput = oi->GetJoystickTwist(threshold);
+	   ---------------------------------------------------------------------*/
+	double twistInput = oi->GetJoystickTwist(threshold);
 	if (oi->DL4->Pressed()) {
 		driveBase->SetTargetAngle(-45.0);
 		twistInput = driveBase->GetCrabTwistOutput();
@@ -246,12 +251,26 @@ void Robot::TeleopPeriodic() {
 		twistInput = driveBase->GetCrabTwistOutput();
 	}
 
+
 	double start = frc::Timer::GetFPGATimestamp();
 	if (speedModeTest) {
 		driveBase->SetConstantVelocity(twistInput, 0.60);
 		driveBase->Diagnostics();
 	} else if (dmsMode) {
 		// DriveBase input handled elsewhere
+	} else if (distanceMode) {
+		distanceControl->Enable();
+		distanceControl->SetTarget(0.25);
+		distanceControl->SetInvert(true);
+//		distanceControl->SetOutputRange(-0.2, 0.2);
+
+		double xSpeed = distanceControl->Get();
+		std::cout << " Distance Control Output: " << xSpeed << "\n";
+
+		driveBase->Crab(twistInput,
+				-oi->GetJoystickY(threshold),
+				xSpeed,
+				true);
 	} else if (!lockWheels) {
 		driveBase->Crab(
 				twistInput,
@@ -320,6 +339,12 @@ void Robot::InstrumentSubsystems() {
 	double elapsedMs = (now - lastTime) * 1000;
 	SmartDashboard::PutNumber("Period (ms)", elapsedMs);
 	lastTime = now;
+
+
+//	std::cout << "Ultrasonic: Value = " << RobotMap::ultrasonic->GetValue()
+//				<< " | Avg Voltage = " << RobotMap::ultrasonic->GetAverageVoltage()
+//				<< "\n";
+	SmartDashboard::PutNumber("Ultrasonic (Raw)", RobotMap::ultrasonic->GetAverageVoltage());
 }
 
 START_ROBOT_CLASS(Robot);

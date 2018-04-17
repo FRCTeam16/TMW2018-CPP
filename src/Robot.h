@@ -33,6 +33,7 @@
 #include "Util/CollisionDetector.h"
 #include "Util/TelemetryLogger.h"
 #include "DMS/DmsProcessManager.h"
+#include "Util/DistanceControl.h"
 
 #include "OI.h"
 
@@ -68,5 +69,6 @@ private:
 	std::unique_ptr<TelemetryLogger> telemetryLogger;
 	std::shared_ptr<StatusReporter> statusReporter;
 	std::unique_ptr<DmsProcessManager> dmsProcessManager;
+	std::unique_ptr<DistanceControl> distanceControl;
 };
 #endif

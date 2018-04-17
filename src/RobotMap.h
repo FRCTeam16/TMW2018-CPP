@@ -48,6 +48,8 @@ public:
 //	static std::shared_ptr<WPI_TalonSRX> intakeRotateMotor;
 //	static std::shared_ptr<DigitalInput> intakeRotateEncoder;
 
+	static std::shared_ptr<AnalogInput> ultrasonic;
+
 	static void init();
 };
 #endif
