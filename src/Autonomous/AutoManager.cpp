@@ -125,4 +125,5 @@ void AutoManager::Instrument() {
 	frc::SmartDashboard::PutNumber("Auto Selected Position", selectedPosition);
 
 	frc::SmartDashboard::PutBoolean("Auto Traverse Check", frc::SmartDashboard::GetBoolean("Autonomous Traverse", true));
+	frc::SmartDashboard::PutBoolean("AutoCrossNearSideTraverse", Preferences::GetInstance()->GetBoolean("AutoCrossNearSideTraverse", false));
 }

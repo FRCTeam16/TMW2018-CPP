@@ -79,8 +79,14 @@ ChiSideStrategy::ChiSideStrategy(std::shared_ptr<World> world) {
 				DoSwitchPickup();
 			} else {
 				std::cout << "[Auto] Crossing Line\n";
-				CrossLine();
-//				CrossLineNearTraverse();
+				const bool doNearTraverse = Preferences::GetInstance()->GetBoolean("AutoCrossNearSideTraverse", false);
+				Preferences::GetInstance()->PutBoolean("AutoCrossNearSideTraverse", doNearTraverse);
+				std::cout << "\tNear Side Traverse? " << doNearTraverse << "\n";
+				if (doNearTraverse) {
+					CrossLineNearTraverse();
+				} else {
+					CrossLine();
+				}
 			}
 		}
 	}
@@ -477,7 +483,7 @@ void ChiSideStrategy::CrossLineHideCubes() {
 
 void ChiSideStrategy::CrossLineNearTraverse() {
 
-	const double delay = 1.0;
+	const double delay = PrefUtil::getSet("AutoCrossNearSideDelay", 3.0);
 	steps.push_back(new Delay(delay));
 
 	const double speed1 = 0.5;
@@ -489,6 +495,11 @@ void ChiSideStrategy::CrossLineNearTraverse() {
 			startAngle, speed1, driveX1, driveY1, -1, DriveUnit::Units::kInches,
 			drive1Timeout, 0.75, 24);
 	steps.push_back(drive);
+
+	const double rotateAngle = -135 * inv;
+	Rotate *rotate = new Rotate(rotateAngle, 10.0, 2.0, 0);
+	rotate->SetContinueOnTimeout(true);
+	steps.push_back(rotate);
 
 	const double angle2 = 90 * inv;
 	const double speed2 = 0.4;
