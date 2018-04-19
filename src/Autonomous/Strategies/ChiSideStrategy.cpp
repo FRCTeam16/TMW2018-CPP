@@ -160,7 +160,7 @@ void ChiSideStrategy::DoTraverse() {
 	//
 	// Get setup for pickup
 	//
-
+/*
 	const double pickupAngle = PrefUtil::getSet("AutoSideTraversePickupRotate", 180.0) * inv;
 	const double pickupAngleThreshold = PrefUtil::getSet("AutoSideTraversePickupRotateThreshold", 10.0) * inv;
 	const double pickupAngleScans = PrefUtil::getSet("AutoSideTraversePickupRotateThresholdScans", 5) * inv;
@@ -183,7 +183,7 @@ void ChiSideStrategy::DoTraverse() {
 		drive,
 		new RunIntakeWithDelay(RunIntakeWithDelay::IntakeState::Start, DelayParam(DelayParam::DelayType::kNone, 0.0), 0.1, 0.0),
 		new IntakeSolenoidWithDelay(true, DelayParam(DelayParam::DelayType::kPosition, 12.0), 1.0),
-	}));
+	}));*/
 
 }
 
