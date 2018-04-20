@@ -34,10 +34,12 @@ public:
 	// Custom behaviors
 	void SetHaltOnIntakePickup(bool _halt) { haltOnIntakePickup = _halt; }
 	void UsePickupDistance(bool _invertDistance = false) { usePickupDistance = true; invertPickupDistance = _invertDistance; }
+	void UseDriveDistanceOvershoot(bool _invertDistance = false) { useDriveDistanceOvershoot = true; invertOvershootDistance = _invertDistance; }
 	void SetHardStopsContinueFromStep(bool _stay) { hardStopsContinueFromStep = _stay; }
 	void SetRampUpMin(double _min) { rampUpMin = _min; }
 	void SetRampDownMin(double _min) { rampDownMin = _min; }
 
+	// Drive distance control uses an ultrasonic to control X component of drive
 	void EnableDistanceControl(double _target, bool _invert, double _ignoreTime = 1.5);
 	DistanceControl* GetDistanceControl() const;
 
@@ -48,7 +50,7 @@ private:
 	const double angle;
 	const double speed;
 	double XtargetDistance;
-	const double YtargetDistance;
+	double YtargetDistance;
 	const double distanceThreshold;     // -1 value simply checks for passing the setpoint
 	const DriveUnit::Units units;
 	const double timeoutCommand = 10;
@@ -71,8 +73,13 @@ private:
 	double startEncoderPosition = 0;
 
 	bool haltOnIntakePickup = false;	// TODO: replace with strategy
-	bool usePickupDistance = false;
-	bool invertPickupDistance = false;		// whether to invert the direction of the pickup distance
+
+	bool usePickupDistance = false;			// use tracked X movement
+	bool invertPickupDistance = false;		// whether to invert the direction of the X pickup distance
+
+	bool useDriveDistanceOvershoot = false;	// whether to incorporate overshoot from World into Y distance
+	bool invertOvershootDistance = false;	// whether to invert the distance of the overshoot when adding to total Y
+
 	bool hardStopsContinueFromStep = true;	// when collisions or timeouts occur, whether to stay on step or continue
 
 	const bool debug = false;

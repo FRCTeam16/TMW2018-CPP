@@ -22,6 +22,7 @@ private:
 	AutoStartPosition startPosition;
 
 	double driveDistance = 0;
+	double driveDistanceOvershoot = 0;
 	bool teamSideMode = false;
 	bool autoTraverse = false;
 public:
@@ -38,6 +39,9 @@ public:
 
 	void SetDriveDistance(double d) { driveDistance = d; }
 	double GetDriveDistance() { return driveDistance; }
+
+	void SetDriveDistanceOvershoot(double d) { driveDistanceOvershoot = d; }
+	double GetDriveDistanceOvershoot() { return driveDistanceOvershoot; }
 
 	void SetTeamSideMode(bool _mode) { teamSideMode = _mode; }
 	bool GetTeamSideMode() { return teamSideMode; }

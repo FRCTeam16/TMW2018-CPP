@@ -31,6 +31,8 @@ ZeroGyro::ZeroGyro(): Command() {
 void ZeroGyro::Initialize() {
 	std::cout << "****** ZERO GYRO ******\n";
 	RobotMap::gyro->ZeroYaw();
+	std::cout << "****** ZERO GYRO OFFSET ******\n";
+	RobotMap::gyro->SetOffset(0.0);
 	SetTimeout(1);
 }
 

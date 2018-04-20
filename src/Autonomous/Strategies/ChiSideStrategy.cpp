@@ -319,8 +319,11 @@ void ChiSideStrategy::DoSecondScale() {
 	const double secondDriveRampDown = PrefUtil::getSet("AutoSideScaleRampDown", 10);
 	const double secondDriveElevatorDelay = PrefUtil::getSet("AutoSideScaleElevatorDelay2", 1.0);
 
+	ClosedLoopDrive2 *drive = new ClosedLoopDrive2(startAngle, secondDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 2.75, secondDriveRampUp, secondDriveRampDown);
+//	drive->UseDriveDistanceOvershoot(true);
+
 	steps.push_back(new ConcurrentStep({
-		new ClosedLoopDrive2(startAngle, secondDriveSpeed, secondDriveX, secondDriveY, -1, DriveUnit::Units::kInches, 2.75, secondDriveRampUp, secondDriveRampDown),
+		drive,
 		new PositionMast(Mast::MastPosition::kVertical),
 		new PositionElevator(Elevator::ElevatorPosition::kFloor, DelayParam(DelayParam::DelayType::kTime, secondDriveElevatorDelay), false),
 		new IntakeSolenoidWithDelay(true, DelayParam(DelayParam::DelayType::kNone, 0.0), 1.0)

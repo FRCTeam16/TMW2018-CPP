@@ -28,10 +28,25 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 			}
 			XtargetDistance += driveDistance;
 			if (debug) std::cout << " new = " << XtargetDistance << "\n";
+		} else if (useDriveDistanceOvershoot) {
+			double overshoot = world->GetDriveDistanceOvershoot();
+			double driveDistance = DriveUnit::ToInches(overshoot, DriveUnit::kPulses);
+			if (invertOvershootDistance) {
+				driveDistance *= -1.0;
+			}
+			std::cout << "ClosedLoopDrive2 using overshoot distance: original Y = " << YtargetDistance
+					<< " | overshoot = " << overshoot
+					<< " | drive To Add = " << driveDistance;
+
+
+			YtargetDistance += driveDistance;
+			std::cout << " new Y = " << YtargetDistance << "\n";
 		}
+
 
 		const double hypotenuse = sqrt(XtargetDistance * XtargetDistance + YtargetDistance * YtargetDistance);
 		targetSetpoint = DriveUnit::ToPulses(hypotenuse, units);
+		
 		const double targetAngle = (!useCurrentAngle) ? angle : RobotMap::gyro->GetYaw();
 		Robot::driveBase->SetTargetAngle(targetAngle);
 
@@ -43,7 +58,7 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 	}
 
 	const double currentEncoderPosition = Robot::driveBase->GetDriveControlEncoderPosition();
-	const double currentError = targetSetpoint - currentEncoderPosition;
+//	const double currentError = targetSetpoint - currentEncoderPosition;
 	const double elapsedTimeSecs = world->GetClock() - startTime;
 	const double currentPIDOutput = Robot::driveBase->GetDriveControlOutput();
 	double thresholdPassInverter = 1;	// when driving past the threshold, we will invert this value to avoid driving in a negative directoin
@@ -63,6 +78,10 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 	}
 
 	SmartDashboard::PutNumber("DriveControl P", Robot::driveBase->GetDriveControlP());
+
+
+	// Store our current information to the world
+	StoreDistance(world.get());
 
 
 	/**
@@ -86,7 +105,7 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 	}
 
 
-	StoreDistance(world.get());
+
 
 
 	if (elapsedTimeSecs > timeoutCommand) {
@@ -136,8 +155,11 @@ bool ClosedLoopDrive2::Run(std::shared_ptr<World> world) {
 }
 
 void ClosedLoopDrive2::StoreDistance(World* world) {
-	double endDecoderPosition = Robot::driveBase->GetDriveControlEncoderPosition();
-	world->SetDriveDistance(endDecoderPosition - startEncoderPosition);
+	double endEncoderPosition = Robot::driveBase->GetDriveControlEncoderPosition();
+	double overshoot = endEncoderPosition - targetSetpoint;
+	world->SetDriveDistance(endEncoderPosition - startEncoderPosition);
+	world->SetDriveDistanceOvershoot(overshoot);
+
 }
 
 void ClosedLoopDrive2::EnableDistanceControl(double _target, bool _invert, double _ignoreTime) {
