@@ -69,6 +69,8 @@ private:
 
 
    int loopCounter = 0;
+
+   bool inHoldMode = false;
 };
 
 

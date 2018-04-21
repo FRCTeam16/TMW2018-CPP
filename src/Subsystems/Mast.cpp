@@ -105,6 +105,9 @@ void Mast::Run() {
 			magicMotionManager->Run(magicTarget);
 			break;
 	}
+	if (inHoldMode) {
+		HoldCurl();
+	}
 
 }
 
@@ -155,6 +158,7 @@ void Mast::HoldCurl() {
 	std::cout << "************ HOLDING CURL **************\n";
 	SetLeftMotorSpeed(0.0);
 	SetRightMotorSpeed(0.0);
+	inHoldMode = true;
 }
 
 
@@ -164,6 +168,7 @@ void Mast::UndoHoldCurl() {
 	leftDart->SelectProfileSlot(0, 0);
 	rightDart->SelectProfileSlot(0, 0);
 	SetMastPosition(Mast::MastPosition::kClimb);
+	inHoldMode = false;
 }
 
 
